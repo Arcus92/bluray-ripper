@@ -31,10 +31,21 @@ public class MovieObjects
 
     private void Read(BigEndianBinaryReader reader)
     {
+        var format = reader.ReadString(4);
+        if (format != "MOBJ")
+            throw new InvalidDataException("Invalid MovieObjects magic number!");
+        var version = reader.ReadString(4);
+        if (version != "0200")
+            throw new InvalidDataException($"Invalid MovieObjects version: {version}!");
+
+        var extensionDataStart = reader.ReadUInt32();
+        
+        reader.SkipTo(40);
+        
         var length = reader.ReadUInt32();
         var start = reader.Position;
         
-        reader.Skip(32);
+        reader.Skip(4);
         var count = reader.ReadUInt16();
         Objects = new MovieObject[count];
         for (var i = 0; i < count; i++)
