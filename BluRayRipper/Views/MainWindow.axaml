@@ -1,0 +1,72 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:BluRayRipper.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BluRayRipper.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="BluRayRipper">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" Padding="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBox Width="250" Text="{Binding DiskPath}"></TextBox>
+                <Button Click="OnLoadDiskClick">Load</Button>
+                <TextBox Width="250" Text="{Binding OutputPath}"></TextBox>
+                <TextBox Width="150" Text="{Binding OutputFilename}"></TextBox>
+                <NumericUpDown Width="140" Value="{Binding SelectedPlaylistId}" FormatString="00000"></NumericUpDown>
+                <Button Click="OnExportClick">Export</Button>
+            </StackPanel>
+        </Border>
+        
+        
+        <!-- Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Track list -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Visible">
+                <TreeView ItemsSource="{Binding TrackNodes}">
+                    <TreeView.ItemTemplate>
+                        <TreeDataTemplate ItemsSource="{Binding SubNodes}">
+                            <CheckBox IsChecked="{Binding IsChecked}">
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                            </CheckBox>
+                        </TreeDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </ScrollViewer>
+            
+            <GridSplitter Grid.Column="1"></GridSplitter>
+            
+            <!-- Track properties -->
+            <TabControl Grid.Column="2">
+                <TabItem Header="Properties">
+                    
+                </TabItem>
+            </TabControl>
+        </Grid>
+        
+        <!-- Footer -->
+        <Border Grid.Row="2" Padding="10">
+            <ProgressBar Height="24" ShowProgressText="true" ProgressTextFormat="{}{1:0.00} %" Value="{Binding ProgressValue}" Maximum="1.0"></ProgressBar>
+        </Border>
+    </Grid>
+</Window>

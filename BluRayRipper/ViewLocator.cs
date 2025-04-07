@@ -1,0 +1,22 @@
+using System;
+using Avalonia.Controls;
+using Avalonia.Controls.Templates;
+using BluRayRipper.ViewModels;
+
+namespace BluRayRipper;
+
+public class ViewLocator : IDataTemplate
+{
+    public Control? Build(object? param)
+    {
+        if (param is not ViewModelBase viewModelBase)
+            return null;
+
+        return viewModelBase.CreateView();
+    }
+
+    public bool Match(object? data)
+    {
+        return data is ViewModelBase;
+    }
+}
