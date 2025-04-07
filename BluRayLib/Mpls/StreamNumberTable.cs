@@ -2,7 +2,7 @@ using BluRayLib.Utils.IO;
 
 namespace BluRayLib.Mpls;
 
-public class StnTable
+public class StreamNumberTable
 {
     /// <summary>
     /// Gets and sets the primary video streams.

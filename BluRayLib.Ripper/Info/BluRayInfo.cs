@@ -37,7 +37,7 @@ public static class BluRayInfo
             
             // Video streams
             var videoStreamInfos = new List<VideoInfo>();
-            foreach (var stream in item.StnTable.PrimaryVideoStreams)
+            foreach (var stream in item.StreamNumberTable.PrimaryVideoStreams)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new VideoInfo(stream.Entry.RefToStreamId)
@@ -46,7 +46,7 @@ public static class BluRayInfo
                 };
                 videoStreamInfos.Add(streamInfo);
             }
-            foreach (var stream in item.StnTable.SecondaryVideoStream)
+            foreach (var stream in item.StreamNumberTable.SecondaryVideoStream)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new VideoInfo(stream.Entry.RefToStreamId)
@@ -59,7 +59,7 @@ public static class BluRayInfo
 
             // Audio streams
             var audioStreamInfos = new List<AudioInfo>();
-            foreach (var stream in item.StnTable.PrimaryAudioStreams)
+            foreach (var stream in item.StreamNumberTable.PrimaryAudioStreams)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new AudioInfo(stream.Entry.RefToStreamId)
@@ -69,7 +69,7 @@ public static class BluRayInfo
                 };
                 audioStreamInfos.Add(streamInfo);
             }
-            foreach (var stream in item.StnTable.SecondaryAudioStream)
+            foreach (var stream in item.StreamNumberTable.SecondaryAudioStream)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new AudioInfo(stream.Entry.RefToStreamId)
@@ -83,7 +83,7 @@ public static class BluRayInfo
             
             // Subtitle streams
             var subtitleStreamInfos = new List<SubtitleInfo>();
-            foreach (var stream in item.StnTable.PrimaryPgStreams)
+            foreach (var stream in item.StreamNumberTable.PrimaryPgStreams)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new SubtitleInfo(stream.Entry.RefToStreamId)
@@ -93,7 +93,7 @@ public static class BluRayInfo
                 };
                 subtitleStreamInfos.Add(streamInfo);
             }
-            foreach (var stream in item.StnTable.SecondaryPgStream)
+            foreach (var stream in item.StreamNumberTable.SecondaryPgStream)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new SubtitleInfo(stream.Entry.RefToStreamId)
@@ -104,8 +104,6 @@ public static class BluRayInfo
                 };
                 subtitleStreamInfos.Add(streamInfo);
             }
-            
-            
                 
             var segmentInfo = new SegmentInfo(clipId)
             {

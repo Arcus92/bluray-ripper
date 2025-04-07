@@ -1,3 +1,4 @@
+using BluRayLib.Utils;
 using BluRayLib.Utils.IO;
 
 namespace BluRayLib.Mpls;
@@ -31,13 +32,14 @@ public class PlaylistItem
     /// </summary>
     public MaskTable MaskTable { get; } = new();
     
+    public bool PlayItemRandomAccess { get; set; }
     public byte StillMode { get; set; }
     public ushort StillTime { get; set; }
 
     /// <summary>
-    /// Gets the STN table.
+    /// Gets the stream-number-table.
     /// </summary>
-    public StnTable StnTable { get; } = new();
+    public StreamNumberTable StreamNumberTable { get; } = new();
      
     public void Read(BigEndianBinaryReader reader)
     {
@@ -47,15 +49,15 @@ public class PlaylistItem
         Name = reader.ReadString(5);
         Type = reader.ReadString(4);
 
-        var miscFlags1 = reader.ReadUInt16();
-        IsMultiAngle = (miscFlags1 & 1 << 4) != 0;
+        var miscFlags = reader.ReadUInt16();
+        IsMultiAngle = BitUtils.GetBitFromLeft(miscFlags, 12);
         StcId = reader.ReadByte();
         InTime = reader.ReadUInt32();
         OutTime = reader.ReadUInt32();
         
         MaskTable.Read(reader);
         
-        var miscFlags2 = reader.ReadByte();
+        PlayItemRandomAccess = reader.ReadByte() == 1;
         StillMode = reader.ReadByte();
         StillTime = reader.ReadUInt16();
 
@@ -64,7 +66,7 @@ public class PlaylistItem
             throw new NotImplementedException();
         }
         
-        StnTable.Read(reader);
+        StreamNumberTable.Read(reader);
         
         reader.SkipTo(start + length);
     }
