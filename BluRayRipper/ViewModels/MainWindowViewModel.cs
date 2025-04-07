@@ -22,12 +22,21 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel(BluRayController bluRayController)
     {
         _bluRayController = bluRayController;
+
+        var args = Environment.GetCommandLineArgs();
+        if (args.Length > 1)
+        {
+            _diskPath = args[1];
+        }
+        if (args.Length > 2)
+        {
+            _outputPath = args[2];
+        }
     }
     
     // Designer default
-    public MainWindowViewModel()
+    public MainWindowViewModel() : this(new BluRayController())
     {
-        _bluRayController = new BluRayController();
     }
     
     
