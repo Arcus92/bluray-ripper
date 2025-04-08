@@ -58,16 +58,27 @@ public class InputStream : IDisposable
     /// <summary>
     /// Opens the input stream pipe.
     /// </summary>
-    public void Open()
+    public async Task StartAsync()
     {
+        var semaphore = new SemaphoreSlim(0, 1);
+        
+        // Stream read thread
         _task = Task.Run(async () =>
         {
+            // Create the pipe
             _pipe = new NamedPipeServerStream(PipeName, PipeDirection.Out, 10, PipeTransmissionMode.Byte, PipeOptions.FirstPipeInstance, 500000, 500000);
+            
+            // Then release the semaphore. This ensures the pipe is created and the following methods can consume it.
+            semaphore.Release();
+            
+            // Opens the underlying stream once a client connects.
             await _pipe.WaitForConnectionAsync();
             await using var stream = _streamFunc();
             await stream.CopyToAsync(_pipe);
             await _pipe.DisposeAsync();
         });
+
+        await semaphore.WaitAsync();
     }
     
     /// <inheritdoc />

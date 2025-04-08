@@ -55,7 +55,7 @@ public class Engine
         {
             foreach (var inputStream in inputStreams)
             {
-                inputStream.Open();
+                await inputStream.StartAsync();
             }
         }
         
