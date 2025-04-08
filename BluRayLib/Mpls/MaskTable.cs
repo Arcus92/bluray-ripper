@@ -37,49 +37,49 @@ public class MaskTable
     public bool SecondaryPgStreamNumberChange { get; set; }
     public void Read(BigEndianBinaryReader reader)
     {
-        var value = reader.ReadByte();
-        MenuCall = BitUtils.GetBitFromLeft(value, 0);
-        TitleSearch = BitUtils.GetBitFromLeft(value, 1);
-        ChapterSearch = BitUtils.GetBitFromLeft(value, 2);
-        TimeSearch = BitUtils.GetBitFromLeft(value, 3);
-        SkipToNextPoint = BitUtils.GetBitFromLeft(value, 4);
-        SkipToPrevPoint = BitUtils.GetBitFromLeft(value, 5);
-        // Reserved
-        Stop = BitUtils.GetBitFromLeft(value, 7);
+        var bits = reader.ReadBits8();
+        MenuCall = bits.ReadBit();
+        TitleSearch = bits.ReadBit();
+        ChapterSearch = bits.ReadBit();
+        TimeSearch = bits.ReadBit();
+        SkipToNextPoint = bits.ReadBit();
+        SkipToPrevPoint = bits.ReadBit();
+        bits.Skip(1); // Reserved
+        Stop = bits.ReadBit();
         
-        value = reader.ReadByte();
-        PauseOn = BitUtils.GetBitFromLeft(value, 0);
-        // Reserved
-        StillOff = BitUtils.GetBitFromLeft(value, 2);
-        ForwardPlay = BitUtils.GetBitFromLeft(value, 3);
-        BackwardPlay = BitUtils.GetBitFromLeft(value, 4);
-        Resume = BitUtils.GetBitFromLeft(value, 5);
-        MoveUpSelectedButton = BitUtils.GetBitFromLeft(value, 6);
-        MoveDownSelectedButton = BitUtils.GetBitFromLeft(value, 7);
+        bits = reader.ReadBits8();
+        PauseOn = bits.ReadBit();
+        bits.Skip(1); // Reserved
+        StillOff = bits.ReadBit();
+        ForwardPlay = bits.ReadBit();
+        BackwardPlay = bits.ReadBit();
+        Resume = bits.ReadBit();
+        MoveUpSelectedButton = bits.ReadBit();
+        MoveDownSelectedButton = bits.ReadBit();
         
-        value = reader.ReadByte();
-        MoveLeftSelectedButton = BitUtils.GetBitFromLeft(value, 0);
-        MoveRightSelectedButton = BitUtils.GetBitFromLeft(value, 1);
-        SelectButton = BitUtils.GetBitFromLeft(value, 2);
-        ActivateButton = BitUtils.GetBitFromLeft(value, 3);
-        SelectAndActivateButton = BitUtils.GetBitFromLeft(value, 4);
-        PrimaryAudioStreamNumberChange = BitUtils.GetBitFromLeft(value, 5);
-        // Reserved
-        AngleNumberChange = BitUtils.GetBitFromLeft(value, 7);
+        bits = reader.ReadBits8();
+        MoveLeftSelectedButton = bits.ReadBit();
+        MoveRightSelectedButton = bits.ReadBit();
+        SelectButton = bits.ReadBit();
+        ActivateButton = bits.ReadBit();
+        SelectAndActivateButton = bits.ReadBit();
+        PrimaryAudioStreamNumberChange = bits.ReadBit();
+        bits.Skip(1); // Reserved
+        AngleNumberChange = bits.ReadBit();
         
-        value = reader.ReadByte();
-        PopupOn = BitUtils.GetBitFromLeft(value, 0);
-        PopupOff = BitUtils.GetBitFromLeft(value, 1);
-        PrimaryPgEnableDisable = BitUtils.GetBitFromLeft(value, 2);
-        PrimaryPgStreamNumberChange = BitUtils.GetBitFromLeft(value, 3);
-        SecondaryVideoEnableDisable = BitUtils.GetBitFromLeft(value, 4);
-        SecondaryVideoStreamNumberChange = BitUtils.GetBitFromLeft(value, 5);
-        SecondaryAudioEnableDisable = BitUtils.GetBitFromLeft(value, 6);
-        SecondaryAudioStreamNumberChange = BitUtils.GetBitFromLeft(value, 7);
+        bits = reader.ReadBits8();
+        PopupOn = bits.ReadBit();
+        PopupOff = bits.ReadBit();
+        PrimaryPgEnableDisable = bits.ReadBit();
+        PrimaryPgStreamNumberChange = bits.ReadBit();
+        SecondaryVideoEnableDisable = bits.ReadBit();
+        SecondaryVideoStreamNumberChange = bits.ReadBit();
+        SecondaryAudioEnableDisable = bits.ReadBit();
+        SecondaryAudioStreamNumberChange = bits.ReadBit();
         
-        value = reader.ReadByte();
-        // Reserved
-        SecondaryPgStreamNumberChange = BitUtils.GetBitFromLeft(value, 1);
+        bits = reader.ReadBits8();
+        bits.Skip(1); // Reserved
+        SecondaryPgStreamNumberChange = bits.ReadBit();
         
         reader.Skip(3);
     }

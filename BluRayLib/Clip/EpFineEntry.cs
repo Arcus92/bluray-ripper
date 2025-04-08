@@ -12,10 +12,10 @@ public class EpFineEntry
 
     public void Read(BigEndianBinaryReader reader)
     {
-        var value = reader.ReadUInt32();
-        ReservedEpFine = BitUtils.GetBitFromLeft(value, 0);
-        EndPositionOffset = (byte)BitUtils.GetBitsFromLeft(value, 1, 3);
-        PtsEpCoarse = (ushort)BitUtils.GetBitsFromLeft(value, 4, 11);
-        SpnEpCoarse = BitUtils.GetBitsFromLeft(value, 15, 17);
+        var bits = reader.ReadBits32();
+        ReservedEpFine = bits.ReadBit();
+        EndPositionOffset = (byte)bits.ReadBits(3);
+        PtsEpCoarse = (ushort)bits.ReadBits(11);
+        SpnEpCoarse = bits.ReadBits(17);
     }
 }

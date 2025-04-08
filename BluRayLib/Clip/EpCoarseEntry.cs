@@ -11,9 +11,9 @@ public class EpCoarseEntry
 
     public void Read(BigEndianBinaryReader reader)
     {
-        var value = reader.ReadUInt64();
-        RefToEpFineId = (uint)BitUtils.GetBitsFromLeft(value, 0, 18);
-        PtsEpCoarse = (ushort)BitUtils.GetBitsFromLeft(value, 18, 14);
-        SpnEpCoarse = (uint)BitUtils.GetBitsFromLeft(value, 32, 32);
+        var bits = reader.ReadBits64();
+        RefToEpFineId = (uint)bits.ReadBits(18);
+        PtsEpCoarse = (ushort)bits.ReadBits(14);
+        SpnEpCoarse = (uint)bits.ReadBits(32);
     }
 }

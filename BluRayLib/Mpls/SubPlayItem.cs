@@ -42,9 +42,10 @@ public class SubPlayItem
         Name = reader.ReadString(5);
         Type = reader.ReadString(4);
         reader.Skip(3);
-        var value = reader.ReadByte();
-        ConnectionCondition = BitUtils.GetBitsFromLeft(value, 3, 4);
-        IsMultiClipEntries = BitUtils.GetBitFromLeft(value, 7);
+        var bits = reader.ReadBits8();
+        bits.Skip(3);
+        ConnectionCondition = bits.ReadBits(4);
+        IsMultiClipEntries = bits.ReadBit();
         StcId = reader.ReadByte();
         InTime = reader.ReadUInt32();
         OutTime = reader.ReadUInt32();

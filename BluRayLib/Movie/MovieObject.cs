@@ -12,10 +12,10 @@ public class MovieObject
 
     public void Read(BigEndianBinaryReader reader)
     {
-        var value = reader.ReadUInt16();
-        ResumeIntention = BitUtils.GetBitFromLeft(value, 0);
-        MenuCallMask = BitUtils.GetBitFromLeft(value, 1);
-        TitleSearchMask = BitUtils.GetBitFromLeft(value, 2);
+        var bits = reader.ReadBits16();
+        ResumeIntention = bits.ReadBit();
+        MenuCallMask = bits.ReadBit();
+        TitleSearchMask = bits.ReadBit();
         // Skip 13 bits
         var count = reader.ReadUInt16();
         Commands = new NavigationCommand[count];

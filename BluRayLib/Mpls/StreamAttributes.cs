@@ -16,8 +16,8 @@ public class StreamAttributes
     
     public ColorSpace ColorSpace { get; set; }
     
-    public bool CRFlag { get; set; }
-    public bool HDRPlusFlag { get; set; }
+    public bool CrFlag { get; set; }
+    public bool HdrPlusFlag { get; set; }
     
     public AudioFormat AudioFormat { get; set; }
     
@@ -33,7 +33,7 @@ public class StreamAttributes
         if (length == 0) return;
         
         CodingType = (StreamCodingType)reader.ReadByte();
-        byte value;
+        BigEndianBitReader<byte> bits;
 
         switch (CodingType)
         {
@@ -41,21 +41,21 @@ public class StreamAttributes
             case StreamCodingType.MPEG2VideoStream:
             case StreamCodingType.MPEG4AVCVideoStream:
             case StreamCodingType.SMTPEVC1VideoStream:
-                value = reader.ReadByte(); 
-                VideoFormat = (VideoFormat)BitUtils.GetBitsFromLeft(value, 0, 4);
-                FrameRate = (FrameRate)BitUtils.GetBitsFromLeft(value, 4, 4);
+                bits = reader.ReadBits8(); 
+                VideoFormat = (VideoFormat)bits.ReadBits(4);
+                FrameRate = (FrameRate)bits.ReadBits(4);
                 break;
             
             case StreamCodingType.HEVCVideoStream:
-                value = reader.ReadByte(); 
-                VideoFormat = (VideoFormat)BitUtils.GetBitsFromLeft(value, 0, 4);
-                FrameRate = (FrameRate)BitUtils.GetBitsFromLeft(value, 4, 4);
-                value = reader.ReadByte(); 
-                DynamicRange = (DynamicRangeType)BitUtils.GetBitsFromLeft(value, 0, 4);
-                ColorSpace = (ColorSpace)BitUtils.GetBitsFromLeft(value, 4, 4);
-                value = reader.ReadByte(); 
-                CRFlag = (value & 1 << 0) != 0;
-                HDRPlusFlag = (value & 2 << 0) != 0;
+                bits = reader.ReadBits8(); 
+                VideoFormat = (VideoFormat)bits.ReadBits(4);
+                FrameRate = (FrameRate)bits.ReadBits(4);
+                bits = reader.ReadBits8(); 
+                DynamicRange = (DynamicRangeType)bits.ReadBits(4);
+                ColorSpace = (ColorSpace)bits.ReadBits(4);
+                bits = reader.ReadBits8(); 
+                CrFlag = bits.ReadBit();
+                HdrPlusFlag = bits.ReadBit();
                 break;
             
             case StreamCodingType.MPEG1AudioStream:
@@ -69,9 +69,9 @@ public class StreamAttributes
             case StreamCodingType.DtsHDMasterAudioStream:
             case StreamCodingType.DolbyDigitalPlusSecondaryAudioStream:
             case StreamCodingType.DtsHDSecondaryAudioStream:
-                value = reader.ReadByte(); 
-                AudioFormat = (AudioFormat)BitUtils.GetBitsFromLeft(value, 0, 4);
-                SampleRate = (SampleRate)BitUtils.GetBitsFromLeft(value, 4, 4);
+                bits = reader.ReadBits8(); 
+                AudioFormat = (AudioFormat)bits.ReadBits(4);
+                SampleRate = (SampleRate)bits.ReadBits(4);
                 LanguageCode = reader.ReadString(3);
                 break;
             

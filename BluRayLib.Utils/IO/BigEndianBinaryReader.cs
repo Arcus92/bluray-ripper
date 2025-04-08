@@ -34,8 +34,6 @@ public class BigEndianBinaryReader : IDisposable
     /// </summary>
     private long _position;
 
-    
-
     /// <summary>
     /// Gets and sets the byte position in the given stream.
     /// </summary>
@@ -170,6 +168,42 @@ public class BigEndianBinaryReader : IDisposable
         return Encoding.UTF8.GetString(bytes);
     }
 
+    /// <summary>
+    /// Reads the next 8 bits and returns a bit-reader.
+    /// </summary>
+    /// <returns>Returns the bit reader.</returns>
+    public BigEndianBitReader<byte> ReadBits8()
+    {
+        return new BigEndianBitReader<byte>(ReadByte());
+    }
+    
+    /// <summary>
+    /// Reads the next 16 bits and returns a bit-reader.
+    /// </summary>
+    /// <returns>Returns the bit reader.</returns>
+    public BigEndianBitReader<ushort> ReadBits16()
+    {
+        return new BigEndianBitReader<ushort>(ReadUInt16());
+    }
+    
+    /// <summary>
+    /// Reads the next 32 bits and returns a bit-reader.
+    /// </summary>
+    /// <returns>Returns the bit reader.</returns>
+    public BigEndianBitReader<uint> ReadBits32()
+    {
+        return new BigEndianBitReader<uint>(ReadUInt32());
+    }
+    
+    /// <summary>
+    /// Reads the next 64 bits and returns a bit-reader.
+    /// </summary>
+    /// <returns>Returns the bit reader.</returns>
+    public BigEndianBitReader<ulong> ReadBits64()
+    {
+        return new BigEndianBitReader<ulong>(ReadUInt64());
+    }
+    
     /// <summary>
     /// Skips the next number of bytes.
     /// </summary>

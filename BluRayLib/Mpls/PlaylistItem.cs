@@ -49,8 +49,9 @@ public class PlaylistItem
         Name = reader.ReadString(5);
         Type = reader.ReadString(4);
 
-        var miscFlags = reader.ReadUInt16();
-        IsMultiAngle = BitUtils.GetBitFromLeft(miscFlags, 12);
+        var miscFlags = reader.ReadBits16();
+        miscFlags.Skip(12);
+        IsMultiAngle = miscFlags.ReadBit();
         StcId = reader.ReadByte();
         InTime = reader.ReadUInt32();
         OutTime = reader.ReadUInt32();
