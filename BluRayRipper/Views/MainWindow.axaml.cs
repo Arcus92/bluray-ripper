@@ -10,21 +10,4 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
-    private async void OnLoadDiskClick(object? sender, RoutedEventArgs e)
-    {
-        var dataContext = (MainWindowViewModel)DataContext!;
-        await dataContext.LoadDiskAsync();
-    }
-    
-    private async void OnExportClick(object? sender, RoutedEventArgs e)
-    {
-        var dataContext = (MainWindowViewModel)DataContext!;
-        await dataContext.ExportAsync();
-    }
-    
-    private async void OnDecryptClick(object? sender, RoutedEventArgs e)
-    {
-        var dataContext = (MainWindowViewModel)DataContext!;
-        await dataContext.DecryptAsync();
-    }
 }

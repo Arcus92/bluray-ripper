@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:BluRayRipper.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BluRayRipper.Views.DiskSelectorView"
+             x:DataType="vm:DiskSelectorViewModel">
+    
+    <Design.DataContext>
+        <vm:DiskSelectorViewModel/>
+    </Design.DataContext>
+    
+    <Border Padding="10">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBox Width="250" Text="{Binding DiskPath}"></TextBox>
+            <Button Click="OnLoadClick">Load</Button>
+            <TextBox Width="250" Text="{Binding OutputPath}"></TextBox>
+            <TextBox Width="150" Text="{Binding OutputFilename}"></TextBox>
+            <NumericUpDown Width="140" Value="{Binding SelectedPlaylistId}" FormatString="00000"></NumericUpDown>
+            <Button Click="OnExportClick">Export</Button>
+        </StackPanel>
+    </Border>
+    
+</UserControl>

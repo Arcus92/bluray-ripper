@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:BluRayRipper.ViewModels"
+        xmlns:v="using:BluRayRipper.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -21,17 +22,7 @@
         </Grid.RowDefinitions>
         
         <!-- Header -->
-        <Border Grid.Row="0" Padding="10">
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBox Width="250" Text="{Binding DiskPath}"></TextBox>
-                <Button Click="OnLoadDiskClick">Load</Button>
-                <TextBox Width="250" Text="{Binding OutputPath}"></TextBox>
-                <TextBox Width="150" Text="{Binding OutputFilename}"></TextBox>
-                <NumericUpDown Width="140" Value="{Binding SelectedPlaylistId}" FormatString="00000"></NumericUpDown>
-                <Button Click="OnExportClick">Export</Button>
-            </StackPanel>
-        </Border>
-        
+        <ContentControl Grid.Row="0" Content="{Binding DiskSelector}"/>
         
         <!-- Content -->
         <Grid Grid.Row="1">
@@ -42,31 +33,16 @@
             </Grid.ColumnDefinitions>
             
             <!-- Track list -->
-            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Visible">
-                <TreeView ItemsSource="{Binding TrackNodes}">
-                    <TreeView.ItemTemplate>
-                        <TreeDataTemplate ItemsSource="{Binding SubNodes}">
-                            <CheckBox IsChecked="{Binding IsChecked}">
-                                <TextBlock Text="{Binding Name}"></TextBlock>
-                            </CheckBox>
-                        </TreeDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>
-            </ScrollViewer>
-            
+            <ContentControl Grid.Column="0" Content="{Binding TitleTree}"/>
+
             <GridSplitter Grid.Column="1"></GridSplitter>
             
             <!-- Track properties -->
-            <TabControl Grid.Column="2">
-                <TabItem Header="Properties">
-                    
-                </TabItem>
-            </TabControl>
+            <ContentControl Grid.Column="2" Content="{Binding TitleProperties}"/>
         </Grid>
         
         <!-- Footer -->
-        <Border Grid.Row="2" Padding="10">
-            <ProgressBar Height="24" ShowProgressText="true" ProgressTextFormat="{}{1:0.00} %" Value="{Binding ProgressValue}" Maximum="1.0"></ProgressBar>
-        </Border>
+        <ContentControl Grid.Row="2" Content="{Binding Output}"/>
+        
     </Grid>
 </Window>

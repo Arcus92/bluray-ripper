@@ -5,19 +5,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BluRayRipper.Models;
 
-public class StreamNode : ObservableObject
+public class TrackItem : ObservableObject
 {
-    public StreamNode(string name, ObservableCollection<StreamNode> subNodes)
+    public TrackItem(string name, ObservableCollection<TrackItem> subNodes)
     {
         Name = name;
         SubNodes = subNodes;
     }
 
-    public StreamNode(string name, IEnumerable<StreamNode> subNodes) : this(name, new ObservableCollection<StreamNode>(subNodes))
+    public TrackItem(string name, IEnumerable<TrackItem> subNodes) : this(name, new ObservableCollection<TrackItem>(subNodes))
     {
     }
     
-    public StreamNode(string name) : this(name, [])
+    public TrackItem(string name) : this(name, [])
     {
     }
 
@@ -36,5 +36,5 @@ public class StreamNode : ObservableObject
     /// <summary>
     /// Gets the sub nodes.
     /// </summary>
-    public ObservableCollection<StreamNode> SubNodes { get; }
+    public ObservableCollection<TrackItem> SubNodes { get; }
 }
