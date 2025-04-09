@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BluRayRipper.ViewModels"
+             xmlns:m="clr-namespace:BluRayRipper.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BluRayRipper.Views.DiskSelectorView"
              x:DataType="vm:DiskSelectorViewModel">
@@ -17,7 +18,16 @@
             <Button Click="OnLoadClick">Load</Button>
             <TextBox Width="250" Text="{Binding OutputPath}"></TextBox>
             <TextBox Width="150" Text="{Binding OutputFilename}"></TextBox>
+            
             <NumericUpDown Width="140" Value="{Binding SelectedPlaylistId}" FormatString="00000"></NumericUpDown>
+            
+            <ComboBox ItemsSource="{Binding AllOutputFormats}" SelectedValue="{Binding OutputFormat}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="m:OutputFormat">
+                        <TextBlock Text="{Binding FileExtension}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <Button Click="OnExportClick">Export</Button>
         </StackPanel>
     </Border>

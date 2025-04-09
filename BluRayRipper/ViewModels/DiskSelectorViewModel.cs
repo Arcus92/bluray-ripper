@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using BluRayLib.FFmpeg;
+using BluRayRipper.Models;
 using BluRayRipper.Models.Queue;
 using BluRayRipper.Services;
 using BluRayRipper.Services.Interfaces;
@@ -73,6 +74,23 @@ public class DiskSelectorViewModel : ViewModelBase
         set => SetProperty(ref _outputFilename, value);
     }
 
+    /// <summary>
+    /// Gets the list of all output formats.
+    /// </summary>
+    public OutputFormat[] AllOutputFormats => OutputFormat.All;
+    
+    /// <inheritdoc cref="OutputFormat"/>
+    private OutputFormat _outputFormat = OutputFormat.Mp4;
+
+    /// <summary>
+    /// Gets and sets the output format.
+    /// </summary>
+    public OutputFormat OutputFormat
+    {
+        get => _outputFormat;
+        set => SetProperty(ref _outputFormat, value);
+    }
+
     /// <inheritdoc cref="SelectedPlaylistId"/>
     private ushort _selectedPlaylistId;
 
@@ -95,9 +113,8 @@ public class DiskSelectorViewModel : ViewModelBase
     public async Task QueueExportAsync()
     {
         var playlistId = SelectedPlaylistId;
-        var outputExtension = ".mp4";
-        var outputFormat = "mp4";
-        var outputFilename = $"{OutputFilename}_{playlistId:00000}{outputExtension}";
+        var outputFormat = _outputFormat;
+        var outputFilename = $"{OutputFilename}_{playlistId:00000}{outputFormat.FileExtension}";
         var outputPath = Path.Combine(_outputPath, outputFilename);
             
         var exporter = _diskService.CreatePlaylistExporter(playlistId);
@@ -117,7 +134,7 @@ public class DiskSelectorViewModel : ViewModelBase
         
         _queueService.QueueTask(new QueuedTask($"Export title [0x{playlistId:x4}] ({playlistId:00000}): {outputFilename}", async task =>
         {
-            await exporter.ExportAsync(outputPath, outputFormat, onUpdate: update =>
+            await exporter.ExportAsync(outputPath, outputFormat.FFmpegFormat, onUpdate: update =>
             {
                 task.Progress = update.Percentage ?? 0.0;
             });
