@@ -176,7 +176,7 @@ public class DiskSelectorViewModel : ViewModelBase
         {
             try
             {
-                var stream = _diskService.GetSegmentStream(segment.Id);
+                await using var stream = _diskService.GetSegmentStream(segment.Id);
                 await stream.CopyToAsync(process.StandardInput.BaseStream);
             }
             catch (IOException)
