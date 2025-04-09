@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using BluRayLib.FFmpeg;
@@ -112,6 +114,9 @@ public class DiskSelectorViewModel : ViewModelBase
     
     public async Task QueueExportAsync()
     {
+        // TODO: Clean up
+        
+        
         var playlistId = SelectedPlaylistId;
         var outputFormat = _outputFormat;
         var outputFilename = $"{OutputFilename}_{playlistId:00000}{outputFormat.FileExtension}";
@@ -141,6 +146,46 @@ public class DiskSelectorViewModel : ViewModelBase
 
             task.Progress = 1.0;
         }));
+    }
+
+    public async Task PlayPreviewAsync()
+    {
+        // TODO: Clean up
+        
+        var playlistId = SelectedPlaylistId;
+        var playlist = _diskService.GetPlaylistInfo(playlistId);
+        
+        // We can only play segments - not playlists. We must place the preview button on segment level.
+        // We should also try to show the audio and subtitle selection listed by the playlist put them as parameter for
+        // FFplay.
+        var segment = playlist.Segments.First();
+
+        // Pipe-ing the decrypted segment stream into your player. You won't be able to seek properly.
+        // You can skip a few seconds ahead, but not backwards. Changing audio or subtitle tracks will force you to 
+        // jump ahead to the end of the current playback buffer.
+        // Despite all of this, this is a usable preview to determine the content.
+        var process = new Process();
+        process.StartInfo.FileName = "ffplay"; // mpv is also working
+        process.StartInfo.Arguments = "-";
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.RedirectStandardInput = true;
+
+        process.Start();
+        
+        await Task.Run(async () =>
+        {
+            try
+            {
+                var stream = _diskService.GetSegmentStream(segment.Id);
+                await stream.CopyToAsync(process.StandardInput.BaseStream);
+            }
+            catch (IOException)
+            {
+                // Broken pipe exception is expected when consuming player is closed...
+            }
+        });
+        
+        await process.WaitForExitAsync();
     }
     
     /// <inheritdoc />

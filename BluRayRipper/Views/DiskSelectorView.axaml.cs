@@ -22,4 +22,10 @@ public partial class DiskSelectorView : UserControl
         var dataContext = (DiskSelectorViewModel)DataContext!;
         await dataContext.QueueExportAsync();
     }
+    
+    private async void OnPreviewClick(object? sender, RoutedEventArgs e)
+    {
+        var dataContext = (DiskSelectorViewModel)DataContext!;
+        await dataContext.PlayPreviewAsync();
+    }
 }

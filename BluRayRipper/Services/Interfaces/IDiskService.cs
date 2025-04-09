@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using BluRayLib.Ripper.Export;
 using BluRayLib.Ripper.Info;
@@ -38,6 +39,20 @@ public interface IDiskService
     /// </summary>
     /// <returns>The track list.</returns>
     PlaylistInfo[] GetPlaylistInfos();
+    
+    /// <summary>
+    /// Creates a track from the current disk.
+    /// </summary>
+    /// <param name="playlistId">The playlist id.</param>
+    /// <returns>The track info.</returns>
+    PlaylistInfo GetPlaylistInfo(ushort playlistId);
+    
+    /// <summary>
+    /// Returns the raw M2TS stream of the given segment.
+    /// </summary>
+    /// <param name="clipId">The clip id.</param>
+    /// <returns>Returns the stream.</returns>
+    Stream GetSegmentStream(ushort clipId);
     
     /// <summary>
     /// Creates a new exporter class for the given playlist id.

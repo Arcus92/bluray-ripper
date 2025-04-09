@@ -1,10 +1,12 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using BluRayLib;
 using BluRayLib.Ripper;
 using BluRayLib.Ripper.Export;
 using BluRayLib.Ripper.Info;
 using BluRayRipper.Services.Interfaces;
+using MakeMkvLib;
 
 namespace BluRayRipper.Services;
 
@@ -51,6 +53,20 @@ public class DiskService : IDiskService
         return _bluRay.GetPlaylistInfos();
     }
 
+    /// <inheritdoc />
+    public PlaylistInfo GetPlaylistInfo(ushort playlistId)
+    {
+        if (_bluRay is null) throw new ArgumentException("BluRay is not loaded!");
+        return _bluRay.GetPlaylistInfo(playlistId);
+    }
+
+    /// <inheritdoc />
+    public Stream GetSegmentStream(ushort clipId)
+    {
+        if (_bluRay is null) throw new ArgumentException("BluRay is not loaded!");
+        return _bluRay.GetDecryptM2TsStream(clipId);
+    }
+    
     /// <inheritdoc />
     public PlaylistExporter CreatePlaylistExporter(ushort playlistId)
     {

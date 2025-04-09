@@ -29,6 +29,8 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <Button Click="OnExportClick">Export</Button>
+            
+            <Button Click="OnPreviewClick">Preview</Button>
         </StackPanel>
     </Border>
     
