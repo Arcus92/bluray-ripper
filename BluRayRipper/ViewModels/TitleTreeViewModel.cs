@@ -1,9 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Avalonia.Controls;
 using BluRayLib.Ripper.Info;
-using BluRayRipper.Models;
+using BluRayRipper.Models.Nodes;
 using BluRayRipper.Services;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.Views;
@@ -32,19 +31,12 @@ public class TitleTreeViewModel : ViewModelBase
 
     private void BuildTrackNodes()
     {
-        TrackNodes.Clear();
+        TitleNodes.Clear();
         var playlists = _diskService.GetPlaylistInfos();
 
         foreach (var playlist in playlists)
         {
-            TrackNodes.Add(new TrackItem(playlist.ToString(), [
-                new TrackItem("Segments", playlist.Segments.Select(segment => new TrackItem(segment.ToString(), [
-                    new TrackItem("Video streams", segment.VideoStreams.Select(stream => new TrackItem(stream.ToString()))),
-                    new TrackItem("Audio streams", segment.AudioStreams.Select(stream => new TrackItem(stream.ToString()))),
-                    new TrackItem("Subtitle streams", segment.SubtitleStreams.Select(stream => new TrackItem(stream.ToString()))),
-                ]))),
-                new TrackItem("Chapters", playlist.Chapters.Select(chapter => new TrackItem(chapter.ToString())))
-            ])
+            TitleNodes.Add(new TitleNode(playlist)
             {
                 IsChecked = playlist.IgnoreFlags == PlaylistIgnoreFlags.None
             });
@@ -52,9 +44,9 @@ public class TitleTreeViewModel : ViewModelBase
     }
     
     /// <summary>
-    /// The track nodes.
+    /// The title nodes for the tree-view.
     /// </summary>
-    public ObservableCollection<TrackItem> TrackNodes { get; } = [];
+    public ObservableCollection<TitleNode> TitleNodes { get; } = [];
     
     /// <inheritdoc />
     public override Control CreateView()

@@ -5,4 +5,12 @@
     <system:String x:Key="OpenDisk">Open disk</system:String>
     <system:String x:Key="Play">Play</system:String>
     <system:String x:Key="Export">Export</system:String>
+    
+    <system:String x:Key="Title">Title</system:String>
+    <system:String x:Key="Segments">Segments</system:String>
+    <system:String x:Key="Chapters">Chapters</system:String>
+    <system:String x:Key="VideoStreams">Video streams</system:String>
+    <system:String x:Key="AudioStreams">Audio streams</system:String>
+    <system:String x:Key="SubtitleStreams">Subtitle streams</system:String>
+    
 </ResourceDictionary>

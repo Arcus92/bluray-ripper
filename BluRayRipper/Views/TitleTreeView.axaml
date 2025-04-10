@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BluRayRipper.ViewModels"
+             xmlns:nodes="clr-namespace:BluRayRipper.Models.Nodes"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BluRayRipper.Views.TitleTreeView"
              x:DataType="vm:TitleTreeViewModel">
@@ -12,12 +13,69 @@
     </Design.DataContext>
     
     <ScrollViewer>
-        <TreeView ItemsSource="{Binding TrackNodes}">
-            <TreeView.ItemTemplate>
-                <TreeDataTemplate ItemsSource="{Binding SubNodes}">
-                    <TextBlock Text="{Binding Name}" />
+        <TreeView x:Name="TreeView" ItemsSource="{Binding TitleNodes}" SelectionChanged="OnSelectionChanged">
+            <TreeView.DataTemplates>
+                
+                <!-- Title node -->
+                <TreeDataTemplate x:DataType="nodes:TitleNode" ItemsSource="{Binding SubNodes}">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}"/> 
+                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </TreeDataTemplate>
-            </TreeView.ItemTemplate>
+                
+                <!-- Segment node -->
+                <TreeDataTemplate x:DataType="nodes:SegmentNode" ItemsSource="{Binding SubNodes}">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}"/> 
+                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </TreeDataTemplate>
+                
+                <!-- Video stream node -->
+                <TreeDataTemplate x:DataType="nodes:VideoStreamNode">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}"/> 
+                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </TreeDataTemplate>
+                
+                <!-- Audio stream node -->
+                <TreeDataTemplate x:DataType="nodes:AudioStreamNode">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}"/> 
+                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </TreeDataTemplate>
+                
+                <!-- Subtitle stream node -->
+                <TreeDataTemplate x:DataType="nodes:SubtitleStreamNode">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}"/> 
+                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </TreeDataTemplate>
+                
+                <!-- Chapter node -->
+                <TreeDataTemplate x:DataType="nodes:ChapterNode">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}"/> 
+                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </TreeDataTemplate>
+                
+                <!-- Generic text node (chapter / segment) -->
+                <TreeDataTemplate x:DataType="nodes:TextNode" ItemsSource="{Binding SubNodes}">
+                    <TextBlock Text="{Binding DisplayName}"/>
+                </TreeDataTemplate>
+            </TreeView.DataTemplates>
+            
+            <TreeView.Styles>
+                <!-- Auto expand text nodes -->
+                <Style x:DataType="nodes:BaseNode" Selector="TreeViewItem">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                </Style>
+            </TreeView.Styles>
         </TreeView>
     </ScrollViewer>
 </UserControl>

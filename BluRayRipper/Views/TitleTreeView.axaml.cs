@@ -8,4 +8,9 @@ public partial class TitleTreeView : UserControl
     {
         InitializeComponent();
     }
+
+    private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        
+    }
 }
