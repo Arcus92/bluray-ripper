@@ -1,0 +1,8 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    
+    <system:String x:Key="OpenDisk">Open disk</system:String>
+    <system:String x:Key="Play">Play</system:String>
+    <system:String x:Key="Export">Export</system:String>
+</ResourceDictionary>

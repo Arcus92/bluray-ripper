@@ -8,6 +8,15 @@
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
+             
+     <Application.Resources>
+         <ResourceDictionary>
+             <ResourceDictionary.MergedDictionaries>
+                 <!-- Default language -->
+                 <MergeResourceInclude Source="Resources/Strings/English.axaml" />
+             </ResourceDictionary.MergedDictionaries>
+         </ResourceDictionary>
+     </Application.Resources>
   
     <Application.Styles>
         <FluentTheme />

@@ -15,7 +15,7 @@
     <Border Padding="10">
         <StackPanel Orientation="Horizontal" Spacing="10">
             <TextBox Width="250" Text="{Binding DiskPath}"></TextBox>
-            <Button Click="OnLoadClick">Load</Button>
+            <Button Click="OnLoadClick" Content="{DynamicResource OpenDisk}"/>
             <TextBox Width="250" Text="{Binding OutputPath}"></TextBox>
             <TextBox Width="150" Text="{Binding OutputFilename}"></TextBox>
             
@@ -28,9 +28,9 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Button Click="OnExportClick">Export</Button>
+            <Button Click="OnExportClick" Content="{DynamicResource Export}" />
             
-            <Button Click="OnPreviewClick">Preview</Button>
+            <Button Click="OnPreviewClick" Content="{DynamicResource Play}" />
         </StackPanel>
     </Border>
     
