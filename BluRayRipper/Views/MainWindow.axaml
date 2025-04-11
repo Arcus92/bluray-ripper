@@ -1,7 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:BluRayRipper.ViewModels"
-        xmlns:v="using:BluRayRipper.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -33,6 +32,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
                 <!-- Disk selection -->
@@ -40,6 +41,12 @@
                 
                 <!-- Title selection --> 
                 <ContentControl Grid.Row="1" Content="{Binding TitleTree}"/>
+                
+                <!-- Title properties --> 
+                <ContentControl Grid.Row="2" Content="{Binding TitleProperties}"/>
+                
+                <!-- Output settings and start buttons --> 
+                <ContentControl Grid.Row="3" Content="{Binding OutputSettings}"/>
             </Grid>
             
 
@@ -56,12 +63,6 @@
                 
                 <!-- Output selection -->
                 <ContentControl Grid.Row="0" Content="{Binding OutputSelector}"/>
-                
-                <!-- Title properties --> 
-                <ContentControl Grid.Row="1" Content="{Binding TitleProperties}"/>
-                
-                <!-- Output settings and start buttons --> 
-                <ContentControl Grid.Row="2" Content="{Binding OutputSettings}"/>
                 
                 <!-- Output progress bars --> 
                 <ContentControl Grid.Row="3" Content="{Binding Output}"/>
