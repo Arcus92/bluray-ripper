@@ -36,9 +36,11 @@ public class TitleTreeViewModel : ViewModelBase
 
         foreach (var playlist in playlists)
         {
+            var isIgnored = playlist.IgnoreFlags != PlaylistIgnoreFlags.None;
             TitleNodes.Add(new TitleNode(playlist)
             {
-                IsChecked = playlist.IgnoreFlags == PlaylistIgnoreFlags.None
+                IsIgnored = isIgnored,
+                IsChecked = !isIgnored,
             });
         }
     }

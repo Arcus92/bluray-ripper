@@ -18,9 +18,12 @@
                 
                 <!-- Title node -->
                 <TreeDataTemplate x:DataType="nodes:TitleNode" ItemsSource="{Binding SubNodes}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" >
+                        
                         <CheckBox IsChecked="{Binding IsChecked}"/> 
-                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" 
+                                   Classes.transparent="{Binding IsIgnored}"/>
+      
                     </StackPanel>
                 </TreeDataTemplate>
                 
@@ -74,6 +77,11 @@
                 <!-- Auto expand text nodes -->
                 <Style x:DataType="nodes:BaseNode" Selector="TreeViewItem">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                </Style>
+                
+                <!-- Slightly hide ignored titles -->
+                <Style Selector="TextBlock.transparent">
+                    <Setter Property="Opacity" Value="0.5"/>
                 </Style>
             </TreeView.Styles>
         </TreeView>

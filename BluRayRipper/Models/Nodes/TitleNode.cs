@@ -54,4 +54,16 @@ public class TitleNode : BaseNode
         get => _isChecked;
         set => SetProperty(ref _isChecked, value);
     }
+    
+    /// <inheritdoc cref="IsIgnored"/>
+    private bool _isIgnored;
+    
+    /// <summary>
+    /// Gets and sets if this title is ignored by default.
+    /// </summary>
+    public bool IsIgnored
+    {
+        get => _isIgnored;
+        set => SetProperty(ref _isIgnored, value);
+    }
 }
