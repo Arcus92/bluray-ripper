@@ -13,7 +13,7 @@
     </Design.DataContext>
     
     <ScrollViewer>
-        <TreeView x:Name="TreeView" ItemsSource="{Binding TitleNodes}" SelectionChanged="OnSelectionChanged">
+        <TreeView x:Name="TreeView" ItemsSource="{Binding TitleNodes}" SelectedItem="{Binding SelectedTitle, Mode=TwoWay}">
             <TreeView.DataTemplates>
                 
                 <!-- Title node -->

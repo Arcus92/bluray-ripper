@@ -16,33 +16,56 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <!-- Header -->
-        <ContentControl Grid.Row="0" Content="{Binding DiskSelector}"/>
         
         <!-- Content -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
-            <!-- Track list -->
-            <ContentControl Grid.Column="0" Content="{Binding TitleTree}"/>
+            <!-- Input -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Disk selection -->
+                <ContentControl Grid.Row="0" Content="{Binding DiskSelector}"/>
+                
+                <!-- Title selection --> 
+                <ContentControl Grid.Row="1" Content="{Binding TitleTree}"/>
+            </Grid>
+            
 
             <GridSplitter Grid.Column="1"></GridSplitter>
             
-            <!-- Track properties -->
-            <ContentControl Grid.Column="2" Content="{Binding TitleProperties}"/>
+            <!-- Output -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Output selection -->
+                <ContentControl Grid.Row="0" Content="{Binding OutputSelector}"/>
+                
+                <!-- Title properties --> 
+                <ContentControl Grid.Row="1" Content="{Binding TitleProperties}"/>
+                
+                <!-- Output settings and start buttons --> 
+                <ContentControl Grid.Row="2" Content="{Binding OutputSettings}"/>
+                
+                <!-- Output progress bars --> 
+                <ContentControl Grid.Row="3" Content="{Binding Output}"/>
+            </Grid>
         </Grid>
-        
-        <!-- Footer -->
-        <ContentControl Grid.Row="2" Content="{Binding Output}"/>
-        
     </Grid>
 </Window>

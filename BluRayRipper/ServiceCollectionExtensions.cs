@@ -14,14 +14,18 @@ public static class ServiceCollectionExtensions
     public static void AddCommonServices(this IServiceCollection collection)
     {
         // View models
-        collection.AddTransient<MainWindowViewModel>();
-        collection.AddTransient<DiskSelectorViewModel>();
-        collection.AddTransient<TitleTreeViewModel>();
-        collection.AddTransient<TitlePropertiesViewModel>();
-        collection.AddTransient<OutputViewModel>();
+        collection.AddScoped<MainWindowViewModel>();
+        collection.AddScoped<DiskSelectorViewModel>();
+        collection.AddScoped<TitleTreeViewModel>();
+        collection.AddScoped<TitlePropertiesViewModel>();
+        collection.AddScoped<OutputSelectorViewModel>();
+        collection.AddScoped<OutputSettingsViewModel>();
+        collection.AddScoped<OutputViewModel>();
         
         // Controller
+        collection.AddSingleton<ISettingService, SettingService>();
         collection.AddSingleton<IDiskService, DiskService>();
+        collection.AddSingleton<IOutputService, OutputService>();
         collection.AddSingleton<IQueueService, QueueService>();
 
         // Services

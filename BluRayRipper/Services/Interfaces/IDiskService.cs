@@ -9,6 +9,11 @@ namespace BluRayRipper.Services.Interfaces;
 public interface IDiskService
 {
     /// <summary>
+    /// Gets the currently loaded path of the disk.
+    /// </summary>
+    string DiskPath { get; }
+    
+    /// <summary>
     /// Opens the disk at the given path.
     /// </summary>
     /// <param name="path">The disk path.</param>

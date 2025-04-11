@@ -23,6 +23,18 @@ public class TitleTreeViewModel : ViewModelBase
     public TitleTreeViewModel() : this(new DiskService())
     {
     }
+
+    /// <inheritdoc cref="SelectedTitle"/>
+    private TitleNode? _selectedTitle;
+
+    /// <summary>
+    /// Gets and sets the selected title info.
+    /// </summary>
+    public TitleNode? SelectedTitle
+    {
+        get => _selectedTitle;
+        set => SetProperty(ref _selectedTitle, value);
+    }
     
     private void OnDiskServiceLoaded(object? sender, EventArgs e)
     {

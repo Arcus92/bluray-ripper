@@ -38,6 +38,9 @@ public class DiskService : IDiskService
     }
 
     /// <inheritdoc />
+    public string DiskPath => _bluRay?.DiskPath ?? string.Empty;
+
+    /// <inheritdoc />
     public bool IsLoaded { get; private set; }
     
     /// <inheritdoc />
