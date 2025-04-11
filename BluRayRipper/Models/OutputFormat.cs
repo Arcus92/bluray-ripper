@@ -17,18 +17,29 @@ public class OutputFormat
     /// Gets the format name in FFmpeg.
     /// </summary>
     public string FFmpegFormat { get; }
+    
+    /// <summary>
+    /// Gets if this format support PGS subtitles.
+    /// </summary>
+    public bool SupportPgs { get; init; }
 
     #region Static
     
     /// <summary>
     /// The MP4 format.
     /// </summary>
-    public static readonly OutputFormat Mp4 = new(".mp4", "mp4");
-    
+    public static readonly OutputFormat Mp4 = new(".mp4", "mp4")
+    {
+        SupportPgs = false,
+    };
+
     /// <summary>
     /// The MKV (Matroska) format.
     /// </summary>
-    public static readonly OutputFormat Mkv = new(".mkv", "matroska");
+    public static readonly OutputFormat Mkv = new(".mkv", "matroska")
+    {
+        SupportPgs = true,
+    };
     
     /// <summary>
     /// The list of all formats.

@@ -123,7 +123,7 @@ public class DiskSelectorViewModel : ViewModelBase
         var outputPath = Path.Combine(_outputPath, outputFilename);
             
         var exporter = _diskService.CreatePlaylistExporter(playlistId);
-        exporter.ExportSubtitlesAsSeparateFiles = true;
+        exporter.ExportSubtitlesAsSeparateFiles = !outputFormat.SupportPgs;
         
         // Convert video to web-friendly format.
         exporter.VideoCommandBuilder = builder =>
