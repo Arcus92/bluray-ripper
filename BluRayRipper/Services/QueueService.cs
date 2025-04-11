@@ -8,6 +8,9 @@ namespace BluRayRipper.Services;
 
 public class QueueService : IQueueService
 {
+    /// <summary>
+    /// The current task queue.
+    /// </summary>
     private readonly List<QueuedTask> _tasks = [];
     
     /// <inheritdoc />
@@ -27,16 +30,33 @@ public class QueueService : IQueueService
         CheckStartNextTask();
     }
 
+    /// <summary>
+    /// The current running queued task.
+    /// </summary>
     private QueuedTask? _currentQueuedTask;
+    
+    /// <summary>
+    /// The current running task.
+    /// </summary>
     private Task? _currentTask;
+
+    private QueuedTask? GetNextReadyTask()
+    {
+        foreach (var task in _tasks)
+        {
+            if (task.State == QueueState.Ready)
+                return task;
+        }
+        return null;
+    }
     
     private void CheckStartNextTask()
     {
         if (_currentQueuedTask is not null) return;
-        if (Tasks.Count == 0) return;
-        
-        var queuedTask = Tasks[0];
+        var queuedTask = GetNextReadyTask();
+        if (queuedTask is null) return;
         _currentQueuedTask = queuedTask;
+        queuedTask.State = QueueState.Running;
         
         Task.Run(async () =>
         {
@@ -44,14 +64,21 @@ public class QueueService : IQueueService
             
             var task = queuedTask.StartFunc(queuedTask);
             _currentTask = task;
-            
-            await task.ConfigureAwait(true);
+
+            try
+            {
+                
+                await task.ConfigureAwait(true);
+                queuedTask.State = QueueState.Finished;
+            }
+            catch (Exception)
+            {
+                queuedTask.State = QueueState.Failed;
+            }
             
             _currentQueuedTask = null;
             _currentTask = null;
-
-            _tasks.Remove(queuedTask);
-            TaskRemoved?.Invoke(this, queuedTask);
+            
             CheckStartNextTask();
         });
     }

@@ -21,6 +21,24 @@ public class QueuedTask
     /// </summary>
     public Func<QueuedTask, Task> StartFunc { get; }
 
+    /// <inheritdoc cref="State"/>
+    private QueueState _state = QueueState.Ready;
+
+    /// <summary>
+    /// Gets the current state of the task.
+    /// </summary>
+    public QueueState State
+    {
+        get => _state;
+        set
+        {
+            if (_state == value) return;
+            _state = value;
+            StateChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+    
+    /// <inheritdoc cref="Progress"/>
     private double _progress;
 
     /// <summary>
@@ -37,6 +55,11 @@ public class QueuedTask
             ProgressChanged?.Invoke(this, EventArgs.Empty);
         }
     }
+    
+    /// <summary>
+    /// The event that is invoked when the state was changed.
+    /// </summary>
+    public event EventHandler? StateChanged; 
     
     /// <summary>
     /// The event that is invoked when the progress value was changed.
