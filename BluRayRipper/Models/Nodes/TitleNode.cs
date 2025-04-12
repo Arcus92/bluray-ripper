@@ -1,12 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Linq;
-using BluRayLib.Ripper.Info;
+using BluRayLib.Ripper.BluRays;
 
 namespace BluRayRipper.Models.Nodes;
 
 public class TitleNode : BaseNode
 {
-    public TitleNode(PlaylistInfo playlist)
+    public TitleNode(TitleData playlist)
     {
         Playlist = playlist;
 
@@ -26,7 +26,7 @@ public class TitleNode : BaseNode
     /// <summary>
     /// Gets the playlist info.
     /// </summary>
-    public PlaylistInfo Playlist { get; }
+    public TitleData Playlist { get; }
     
     /// <summary>
     /// Gets the title id.

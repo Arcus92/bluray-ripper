@@ -1,8 +1,8 @@
-namespace BluRayLib.Ripper.Info;
+namespace BluRayLib.Ripper.BluRays;
 
-public class SegmentInfo
+public class SegmentData
 {
-    public SegmentInfo(ushort id)
+    public SegmentData(ushort id)
     {
         Id = id;
     }
@@ -20,7 +20,7 @@ public class SegmentInfo
     /// <summary>
     /// Gets the video streams.
     /// </summary>
-    public VideoInfo[] VideoStreams { get; set; } = [];
+    public VideoData[] VideoStreams { get; set; } = [];
     
     /// <summary>
     /// Gets the audio streams.
@@ -30,7 +30,7 @@ public class SegmentInfo
     /// <summary>
     /// Gets the subtitle streams.
     /// </summary>
-    public SubtitleInfo[] SubtitleStreams { get; set; } = [];
+    public SubtitleData[] SubtitleStreams { get; set; } = [];
     
     public override string ToString() => $"Segment [0x{Id:x4}] ({Id:00000}) - [{Duration:hh\\:mm\\:ss}]";
 }

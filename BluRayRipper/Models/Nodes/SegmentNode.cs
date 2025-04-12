@@ -1,29 +1,29 @@
 using System.Collections.ObjectModel;
 using System.Linq;
-using BluRayLib.Ripper.Info;
+using BluRayLib.Ripper.BluRays;
 
 namespace BluRayRipper.Models.Nodes;
 
 public class SegmentNode : BaseNode
 {
-    public SegmentNode(SegmentInfo segment)
+    public SegmentNode(SegmentData segment)
     {
         Segment = segment;
         
         var videoStreamNode = new TextNode("Videos")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(Segment.VideoStreams.Select(s => new VideoStreamNode(s) { IsChecked = true }))
+            SubNodes = new ObservableCollection<BaseNode>(Segment.VideoStreams.Select(s => new VideoNode(s) { IsChecked = true }))
         };
         var audioStreamNode = new TextNode("Audios")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(Segment.AudioStreams.Select(s => new AudioStreamNode(s) { IsChecked = true }))
+            SubNodes = new ObservableCollection<BaseNode>(Segment.AudioStreams.Select(s => new AudioNode(s) { IsChecked = true }))
         };
         var subtitleStreamNode = new TextNode("Subtitles")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(Segment.SubtitleStreams.Select(s => new SubtitleStreamNode(s) { IsChecked = true }))
+            SubNodes = new ObservableCollection<BaseNode>(Segment.SubtitleStreams.Select(s => new SubtitleNode(s) { IsChecked = true }))
         };
         SubNodes = [ videoStreamNode, audioStreamNode, subtitleStreamNode ];
     }
@@ -31,7 +31,7 @@ public class SegmentNode : BaseNode
     /// <summary>
     /// Gets the segment info.
     /// </summary>
-    public SegmentInfo Segment { get; }
+    public SegmentData Segment { get; }
     
     /// <summary>
     /// Gets the segment id.

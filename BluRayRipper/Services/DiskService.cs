@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using BluRayLib;
 using BluRayLib.Decrypt;
 using BluRayLib.Ripper;
-using BluRayLib.Ripper.Export;
-using BluRayLib.Ripper.Info;
+using BluRayLib.Ripper.BluRays;
+using BluRayLib.Ripper.BluRays.Export;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.Utils;
 using Microsoft.Extensions.Logging;
@@ -86,30 +86,30 @@ public class DiskService : IDiskService
     public event EventHandler? Unloaded;
     
     /// <inheritdoc />
-    public PlaylistInfo[] GetPlaylistInfos()
+    public TitleData[] GetTitles()
     {
         if (_bluRay is null) throw new ArgumentException("BluRay is not loaded!");
-        return _bluRay.GetPlaylistInfos();
+        return _bluRay.GetTitles();
     }
 
     /// <inheritdoc />
-    public PlaylistInfo GetPlaylistInfo(ushort playlistId)
+    public TitleData GetTitle(ushort playlistId)
     {
         if (_bluRay is null) throw new ArgumentException("BluRay is not loaded!");
-        return _bluRay.GetPlaylistInfo(playlistId);
+        return _bluRay.GetTitle(playlistId);
     }
 
+    /// <inheritdoc />
+    public TitleExporter CreateTitleExporter()
+    {
+        if (_bluRay is null) throw new ArgumentException("BluRay is not loaded!");
+        return new TitleExporter(_bluRay);
+    }
+    
     /// <inheritdoc />
     public Stream GetSegmentStream(ushort clipId)
     {
         if (_bluRay is null) throw new ArgumentException("BluRay is not loaded!");
         return _bluRay.GetM2TsStream(clipId);
-    }
-    
-    /// <inheritdoc />
-    public PlaylistExporter CreatePlaylistExporter(ushort playlistId)
-    {
-        if (_bluRay is null) throw new ArgumentException("BluRay is not loaded!");
-        return _bluRay.CreatePlaylistExporter(playlistId);
     }
 }

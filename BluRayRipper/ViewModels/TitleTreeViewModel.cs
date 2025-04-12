@@ -1,7 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using Avalonia.Controls;
-using BluRayLib.Ripper.Info;
+using BluRayLib.Ripper;
 using BluRayRipper.Models.Nodes;
 using BluRayRipper.Services;
 using BluRayRipper.Services.Interfaces;
@@ -44,11 +44,11 @@ public class TitleTreeViewModel : ViewModelBase
     private void BuildTrackNodes()
     {
         TitleNodes.Clear();
-        var playlists = _diskService.GetPlaylistInfos();
+        var playlists = _diskService.GetTitles();
 
         foreach (var playlist in playlists)
         {
-            var isIgnored = playlist.IgnoreFlags != PlaylistIgnoreFlags.None;
+            var isIgnored = playlist.IgnoreFlags != TitleIgnoreFlags.None;
             TitleNodes.Add(new TitleNode(playlist)
             {
                 IsIgnored = isIgnored,

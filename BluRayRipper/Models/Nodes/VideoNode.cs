@@ -1,10 +1,10 @@
-using BluRayLib.Ripper.Info;
+using BluRayLib.Ripper.BluRays;
 
 namespace BluRayRipper.Models.Nodes;
 
-public class VideoStreamNode : BaseNode
+public class VideoNode : BaseNode
 {
-    public VideoStreamNode(VideoInfo stream)
+    public VideoNode(VideoData stream)
     {
         Stream = stream;
     }
@@ -12,7 +12,7 @@ public class VideoStreamNode : BaseNode
     /// <summary>
     /// Gets the stream info.
     /// </summary>
-    public VideoInfo Stream { get; }
+    public VideoData Stream { get; }
     
     /// <summary>
     /// Gets the stream id.

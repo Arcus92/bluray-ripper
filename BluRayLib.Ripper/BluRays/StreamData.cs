@@ -1,14 +1,14 @@
-namespace BluRayLib.Ripper.Info;
+namespace BluRayLib.Ripper.BluRays;
 
-public class VideoInfo
+public abstract class StreamData
 {
-    public VideoInfo(ushort id)
+    public StreamData(ushort id)
     {
         Id = id;
     }
 
     /// <summary>
-    /// Gets the track id.
+    /// Gets the stream id.
     /// </summary>
     public ushort Id { get; }
     
@@ -21,6 +21,4 @@ public class VideoInfo
     /// Gets if this track is a secondary track.
     /// </summary>
     public bool IsSecondary { get; set; }
-    
-    public override string ToString() => $"Video #{Index} [0x{Id:x4}] {(IsSecondary ?" (secondary)" : "")}";
 }

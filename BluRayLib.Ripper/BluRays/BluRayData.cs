@@ -1,24 +1,21 @@
-using BluRayLib.Enums;
-using BluRayLib.Mpls;
+namespace BluRayLib.Ripper.BluRays;
 
-namespace BluRayLib.Ripper.Info;
-
-public static class BluRayInfo
+public static class BluRayData
 {
     /// <summary>
-    /// Returns the info data for the given playlist id.
+    /// Returns the data for the given playlist id.
     /// </summary>
     /// <param name="bluRay">The BluRay instance.</param>
     /// <param name="playlistId">The playlist id.</param>
     /// <returns></returns>
-    public static PlaylistInfo GetPlaylistInfo(BluRay bluRay, ushort playlistId)
+    public static TitleData GetTitle(BluRay bluRay, ushort playlistId)
     {
         var playlist = bluRay.Playlists[playlistId];
-        var playlistInfo = new PlaylistInfo(playlistId);
+        var playlistInfo = new TitleData(playlistId);
 
         // Build segments
         var playlistDuration = TimeSpan.Zero;
-        var segmentInfos = new List<SegmentInfo>();
+        var segmentInfos = new List<SegmentData>();
         foreach (var item in playlist.Items)
         {
             if (!ushort.TryParse(item.Name, out var clipId))
@@ -36,11 +33,11 @@ public static class BluRayInfo
             }
             
             // Video streams
-            var videoStreamInfos = new List<VideoInfo>();
+            var videoStreamInfos = new List<VideoData>();
             foreach (var stream in item.StreamNumberTable.PrimaryVideoStreams)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new VideoInfo(stream.Entry.RefToStreamId)
+                var streamInfo = new VideoData(stream.Entry.RefToStreamId)
                 {
                     Index = pidToIndex[stream.Entry.RefToStreamId],
                 };
@@ -49,7 +46,7 @@ public static class BluRayInfo
             foreach (var stream in item.StreamNumberTable.SecondaryVideoStream)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new VideoInfo(stream.Entry.RefToStreamId)
+                var streamInfo = new VideoData(stream.Entry.RefToStreamId)
                 {
                     Index = pidToIndex[stream.Entry.RefToStreamId],
                     IsSecondary = true
@@ -82,11 +79,11 @@ public static class BluRayInfo
             }
             
             // Subtitle streams
-            var subtitleStreamInfos = new List<SubtitleInfo>();
+            var subtitleStreamInfos = new List<SubtitleData>();
             foreach (var stream in item.StreamNumberTable.PrimaryPgStreams)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new SubtitleInfo(stream.Entry.RefToStreamId)
+                var streamInfo = new SubtitleData(stream.Entry.RefToStreamId)
                 {
                     Index = pidToIndex[stream.Entry.RefToStreamId],
                     LanguageCode = stream.Attributes.LanguageCode
@@ -96,7 +93,7 @@ public static class BluRayInfo
             foreach (var stream in item.StreamNumberTable.SecondaryPgStream)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new SubtitleInfo(stream.Entry.RefToStreamId)
+                var streamInfo = new SubtitleData(stream.Entry.RefToStreamId)
                 {
                     Index = pidToIndex[stream.Entry.RefToStreamId],
                     LanguageCode = stream.Attributes.LanguageCode,
@@ -105,7 +102,7 @@ public static class BluRayInfo
                 subtitleStreamInfos.Add(streamInfo);
             }
                 
-            var segmentInfo = new SegmentInfo(clipId)
+            var segmentInfo = new SegmentData(clipId)
             {
                 Duration = TimeSpanFromBluRayTime(item.Duration),
                 VideoStreams = videoStreamInfos.ToArray(),
@@ -155,18 +152,18 @@ public static class BluRayInfo
         playlistInfo.Chapters = chapterInfos.ToArray();
 
         // Check ignore flags
-        var flags = PlaylistIgnoreFlags.None;
+        var flags = TitleIgnoreFlags.None;
 
         // Smaller than 10 seconds
         if (playlistInfo.Duration.TotalSeconds < 10) 
         {
-            flags |= PlaylistIgnoreFlags.TooShort;
+            flags |= TitleIgnoreFlags.TooShort;
         }
         
         // Longer than 5 hours
         if (playlistInfo.Duration.TotalSeconds > 60 * 60 * 5) 
         {
-            flags |= PlaylistIgnoreFlags.TooLong;
+            flags |= TitleIgnoreFlags.TooLong;
         }
 
         // Scan segments
@@ -179,11 +176,11 @@ public static class BluRayInfo
         }
         if (audioStreams == 0)
         {
-            flags |= PlaylistIgnoreFlags.NoAudio;
+            flags |= TitleIgnoreFlags.NoAudio;
         }
         if (subtitleStreams == 0)
         {
-            flags |= PlaylistIgnoreFlags.NoSubtitle;
+            flags |= TitleIgnoreFlags.NoSubtitle;
         }
 
 
@@ -198,12 +195,12 @@ public static class BluRayInfo
     /// </summary>
     /// <param name="bluRay">The BluRay instance.</param>
     /// <returns></returns>
-    public static PlaylistInfo[] GetPlaylistInfos(BluRay bluRay)
+    public static TitleData[] GetTitles(BluRay bluRay)
     {
-        var playlistInfos = new List<PlaylistInfo>();
+        var playlistInfos = new List<TitleData>();
         foreach (var playlistId in bluRay.Playlists.Keys.Order())
         {
-            playlistInfos.Add(GetPlaylistInfo(bluRay, playlistId));
+            playlistInfos.Add(GetTitle(bluRay, playlistId));
         }
 
         for (var a = 0; a < playlistInfos.Count; a++)
@@ -214,7 +211,7 @@ public static class BluRayInfo
 
             if (playlistA.Matches(playlistB))
             {
-                playlistB.IgnoreFlags |= PlaylistIgnoreFlags.Duplicate;
+                playlistB.IgnoreFlags |= TitleIgnoreFlags.Duplicate;
             }
         }
         

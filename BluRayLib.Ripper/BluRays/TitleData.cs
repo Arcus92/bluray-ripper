@@ -1,8 +1,8 @@
-namespace BluRayLib.Ripper.Info;
+namespace BluRayLib.Ripper.BluRays;
 
-public class PlaylistInfo
+public class TitleData
 {
-    public PlaylistInfo(ushort id)
+    public TitleData(ushort id)
     {
         Id = id;
     }
@@ -20,7 +20,7 @@ public class PlaylistInfo
     /// <summary>
     /// Gets the segments / clips.
     /// </summary>
-    public SegmentInfo[] Segments { get; set; } = [];
+    public SegmentData[] Segments { get; set; } = [];
 
     /// <summary>
     /// Gets the chapters.
@@ -30,7 +30,7 @@ public class PlaylistInfo
     /// <summary>
     /// Gets the ignore flags.
     /// </summary>
-    public PlaylistIgnoreFlags IgnoreFlags { get; set; }
+    public TitleIgnoreFlags IgnoreFlags { get; set; }
     
     public override string ToString() => $"Playlist [0x{Id:x4}] ({Id:00000}) - [{Duration:hh\\:mm\\:ss}] ({Segments.Length} segments) ({IgnoreFlags})";
     
@@ -41,7 +41,7 @@ public class PlaylistInfo
     /// </summary>
     /// <param name="other">The other playlist.</param>
     /// <returns></returns>
-    public bool Matches(PlaylistInfo? other)
+    public bool Matches(TitleData? other)
     {
         if (ReferenceEquals(null, other)) return false;
 

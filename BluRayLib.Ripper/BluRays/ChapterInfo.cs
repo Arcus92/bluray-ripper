@@ -1,4 +1,4 @@
-namespace BluRayLib.Ripper.Info;
+namespace BluRayLib.Ripper.BluRays;
 
 public class ChapterInfo
 {

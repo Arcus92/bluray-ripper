@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using BluRayLib.FFmpeg;
+using BluRayLib.Ripper.BluRays.Export;
 using BluRayRipper.Models;
 using BluRayRipper.Models.Queue;
 using BluRayRipper.Services;
@@ -50,7 +51,7 @@ public class OutputSettingsViewModel : ViewModelBase
         set => SetProperty(ref _outputFormat, value);
     }
 
-    private ushort? GetSelectedPlaylistId()
+    private ushort? GetSelectedTitleId()
     {
         var selectedTitle = _titleTree.SelectedTitle;
         return selectedTitle?.Id;
@@ -59,32 +60,31 @@ public class OutputSettingsViewModel : ViewModelBase
     public async Task QueueExportAsync()
     {
         // TODO: Clean up
-        var playlistId = GetSelectedPlaylistId();
-        if (playlistId is null) return;
+        var titleId = GetSelectedTitleId();
+        if (titleId is null) return;
         
         
         var outputFormat = _outputFormat;
-        var outputFilename = $"{_outputSelector.OutputFilename}_{playlistId:00000}{outputFormat.FileExtension}";
+        var outputFilename = $"{_outputSelector.OutputFilename}_{titleId:00000}{outputFormat.FileExtension}";
         var outputPath = Path.Combine(_outputSelector.OutputPath, outputFilename);
-            
-        var exporter = _diskService.CreatePlaylistExporter(playlistId.Value);
-        exporter.ExportSubtitlesAsSeparateFiles = !outputFormat.SupportPgs;
+        
+        var exporter = _diskService.CreateTitleExporter();
+        var playlist = _diskService.GetTitle(titleId.Value);
+
+        var options = TitleExportOptions.From(playlist);
+        options.ExportSubtitlesAsSeparateFiles = !outputFormat.SupportPgs;
         
         // Convert video to web-friendly format.
-        exporter.VideoCommandBuilder = builder =>
-        {
-            builder.Codec(StreamType.Video, "libx264");
-            builder.Codec(StreamType.Audio, "copy");
-            builder.Codec(StreamType.Subtitle, "copy");
-
-            builder.ConstantRateFactor(16);
-            builder.MaxRate(20000);
-            builder.BufferSize(25000);
-        };
+        options.VideoCodec = "libx264";
         
+        options.ConstantRateFactor = 16;
+        options.MaxRate = 20000;
+        options.BufferSize = 25000;
+        
+
         _queueService.QueueTask(new QueuedTask($"Export {outputFilename}", async task =>
         {
-            await exporter.ExportAsync(outputPath, outputFormat.FFmpegFormat, onUpdate: update =>
+            await exporter.ExportAsync(options, outputPath, outputFormat.FFmpegFormat, onUpdate: update =>
             {
                 task.Progress = update.Percentage ?? 0.0;
             });
@@ -97,10 +97,10 @@ public class OutputSettingsViewModel : ViewModelBase
     {
         // TODO: Clean up
         
-        var playlistId = GetSelectedPlaylistId();
+        var playlistId = GetSelectedTitleId();
         if (playlistId is null) return;
         
-        var playlist = _diskService.GetPlaylistInfo(playlistId.Value);
+        var playlist = _diskService.GetTitle(playlistId.Value);
         
         // We can only play segments - not playlists. We must place the preview button on segment level.
         // We should also try to show the audio and subtitle selection listed by the playlist put them as parameter for
