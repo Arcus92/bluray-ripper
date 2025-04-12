@@ -3,6 +3,9 @@ using BluRayRipper.Services.Interfaces;
 
 namespace BluRayRipper.Services;
 
+/// <summary>
+/// The service to load and save application settings.
+/// </summary>
 public class SettingService : ISettingService
 {
     private readonly string _lastDiskPath;

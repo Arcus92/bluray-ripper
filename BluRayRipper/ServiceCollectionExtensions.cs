@@ -2,6 +2,7 @@ using BluRayRipper.Services;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BluRayRipper;
 
@@ -29,5 +30,6 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<IQueueService, QueueService>();
 
         // Services
+        collection.AddLogging(builder => builder.AddConsole());
     }
 }

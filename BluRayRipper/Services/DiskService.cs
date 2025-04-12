@@ -7,14 +7,28 @@ using BluRayLib.Ripper;
 using BluRayLib.Ripper.Export;
 using BluRayLib.Ripper.Info;
 using BluRayRipper.Services.Interfaces;
+using BluRayRipper.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace BluRayRipper.Services;
 
+/// <summary>
+/// Handles disk loading and collects exportable titles from the disk. Currently, only BluRay is supported.
+/// </summary>
 public class DiskService : IDiskService
 {
-    public DiskService()
+    private readonly ILogger<DiskService> _logger;
+    
+    public DiskService(ILogger<DiskService> logger)
     {
+        _logger = logger;
+        
+        // Use MakeMkv as decryption handler. I might add native AACS with key-config file later.
         MakeMkv.RegisterAsDecryptionHandler();
+    }
+
+    public DiskService() : this(EmptyLogger<DiskService>.Create())
+    {
     }
     
     /// <summary>
@@ -26,17 +40,33 @@ public class DiskService : IDiskService
     public async Task OpenAsync(string path)
     {
         await CloseAsync();
-        _bluRay = new BluRay(path);
         
-        await _bluRay.LoadAsync();
-        IsLoaded = true;
-        Loaded?.Invoke(this, EventArgs.Empty);
+        _logger.LogInformation("Opening disk: {DiskPath}", path);
+        
+        _bluRay = new BluRay(path);
+
+        try
+        {
+            await _bluRay.LoadAsync();
+            IsLoaded = true;
+        
+            _logger.LogInformation("Disk loaded: {DiskPath}", path);
+            Loaded?.Invoke(this, EventArgs.Empty);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Failed to load disk: {DiskPath}", path);
+            _bluRay = null;
+        }
     }
 
     /// <inheritdoc />
     public Task CloseAsync()
     {
         if (!IsLoaded) return Task.CompletedTask;
+        
+        _logger.LogInformation("Closing disk: {DiskPath}", _bluRay?.DiskPath);
+        
         _bluRay = null;
         IsLoaded = false;
         Unloaded?.Invoke(this, EventArgs.Empty);

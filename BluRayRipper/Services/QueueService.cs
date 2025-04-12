@@ -3,11 +3,27 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BluRayRipper.Models.Queue;
 using BluRayRipper.Services.Interfaces;
+using BluRayRipper.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace BluRayRipper.Services;
 
+/// <summary>
+/// The service to queue async tasks like exporting.
+/// </summary>
 public class QueueService : IQueueService
 {
+    private readonly ILogger<QueueService> _logger;
+    
+    public QueueService(ILogger<QueueService> logger)
+    {
+        _logger = logger;
+    }
+
+    public QueueService() : this(EmptyLogger<QueueService>.Create())
+    {
+    }
+    
     /// <summary>
     /// The current task queue.
     /// </summary>
@@ -62,6 +78,8 @@ public class QueueService : IQueueService
         {
             // TODO: Make this thread safe!
             
+            _logger.LogInformation("Starting queued task: {TaskName}", queuedTask.Name);
+            
             var task = queuedTask.StartFunc(queuedTask);
             _currentTask = task;
 
@@ -70,9 +88,12 @@ public class QueueService : IQueueService
                 
                 await task.ConfigureAwait(true);
                 queuedTask.State = QueueState.Finished;
+                
+                _logger.LogInformation("Queued task finished: {TaskName}", queuedTask.Name);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogError(e, "Queued task failed: {TaskName}", queuedTask.Name);
                 queuedTask.State = QueueState.Failed;
             }
             
