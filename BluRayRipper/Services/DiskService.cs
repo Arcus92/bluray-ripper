@@ -25,6 +25,7 @@ public class DiskService : IDiskService
         
         // Use MakeMkv as decryption handler. I might add native AACS with key-config file later.
         MakeMkv.RegisterAsDecryptionHandler();
+        MakeMkv.RegisterLibraryImportResolver();
     }
 
     public DiskService() : this(EmptyLogger<DiskService>.Create())

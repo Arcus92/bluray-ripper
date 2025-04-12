@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace BluRayLib.Decrypt;
 
@@ -118,8 +119,8 @@ public partial class MakeMkv : IDisposable
     
     #region Native
     
-    private const string LibraryName = "libmmbd.so.0";
-
+    private const string LibraryName = "libmmbd";
+    
     /// <summary>
     /// The native output message handler for MakeMkv. 
     /// </summary>
@@ -145,6 +146,44 @@ public partial class MakeMkv : IDisposable
     
     [LibraryImport(LibraryName, EntryPoint = "mmbd_destroy_context")]
     private static partial void NativeDestroyContext(IntPtr context);
+    
+    /// <summary>
+    /// The library import resolver to handle the name and location of libmmbd.
+    /// </summary>
+    /// <param name="libraryName">The loaded library name.</param>
+    /// <param name="assembly">The loading assembly.</param>
+    /// <param name="searchPath">The search path.</param>
+    /// <returns>Returns the loaded library pointer.</returns>
+    public static IntPtr LibraryImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+    {
+        if (libraryName != LibraryName) 
+            return IntPtr.Zero; // Fallback to default resolver
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            libraryName = "libmmbd.dll";
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || 
+                 RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+        {
+            libraryName = "libmmbd.so.0";
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            libraryName = "libmmbd.dylib";
+        }
+        else return IntPtr.Zero;
+        
+        return NativeLibrary.Load(libraryName, assembly, searchPath);
+    }
+
+    /// <summary>
+    /// Registers the library import resolve to handle the name and location of libmmbd.
+    /// </summary>
+    public static void RegisterLibraryImportResolver()
+    {
+        NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), LibraryImportResolver);
+    }
     
     #endregion Native
 }
