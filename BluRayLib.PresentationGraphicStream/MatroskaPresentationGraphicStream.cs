@@ -39,7 +39,7 @@ public class MatroskaPresentationGraphicStream : IPresentationGraphicStream
             if (block.Data is null) continue;
 
             var timeInMilliseconds =
-                (timestamp + (double)block.TimeCode) * timestampScale - track.CodecDelay;
+                (timestamp + (double)block.TimeCode) * timestampScale - (track.CodecDelay ?? 0);
 
             await using var ms = new MemoryStream(block.Data);
             using var reader = new BigEndianBinaryReader(ms);
