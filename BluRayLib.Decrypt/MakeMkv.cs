@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace MakeMkvLib;
+namespace BluRayLib.Decrypt;
 
 /// <summary>
 /// A wrapper class for the libmmbd from MakeMkv. This library handles BluRay file encryption by launching MakeMkv in
@@ -91,6 +91,17 @@ public partial class MakeMkv : IDisposable
         var ptr = NativeGetVersionString();
         return Marshal.PtrToStringAnsi(ptr);
     }
+    
+    /// <summary>
+    /// Registers MakeMkv as BluRay decryption handler.
+    /// </summary>
+    public static void RegisterAsDecryptionHandler()
+    {
+        BluRay.M2TsDecryptionHandler = M2TsDecryptionHandler;
+    }
+
+    private static Stream M2TsDecryptionHandler(BluRay bluRay, ushort clipId) =>
+        MakeMkvDecryptStream.Open(bluRay.DiskPath, FileName.M2TS(clipId));
     
     #region IDisposable
     

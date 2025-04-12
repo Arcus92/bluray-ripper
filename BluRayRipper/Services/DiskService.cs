@@ -2,16 +2,21 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using BluRayLib;
+using BluRayLib.Decrypt;
 using BluRayLib.Ripper;
 using BluRayLib.Ripper.Export;
 using BluRayLib.Ripper.Info;
 using BluRayRipper.Services.Interfaces;
-using MakeMkvLib;
 
 namespace BluRayRipper.Services;
 
 public class DiskService : IDiskService
 {
+    public DiskService()
+    {
+        MakeMkv.RegisterAsDecryptionHandler();
+    }
+    
     /// <summary>
     /// The current opened BluRay disk.
     /// </summary>
@@ -22,6 +27,7 @@ public class DiskService : IDiskService
     {
         await CloseAsync();
         _bluRay = new BluRay(path);
+        
         await _bluRay.LoadAsync();
         IsLoaded = true;
         Loaded?.Invoke(this, EventArgs.Empty);
@@ -67,7 +73,7 @@ public class DiskService : IDiskService
     public Stream GetSegmentStream(ushort clipId)
     {
         if (_bluRay is null) throw new ArgumentException("BluRay is not loaded!");
-        return _bluRay.GetDecryptM2TsStream(clipId);
+        return _bluRay.GetM2TsStream(clipId);
     }
     
     /// <inheritdoc />

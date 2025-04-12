@@ -1,4 +1,4 @@
-namespace MakeMkvLib;
+namespace BluRayLib.Decrypt;
 
 /// <summary>
 /// The MakeMkv filename flags.

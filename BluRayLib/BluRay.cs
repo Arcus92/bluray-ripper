@@ -17,6 +17,11 @@ public class BluRay
     }
     
     #region Info
+    
+    /// <summary>
+    /// Gets if the BluRay is encrypted.
+    /// </summary>
+    public bool IsEncrypted { get; private set; }
 
     /// <summary>
     /// Gets the loaded movie object.
@@ -42,6 +47,9 @@ public class BluRay
         Clips.Clear();
         await Task.Run(() =>
         {
+            // Check if the disk is encrypted by checking the AACS directory.
+            IsEncrypted = Directory.Exists(Path.Combine(DiskPath, "AACS"));
+            
             // Load the movie object file
             var path = Path.Combine(DiskPath, "BDMV/MovieObject.bdmv");
             MovieObjects.Read(path);
@@ -81,6 +89,12 @@ public class BluRay
     /// <returns></returns>
     public Stream GetM2TsStream(ushort clipId)
     {
+        // Handle decryption
+        if (IsEncrypted && M2TsDecryptionHandler is not null)
+        {
+            return M2TsDecryptionHandler.Invoke(this, clipId);
+        }
+        
         var path = Path.Combine(DiskPath, "BDMV/STREAM", $"{clipId:00000}.m2ts");
         return File.OpenRead(path);
     }
@@ -120,4 +134,18 @@ public class BluRay
     }
     
     #endregion Playlists
+    
+    #region Decryption
+    
+    /// <summary>
+    /// The decryption handler method.
+    /// </summary>
+    public delegate Stream DecryptionHandler(BluRay bluRay, ushort clipId);
+
+    /// <summary>
+    /// Gets and sets the M2TS decryption stream.
+    /// </summary>
+    public static DecryptionHandler? M2TsDecryptionHandler { get; set; }
+
+    #endregion Decryption
 }

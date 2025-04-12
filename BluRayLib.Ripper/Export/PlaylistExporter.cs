@@ -1,6 +1,5 @@
 using BluRayLib.FFmpeg;
 using BluRayLib.Ripper.Info;
-using MakeMkvLib;
 
 namespace BluRayLib.Ripper.Export;
 
@@ -147,7 +146,7 @@ public class PlaylistExporter
             var concatWriter = new StreamWriter(concatStream);
             foreach (var segment in Playlist.Segments)
             {
-                var inputStream = builder.CreateInputStream(() => _bluRay.GetDecryptM2TsStream(segment.Id));
+                var inputStream = builder.CreateInputStream(() => _bluRay.GetM2TsStream(segment.Id));
                 concatWriter.WriteLine($"file '{inputStream.GetPath()}'");
             }
             concatWriter.Flush();

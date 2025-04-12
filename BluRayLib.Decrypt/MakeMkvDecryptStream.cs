@@ -1,4 +1,4 @@
-namespace MakeMkvLib;
+namespace BluRayLib.Decrypt;
 
 /// <summary>
 /// A decryption stream to read an encrypted BluRay file. For example an M2TS file.
