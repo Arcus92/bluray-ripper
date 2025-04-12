@@ -18,7 +18,7 @@
                 <TextBlock Text="{Binding Name}" />
             </StackPanel>
             
-            <ProgressBar Value="{Binding Progress}" Maximum="1.0" />
+            <ProgressBar Value="{Binding Progress}" Maximum="1.0" IsVisible="{Binding IsProgressBarVisible}" />
         </StackPanel>
         
     </Border>

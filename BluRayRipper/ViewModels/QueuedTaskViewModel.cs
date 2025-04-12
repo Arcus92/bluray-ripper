@@ -17,6 +17,7 @@ public class QueuedTaskViewModel : ViewModelBase
     {
         QueuedTask = queuedTask;
         QueuedTask.ProgressChanged += OnProgressChanged;
+        QueuedTask.StateChanged += OnStateChanged;
     }
     
     // Designer default
@@ -27,10 +28,20 @@ public class QueuedTaskViewModel : ViewModelBase
     public string Name => QueuedTask.Name;
     
     public double Progress => QueuedTask.Progress;
+    
+    public QueueState State => QueuedTask.State;
+    
+    public bool IsProgressBarVisible => State == QueueState.Running;
 
     private void OnProgressChanged(object? sender, EventArgs e)
     {
         OnPropertyChanged(nameof(Progress));
+    }
+    
+    private void OnStateChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(State));
+        OnPropertyChanged(nameof(IsProgressBarVisible));
     }
     
     /// <inheritdoc />
