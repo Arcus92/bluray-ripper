@@ -5,16 +5,16 @@ namespace BluRayRipper.Utils;
 /// <summary>
 /// Creates an empty logger using in the UI designer.
 /// </summary>
-/// <typeparam name="T"></typeparam>
-public static class EmptyLogger<T>
+public static class EmptyLogger
 {
     private static readonly LoggerFactory LoggerFactory = new();
     
     /// <summary>
     /// Creates a new empty logger.
     /// </summary>
+    /// <typeparam name="T">The logger target class.</typeparam>
     /// <returns></returns>
-    public static ILogger<T> Create()
+    public static ILogger<T> Create<T>()
     {
         return new Logger<T>(LoggerFactory);
     }
