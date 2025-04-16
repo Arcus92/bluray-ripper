@@ -4,23 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BluRayRipper.ViewModels"
              xmlns:nodes="clr-namespace:BluRayRipper.Models.Nodes"
+             xmlns:utils="clr-namespace:BluRayRipper.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BluRayRipper.Views.TitleTreeView"
-             x:DataType="vm:TitleTreeViewModel">
-    
-    <Design.DataContext>
-        <vm:TitleTreeViewModel/>
-    </Design.DataContext>
+             x:DataType="vm:TitleTreeViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:TitleTreeViewModel}}">
     
     <ScrollViewer>
-        <TreeView x:Name="TreeView" ItemsSource="{Binding TitleNodes}" SelectedItem="{Binding SelectedTitle, Mode=TwoWay}">
+        <TreeView ItemsSource="{Binding TitleNodes}" SelectedItem="{Binding SelectedTitle, Mode=TwoWay}">
             <TreeView.DataTemplates>
                 
                 <!-- Title node -->
                 <TreeDataTemplate x:DataType="nodes:TitleNode" ItemsSource="{Binding SubNodes}">
                     <StackPanel Orientation="Horizontal" >
                         
-                        <CheckBox IsChecked="{Binding IsChecked}"/> 
                         <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" 
                                    Classes.transparent="{Binding IsIgnored}"/>
       

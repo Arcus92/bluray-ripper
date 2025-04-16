@@ -3,18 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BluRayRipper.ViewModels"
+             xmlns:utils="clr-namespace:BluRayRipper.Utils"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="50"
              x:Class="BluRayRipper.Views.DiskSelectorView"
-             x:DataType="vm:DiskSelectorViewModel">
-    
-    <Design.DataContext>
-        <vm:DiskSelectorViewModel/>
-    </Design.DataContext>
+             x:DataType="vm:DiskSelectorViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:DiskSelectorViewModel}}">
     
     <Border Padding="10">
         <StackPanel Orientation="Horizontal" Spacing="10">
             <TextBox Width="250" Text="{Binding DiskPath}"></TextBox>
-            <Button Click="OnLoadClick" Content="{DynamicResource OpenDisk}"/>
+            <Button Command="{Binding OpenAsync}" Content="{DynamicResource OpenDisk}"/>
         </StackPanel>
     </Border>
     

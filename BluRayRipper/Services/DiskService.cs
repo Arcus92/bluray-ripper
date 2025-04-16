@@ -3,11 +3,9 @@ using System.IO;
 using System.Threading.Tasks;
 using BluRayLib;
 using BluRayLib.Decrypt;
-using BluRayLib.Ripper;
 using BluRayLib.Ripper.BluRays;
 using BluRayLib.Ripper.BluRays.Export;
 using BluRayRipper.Services.Interfaces;
-using BluRayRipper.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace BluRayRipper.Services;
@@ -27,10 +25,6 @@ public class DiskService : IDiskService
         MakeMkv.RegisterAsDecryptionHandler();
         MakeMkv.RegisterLibraryImportResolver();
     }
-
-    public DiskService() : this(EmptyLogger<DiskService>.Create())
-    {
-    }
     
     /// <summary>
     /// The current opened BluRay disk.
@@ -40,6 +34,7 @@ public class DiskService : IDiskService
     /// <inheritdoc />
     public async Task OpenAsync(string path)
     {
+        path = Path.GetFullPath(path).TrimEnd('/', '\\'); // Sanitize
         await CloseAsync();
         
         _logger.LogInformation("Opening disk: {DiskPath}", path);
@@ -50,7 +45,9 @@ public class DiskService : IDiskService
         {
             await _bluRay.LoadAsync();
             IsLoaded = true;
-        
+            
+            DiskName = Path.GetFileName(path);
+            
             _logger.LogInformation("Disk loaded: {DiskPath}", path);
             Loaded?.Invoke(this, EventArgs.Empty);
         }
@@ -76,6 +73,9 @@ public class DiskService : IDiskService
 
     /// <inheritdoc />
     public string DiskPath => _bluRay?.DiskPath ?? string.Empty;
+
+    /// <inheritdoc />
+    public string DiskName { get; private set; } = "";
 
     /// <inheritdoc />
     public bool IsLoaded { get; private set; }

@@ -43,18 +43,6 @@ public class TitleNode : BaseNode
     /// </summary>
     public ObservableCollection<BaseNode> SubNodes { get; }
     
-    /// <inheritdoc cref="IsChecked"/>
-    private bool _isChecked;
-    
-    /// <summary>
-    /// Gets and sets if this title is selected for export.
-    /// </summary>
-    public bool IsChecked
-    {
-        get => _isChecked;
-        set => SetProperty(ref _isChecked, value);
-    }
-    
     /// <inheritdoc cref="IsIgnored"/>
     private bool _isIgnored;
     

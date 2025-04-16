@@ -3,14 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BluRayRipper.ViewModels"
-             xmlns:m="clr-namespace:BluRayRipper.Models"
+             xmlns:utils="clr-namespace:BluRayRipper.Utils"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="50"
              x:Class="BluRayRipper.Views.OutputSelectorView"
-             x:DataType="vm:OutputSelectorViewModel">
-    
-    <Design.DataContext>
-        <vm:OutputSelectorViewModel />
-    </Design.DataContext>
+             x:DataType="vm:OutputSelectorViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:OutputSelectorViewModel}}">
     
     <Border Padding="10">
         <StackPanel Orientation="Horizontal" Spacing="10">

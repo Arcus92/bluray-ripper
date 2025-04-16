@@ -5,6 +5,8 @@
     <system:String x:Key="OpenDisk">Open disk</system:String>
     <system:String x:Key="Play">Play</system:String>
     <system:String x:Key="Export">Export</system:String>
+    <system:String x:Key="QueueSelection">Queue selection</system:String>
+    <system:String x:Key="DequeueSelection">Dequeue selection</system:String>
     
     <system:String x:Key="Title">Title</system:String>
     <system:String x:Key="Segments">Segments</system:String>

@@ -1,8 +1,5 @@
-using System;
-using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using BluRayRipper.Services;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.Views;
 
@@ -21,11 +18,6 @@ public class DiskSelectorViewModel : ViewModelBase
         _diskPath = _settingService.GetDefaultDiskPath();
     }
     
-    // Designer default
-    public DiskSelectorViewModel() : this(new SettingService(), new DiskService())
-    {
-    }
-    
     /// <inheritdoc cref="DiskPath"/>
     private string _diskPath;
 
@@ -38,7 +30,7 @@ public class DiskSelectorViewModel : ViewModelBase
         set => SetProperty(ref _diskPath, value);
     }
     
-    public async Task LoadDiskAsync()
+    public async Task OpenAsync()
     {
         await _diskService.OpenAsync(_diskPath);
     }

@@ -11,20 +11,25 @@ namespace BluRayRipper;
 
 public partial class App : Application
 {
+    /// <summary>
+    /// Gets the service provider for dependency injection.
+    /// </summary>
+    public ServiceProvider ServiceProvider { get; private set; } = null!;
+    
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
     }
-
+    
     public override void OnFrameworkInitializationCompleted()
     {
         // Register all services for this application
         var collection = new ServiceCollection();
         collection.AddCommonServices();
         
-        var services = collection.BuildServiceProvider();
+        ServiceProvider = collection.BuildServiceProvider();
         
-        var mainViewModel = services.GetRequiredService<MainWindowViewModel>();
+        var mainViewModel = ServiceProvider.GetRequiredService<MainWindowViewModel>();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 

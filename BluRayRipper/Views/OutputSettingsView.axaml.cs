@@ -10,16 +10,4 @@ public partial class OutputSettingsView : UserControl
     {
         InitializeComponent();
     }
-    
-    private async void OnExportClick(object? sender, RoutedEventArgs e)
-    {
-        var dataContext = (OutputSettingsViewModel)DataContext!;
-        await dataContext.QueueExportAsync();
-    }
-    
-    private async void OnPreviewClick(object? sender, RoutedEventArgs e)
-    {
-        var dataContext = (OutputSettingsViewModel)DataContext!;
-        await dataContext.PlayPreviewAsync();
-    }
 }

@@ -3,21 +3,18 @@
         xmlns:vm="using:BluRayRipper.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:utils="clr-namespace:BluRayRipper.Utils"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BluRayRipper.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="BluRayRipper">
-
-    <Design.DataContext>
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
-
+        Title="BluRayRipper"
+        Design.DataContext="{utils:DesignResolve {x:Type vm:MainWindowViewModel}}">
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
         
         <!-- Content -->
         <Grid Grid.Row="0">
@@ -43,10 +40,7 @@
                 <ContentControl Grid.Row="1" Content="{Binding TitleTree}"/>
                 
                 <!-- Title properties --> 
-                <ContentControl Grid.Row="2" Content="{Binding TitleProperties}"/>
-                
-                <!-- Output settings and start buttons --> 
-                <ContentControl Grid.Row="3" Content="{Binding OutputSettings}"/>
+                <ContentControl Grid.Row="2" Content="{Binding TitleOptions}"/>
             </Grid>
             
 
@@ -58,14 +52,16 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
                 <!-- Output selection -->
                 <ContentControl Grid.Row="0" Content="{Binding OutputSelector}"/>
                 
-                <!-- Output progress bars --> 
-                <ContentControl Grid.Row="3" Content="{Binding Output}"/>
+                <!-- Output list --> 
+                <ContentControl Grid.Row="1" Content="{Binding OutputList}"/>
+                
+                <!-- Output settings and start buttons --> 
+                <ContentControl Grid.Row="2" Content="{Binding OutputSettings}"/>
             </Grid>
         </Grid>
     </Grid>

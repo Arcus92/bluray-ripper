@@ -3,18 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BluRayRipper.ViewModels"
+             xmlns:utils="clr-namespace:BluRayRipper.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="BluRayRipper.Views.QueuedTaskView"
-             x:DataType="vm:QueuedTaskViewModel">
-
-    <Design.DataContext>
-        <vm:QueuedTaskViewModel />
-    </Design.DataContext>
+             x:Class="BluRayRipper.Views.OutputFileView"
+             x:DataType="vm:OutputFileViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:OutputFileViewModel}}">
     
     <Border Padding="10">
         <StackPanel Orientation="Vertical" Spacing="10">
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="{Binding Progress, StringFormat='{}{0:P0}'}" />
+                <TextBlock Text="{Binding Progress, StringFormat='{}{0:P0}'}" IsVisible="{Binding IsProgressBarVisible}" />
                 <TextBlock Text="{Binding Name}" />
             </StackPanel>
             

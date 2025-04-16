@@ -17,17 +17,13 @@ public class TitleExporter
     /// <summary>
     /// Exports the playlist as a video file using FFmpeg.
     /// </summary>
+    /// <param name="outputPath">The output path.</param>
     /// <param name="options">The title export options.</param>
-    /// <param name="output">The output file.</param>
-    /// <param name="outputFormat">The FFmpeg output format.</param>
     /// <param name="onUpdate">The status update event.</param>
     /// <param name="cancellationToken">The cancellation token</param>
-    public async Task ExportAsync(TitleExportOptions options, string output, string? outputFormat = null, Action<ConverterUpdate>? onUpdate = null,
+    public async Task ExportAsync(string outputPath, TitleExportOptions options, Action<ConverterUpdate>? onUpdate = null,
         CancellationToken cancellationToken = default)
     {
-        var directory = Path.GetDirectoryName(output)!;
-        var fileName = Path.GetFileNameWithoutExtension(output);
-        
         var ffmpeg = new Engine();
         await ffmpeg.ConvertAsync(builder =>
         {
@@ -73,13 +69,13 @@ public class TitleExporter
             }
 
             // Define codec
-            builder.Codec(StreamType.Video, options.VideoCodec);
-            builder.Codec(StreamType.Audio, options.AudioCodec);
-            builder.Codec(StreamType.Subtitle, options.SubtitleCodec);
+            builder.Codec(StreamType.Video, options.Codec.VideoCodec);
+            builder.Codec(StreamType.Audio, options.Codec.AudioCodec);
+            builder.Codec(StreamType.Subtitle, options.Codec.SubtitleCodec);
             
-            if (options.ConstantRateFactor.HasValue) builder.ConstantRateFactor(options.ConstantRateFactor.Value);
-            if (options.MaxRate.HasValue) builder.MaxRate(options.MaxRate.Value);
-            if (options.BufferSize.HasValue) builder.BufferSize(options.BufferSize.Value);
+            if (options.Codec.ConstantRateFactor.HasValue) builder.ConstantRateFactor(options.Codec.ConstantRateFactor.Value);
+            if (options.Codec.MaxRate.HasValue) builder.MaxRate(options.Codec.MaxRate.Value);
+            if (options.Codec.BufferSize.HasValue) builder.BufferSize(options.Codec.BufferSize.Value);
             
             // Map the output streams
             var outputStreamCount = 0;
@@ -118,9 +114,11 @@ public class TitleExporter
             
             // Video output
             builder.OverwriteOutput();
-            if (outputFormat is not null)
-                builder.Format(outputFormat);
-            builder.Output(output);
+            if (options.Codec.VideoFormat is not null)
+                builder.Format(options.Codec.VideoFormat);
+            
+            var path = Path.Combine(outputPath, $"{options.Basename}{options.Extension}");
+            builder.Output(path);
             
             
             // FFmpeg supports multiple outputs. We can export the subtitle files in a single run as well.
@@ -136,11 +134,18 @@ public class TitleExporter
                     builder.Metadata(0, "language", stream.LanguageCode);
                     // Single exports don't need a default flag.
                     
-                    builder.Codec(StreamType.Subtitle, options.SubtitleCodec);
+                    builder.Codec(StreamType.Subtitle, options.Codec.SubtitleCodec);
 
                     // Subtitle output
                     builder.OverwriteOutput();
-                    var path = Path.Combine(directory, $"{fileName}.{stream.LanguageCode}.{stream.Id}.sup");
+
+                    // Overwrite external filenames
+                    if (options.StreamFilenames is null || !options.StreamFilenames.TryGetValue(stream.Id, out var filename))
+                    {
+                        filename = $"{options.Basename}.{stream.LanguageCode}.{stream.Id}.sup";
+                    }
+                    
+                    path = Path.Combine(outputPath, filename);
                     builder.Output(path);
                 }
             }

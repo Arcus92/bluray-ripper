@@ -21,17 +21,12 @@ public class OutputSelectorViewModel : ViewModelBase
 
         _outputPath = _settingService.GetDefaultOutputPath();
         _diskService.Loaded += OnDiskLoaded;
-    }
 
-    // Designer default
-    public OutputSelectorViewModel() : this(new SettingService(), new OutputService(), new DiskService())
-    {
+        _outputService.OpenAsync(_outputPath);
     }
-    
     private void OnDiskLoaded(object? sender, EventArgs e)
     {
-        var diskPath = Path.GetFullPath(_diskService.DiskPath).TrimEnd('/', '\\'); // Sanitize
-        OutputFilename = Path.GetFileName(diskPath);
+        OutputFilename = _diskService.DiskName;
     }
     
     /// <inheritdoc cref="OutputPath"/>

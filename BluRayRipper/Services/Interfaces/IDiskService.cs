@@ -14,6 +14,11 @@ public interface IDiskService
     string DiskPath { get; }
     
     /// <summary>
+    /// Gets the currently loaded disk name.
+    /// </summary>
+    string DiskName { get; }
+    
+    /// <summary>
     /// Opens the disk at the given path.
     /// </summary>
     /// <param name="path">The disk path.</param>

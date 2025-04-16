@@ -19,11 +19,6 @@ public class TitleTreeViewModel : ViewModelBase
         _diskService.Loaded += OnDiskServiceLoaded;
     }
 
-    // Designer default
-    public TitleTreeViewModel() : this(new DiskService())
-    {
-    }
-
     /// <inheritdoc cref="SelectedTitle"/>
     private TitleNode? _selectedTitle;
 
@@ -51,8 +46,7 @@ public class TitleTreeViewModel : ViewModelBase
             var isIgnored = playlist.IgnoreFlags != TitleIgnoreFlags.None;
             TitleNodes.Add(new TitleNode(playlist)
             {
-                IsIgnored = isIgnored,
-                IsChecked = !isIgnored,
+                IsIgnored = isIgnored
             });
         }
     }

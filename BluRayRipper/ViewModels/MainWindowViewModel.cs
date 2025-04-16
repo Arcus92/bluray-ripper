@@ -7,28 +7,21 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     public DiskSelectorViewModel DiskSelector { get; }
     public TitleTreeViewModel TitleTree { get; }
-    public TitlePropertiesViewModel TitleProperties { get; }
+    public TitleOptionsViewModel TitleOptions { get; }
     public OutputSelectorViewModel OutputSelector { get; }
     public OutputSettingsViewModel OutputSettings { get; }
-    public OutputViewModel Output { get; }
+    public OutputListViewModel OutputList { get; }
     
     public MainWindowViewModel(DiskSelectorViewModel diskSelector, TitleTreeViewModel titleTree, 
-        TitlePropertiesViewModel titleProperties, OutputSelectorViewModel outputSelector, 
-        OutputSettingsViewModel outputSettings, OutputViewModel output)
+        TitleOptionsViewModel titleOptions, OutputSelectorViewModel outputSelector, 
+        OutputSettingsViewModel outputSettings, OutputListViewModel outputList)
     {
         DiskSelector = diskSelector;
         TitleTree = titleTree;
-        TitleProperties = titleProperties;
+        TitleOptions = titleOptions;
         OutputSelector = outputSelector;
         OutputSettings = outputSettings;
-        Output = output;
-    }
-    
-    // Designer default
-    public MainWindowViewModel() : this(new DiskSelectorViewModel(), new TitleTreeViewModel(), 
-        new TitlePropertiesViewModel(), new OutputSelectorViewModel(), new OutputSettingsViewModel(), 
-        new OutputViewModel())
-    {
+        OutputList = outputList;
     }
 
     /// <inheritdoc />

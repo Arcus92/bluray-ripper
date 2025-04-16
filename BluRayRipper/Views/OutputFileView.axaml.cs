@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace BluRayRipper.Views;
 
-public partial class OutputView : UserControl
+public partial class OutputFileView : UserControl
 {
-    public OutputView()
+    public OutputFileView()
     {
         InitializeComponent();
     }

@@ -10,10 +10,4 @@ public partial class DiskSelectorView : UserControl
     {
         InitializeComponent();
     }
-
-    private async void OnLoadClick(object? sender, RoutedEventArgs e)
-    {
-        var dataContext = (DiskSelectorViewModel)DataContext!;
-        await dataContext.LoadDiskAsync();
-    }
 }

@@ -7,44 +7,30 @@ public class TitleExportOptions
     /// </summary>
     public TitleData Title { get; }
 
-    private TitleExportOptions(TitleData title)
+    private TitleExportOptions(TitleData title, string basename)
     {
         Title = title;
+        Basename = basename;
     }
-
-    #region Codecs
+    
+    #region Output
     
     /// <summary>
-    /// Gets and sets the FFmpeg video codec.
+    /// Gets and sets the basename.
     /// </summary>
-    public string VideoCodec { get; set; } = "copy";
+    public string Basename { get; set; }
     
     /// <summary>
-    /// Gets and sets the FFmpeg audio codec.
+    /// Gets and sets the video extension.
     /// </summary>
-    public string AudioCodec { get; set; } = "copy";
+    public string Extension { get; set; } = ".mkv";
     
     /// <summary>
-    /// Gets and sets the FFmpeg subtitle codec.
+    /// Gets and sets the codec options.
     /// </summary>
-    public string SubtitleCodec { get; set; } = "copy";
+    public CodecOptions Codec { get; set; } = new();
     
-    /// <summary>
-    /// Gets and sets the FFmpeg constant rate factor.
-    /// </summary>
-    public int? ConstantRateFactor  { get; set; }
-    
-    /// <summary>
-    /// Gets and sets the FFmpeg max bitrate.
-    /// </summary>
-    public int? MaxRate  { get; set; }
-    
-    /// <summary>
-    /// Gets and sets the FFmpeg buffer size.
-    /// </summary>
-    public int? BufferSize  { get; set; }
-    
-    #endregion Codecs
+    #endregion Output
     
     #region Streams
     
@@ -73,6 +59,12 @@ public class TitleExportOptions
     /// Gets and sets the list of the streams to ignore.
     /// </summary>
     public List<ushort>? IgnoredStreamIds { get; set; }
+    
+    /// <summary>
+    /// Gets and sets the external stream filenames. If set and <see cref="ExportSubtitlesAsSeparateFiles"/> is enabled,
+    /// this can overwrite the default subtitle filenames.
+    /// </summary>
+    public Dictionary<ushort, string>? StreamFilenames { get; set; }
 
     /// <summary>
     /// Adds the given stream id to <see cref="IgnoredStreamIds"/>.
@@ -87,10 +79,10 @@ public class TitleExportOptions
     
     #endregion Streams
 
-    public static TitleExportOptions From(TitleData title)
+    public static TitleExportOptions From(TitleData title, string basename)
     {
-        var exporter = new TitleExportOptions(title);
-        
+        var exporter = new TitleExportOptions(title, basename);
+
         // Find default streams
         if (title.Segments.Length > 0)
         {

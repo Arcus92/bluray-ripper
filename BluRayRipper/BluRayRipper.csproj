@@ -34,8 +34,4 @@
       <ProjectReference Include="..\BluRayLib.Ripper\BluRayLib.Ripper.csproj" />
       <ProjectReference Include="..\BluRayLib\BluRayLib.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Controller\" />
-    </ItemGroup>
 </Project>
