@@ -23,6 +23,9 @@ public class OutputModel : ObservableObject
     /// <inheritdoc cref="OutputFile.BaseName"/>
     public string BaseName => File.BaseName;
     
+    /// <inheritdoc cref="OutputFile.Extension"/>
+    public string Extension => File.Extension;
+    
     /// <inheritdoc cref="Status"/>
     private OutputStatus _status;
 

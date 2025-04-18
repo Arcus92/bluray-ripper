@@ -72,6 +72,22 @@ public class OutputService(IDiskService diskService) : IOutputService
         await foreach (var file in OutputFileSerializer.DeserializeFromDirectoryAsync(OutputPath))
         {
             var model = new OutputModel(file);
+            
+            // Check the initial status
+            var path = Path.Combine(OutputPath, $"{model.BaseName}{model.Extension}");
+            if (File.Exists(path))
+            {
+                model.Status = OutputStatus.Completed;
+            }
+            else
+            {
+                // Queued output file, but from a different disk.
+                if (diskService.DiskName != model.DiskName)
+                {
+                    model.Status = OutputStatus.QueuedMismatchDisk;
+                }
+            }
+            
             Items.Add(model);
         }
     }
