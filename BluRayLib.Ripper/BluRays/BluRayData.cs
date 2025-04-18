@@ -197,17 +197,20 @@ public static class BluRayData
     /// <returns></returns>
     public static TitleData[] GetTitles(BluRay bluRay)
     {
-        var playlistInfos = new List<TitleData>();
+        var titles = new List<TitleData>();
+        var index = 0;
         foreach (var playlistId in bluRay.Playlists.Keys.Order())
         {
-            playlistInfos.Add(GetTitle(bluRay, playlistId));
+            var title = GetTitle(bluRay, playlistId);
+            title.Index = index++;
+            titles.Add(title);
         }
 
-        for (var a = 0; a < playlistInfos.Count; a++)
-        for (var b = a + 1; b < playlistInfos.Count; b++)
+        for (var a = 0; a < titles.Count; a++)
+        for (var b = a + 1; b < titles.Count; b++)
         {
-            var playlistA = playlistInfos[a];
-            var playlistB = playlistInfos[b];
+            var playlistA = titles[a];
+            var playlistB = titles[b];
 
             if (playlistA.Matches(playlistB))
             {
@@ -215,7 +218,7 @@ public static class BluRayData
             }
         }
         
-        return playlistInfos.ToArray();
+        return titles.ToArray();
     }
     
     /// <summary>

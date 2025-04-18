@@ -11,7 +11,12 @@ public class TitleData
     /// Gets the playlist id.
     /// </summary>
     public ushort Id { get; }
-    
+
+    /// <summary>
+    /// Gets the playlist index.
+    /// </summary>
+    public int Index { get; set;  }
+
     /// <summary>
     /// Gets the playlist duration.
     /// </summary>
@@ -32,7 +37,7 @@ public class TitleData
     /// </summary>
     public TitleIgnoreFlags IgnoreFlags { get; set; }
     
-    public override string ToString() => $"Playlist [0x{Id:x4}] ({Id:00000}) - [{Duration:hh\\:mm\\:ss}] ({Segments.Length} segments) ({IgnoreFlags})";
+    public override string ToString() => $"Playlist #{Index} [0x{Id:x4}] ({Id:00000}) - [{Duration:hh\\:mm\\:ss}] ({Segments.Length} segments) ({IgnoreFlags})";
     
     #region Equals
 

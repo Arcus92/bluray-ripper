@@ -1,9 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using Avalonia.Controls;
 using BluRayLib.Ripper;
+using BluRayLib.Ripper.BluRays;
 using BluRayRipper.Models.Nodes;
-using BluRayRipper.Services;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.Views;
 
@@ -19,16 +20,40 @@ public class TitleTreeViewModel : ViewModelBase
         _diskService.Loaded += OnDiskServiceLoaded;
     }
 
-    /// <inheritdoc cref="SelectedTitle"/>
-    private TitleNode? _selectedTitle;
+    /// <inheritdoc cref="SelectedNode"/>
+    private BaseNode? _selectedNode;
 
     /// <summary>
     /// Gets and sets the selected title info.
     /// </summary>
-    public TitleNode? SelectedTitle
+    public BaseNode? SelectedNode
     {
-        get => _selectedTitle;
-        set => SetProperty(ref _selectedTitle, value);
+        get => _selectedNode;
+        set => SetProperty(ref _selectedNode, value);
+    }
+
+    public bool TryGetSelectedTitle([MaybeNullWhen(false)] out TitleData title)
+    {
+        if (_selectedNode is TitleNode node)
+        {
+            title = node.Playlist;
+            return true;
+        }
+
+        title = null;
+        return false;
+    }
+    
+    public bool TryGetSelectedSegment([MaybeNullWhen(false)] out SegmentData segment)
+    {
+        if (_selectedNode is SegmentNode node)
+        {
+            segment = node.Segment;
+            return true;
+        }
+
+        segment = null;
+        return false;
     }
     
     private void OnDiskServiceLoaded(object? sender, EventArgs e)

@@ -66,10 +66,9 @@ public class TitleOptionsViewModel : ViewModelBase
     /// </summary>
     public async Task QueueSelectionAsync()
     {
-        var selectedNode = _titleTree.SelectedTitle;
-        if (selectedNode is null) return;
+        if (!_titleTree.TryGetSelectedTitle(out var title))
+            return;
         
-        var title = selectedNode.Playlist;
         var baseName = $"{_outputSelector.OutputFilename}_{title.Id}";
         var outputInfo = _outputService.BuildOutputInfo(title, _videoFormat, DefaultCodecOptions, baseName);
 
@@ -78,10 +77,9 @@ public class TitleOptionsViewModel : ViewModelBase
 
     public async Task DequeueSelectionAsync()
     {
-        var selectedNode = _titleTree.SelectedTitle;
-        if (selectedNode is null) return;
+        if (!_titleTree.TryGetSelectedTitle(out var title))
+            return;
         
-        var title = selectedNode.Playlist;
         var output = _outputService.GetByPlaylist(_diskService.DiskName, title.Id);
         if (output is null) return;
         if (output.Status == OutputStatus.Completed) return; // Do not remove completed outputs!
@@ -90,24 +88,20 @@ public class TitleOptionsViewModel : ViewModelBase
 
     public async Task PlayPreviewAsync()
     {
-        // TODO: Clean up
-        
-        var selectedNode = _titleTree.SelectedTitle;
-        if (selectedNode is null) return;
-        
-        var title = selectedNode.Playlist;
-        
-        // We can only play segments - not playlists. We must place the preview button on segment level.
-        // We should also try to show the audio and subtitle selection listed by the playlist put them as parameter for
-        // FFplay.
-        var segment = title.Segments.First();
+        if (!_titleTree.TryGetSelectedSegment(out var segment))
+        {
+            if (!_titleTree.TryGetSelectedTitle(out var title))
+                return;
+            
+            segment = title.Segments.First();
+        }
 
         // Pipe-ing the decrypted segment stream into your player. You won't be able to seek properly.
         // You can skip a few seconds ahead, but not backwards. Changing audio or subtitle tracks will force you to 
         // jump ahead to the end of the current playback buffer.
         // Despite all of this, this is a usable preview to determine the content.
         var process = new Process();
-        process.StartInfo.FileName = "ffplay"; // mpv is also working
+        process.StartInfo.FileName = "mpv"; // mpv is also working
         process.StartInfo.Arguments = "-";
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardInput = true;
