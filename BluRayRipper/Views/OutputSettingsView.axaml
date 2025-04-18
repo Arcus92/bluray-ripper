@@ -11,7 +11,7 @@
     
     <Border Padding="10">
         <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button Command="{Binding StartQueue}">Start queue</Button>
+            <Button Command="{Binding StartQueueAsync}">Start queue</Button>
             <Button Command="{Binding RefreshAsync}">Refresh</Button>
         </StackPanel>
     </Border>

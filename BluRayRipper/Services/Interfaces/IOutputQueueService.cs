@@ -1,6 +1,4 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using BluRayRipper.Models.Output;
+using System.Threading.Tasks;
 
 namespace BluRayRipper.Services.Interfaces;
 
@@ -9,10 +7,10 @@ public interface IOutputQueueService
     /// <summary>
     /// Starts the queue.
     /// </summary>
-    void Start();
+    Task StartAsync();
     
     /// <summary>
     /// Stops the queue.
     /// </summary>
-    void Stop();
+    Task StopAsync();
 }

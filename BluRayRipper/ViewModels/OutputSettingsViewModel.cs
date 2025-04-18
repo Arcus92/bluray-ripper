@@ -25,9 +25,10 @@ public class OutputSettingsViewModel : ViewModelBase
         await _outputService.RefreshAsync();
     }
 
-    public void StartQueue()
+    /// <inheritdoc cref="IOutputQueueService.StartAsync"/>
+    public async Task StartQueueAsync()
     {
-        _outputQueueService.Start();
+        await _outputQueueService.StartAsync();
     }
     
     /// <inheritdoc />

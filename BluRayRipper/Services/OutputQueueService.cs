@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace BluRayRipper.Services;
 
 public class OutputQueueService : IOutputQueueService
 {
+    private readonly ILogger<OutputQueueService> _logger;
     private readonly IDiskService _diskService;
     private readonly IOutputService _outputService;
     
-    public OutputQueueService(IDiskService diskService, IOutputService outputService)
+    public OutputQueueService(ILogger<OutputQueueService> logger, IDiskService diskService, IOutputService outputService)
     {
+        _logger = logger;
         _diskService = diskService;
         _outputService = outputService;
     }
@@ -28,7 +31,7 @@ public class OutputQueueService : IOutputQueueService
     private bool _isRunning;
 
     /// <inheritdoc />
-    public void Start()
+    public async Task StartAsync()
     {
         if (_isRunning)
             return;
@@ -44,22 +47,28 @@ public class OutputQueueService : IOutputQueueService
         
         // Start the thread
         _isRunning = true;
-        Task.Run(async () =>
+        await Task.Run(async () =>
         {
             var exporter = _diskService.CreateTitleExporter();
 
             foreach (var output in _queue)
             {
-                var options = _outputService.BuildExportOptionsFormOutputInfo(output.File);
-                var outputPath = _outputService.OutputPath;
-
-                output.Status = OutputStatus.Running;
-                await exporter.ExportAsync(outputPath, options, onUpdate: update =>
+                try
                 {
-                    output.Progress = update.Percentage ?? 0.0;
-                });
-                output.Progress = 1.0;
-                output.Status = OutputStatus.Completed;
+                    var options = _outputService.BuildExportOptionsFormOutputInfo(output.File);
+                    var outputPath = _outputService.OutputPath;
+                    
+                    output.Status = OutputStatus.Running;
+                    await exporter.ExportAsync(outputPath, options,
+                        onUpdate: update => { output.Progress = update.Percentage ?? 0.0; });
+                    output.Progress = 1.0;
+                    output.Status = OutputStatus.Completed;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed FFmpeg export for playlist {PlaylistId:00000}!", output.PlaylistId);
+                    output.Status = OutputStatus.Failed;
+                }
             }
 
             _isRunning = false;
@@ -67,7 +76,7 @@ public class OutputQueueService : IOutputQueueService
     }
 
     /// <inheritdoc />
-    public void Stop()
+    public Task StopAsync()
     {
         throw new NotImplementedException();
     }
