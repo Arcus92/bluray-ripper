@@ -24,6 +24,11 @@ public class TitleExportOptions
     /// Gets and sets the video extension.
     /// </summary>
     public string Extension { get; set; } = ".mkv";
+
+    /// <summary>
+    /// Gets and sets the FFmpeg video format.
+    /// </summary>
+    public string? VideoFormat { get; set; } = "matroska";
     
     /// <summary>
     /// Gets and sets the codec options.
@@ -62,7 +67,7 @@ public class TitleExportOptions
     
     /// <summary>
     /// Gets and sets the external stream filenames. If set and <see cref="ExportSubtitlesAsSeparateFiles"/> is enabled,
-    /// this can overwrite the default subtitle filenames.
+    /// this can overwrite the default subtitle filenames. Set ID 0 to overwrite the main video file.
     /// </summary>
     public Dictionary<ushort, string>? StreamFilenames { get; set; }
 

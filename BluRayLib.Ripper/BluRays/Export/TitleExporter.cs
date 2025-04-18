@@ -15,6 +15,11 @@ public class TitleExporter
     }
 
     /// <summary>
+    /// Gets and sets the file extension added to the output files while the export is running.
+    /// </summary>
+    public string? WorkingFileExtension { get; set; } = ".tmp";
+
+    /// <summary>
     /// Exports the playlist as a video file using FFmpeg.
     /// </summary>
     /// <param name="outputPath">The output path.</param>
@@ -24,6 +29,8 @@ public class TitleExporter
     public async Task ExportAsync(string outputPath, TitleExportOptions options, Action<ConverterUpdate>? onUpdate = null,
         CancellationToken cancellationToken = default)
     {
+        var renameMap = new Dictionary<string, string>();
+        
         var ffmpeg = new Engine();
         await ffmpeg.ConvertAsync(builder =>
         {
@@ -114,10 +121,24 @@ public class TitleExporter
             
             // Video output
             builder.OverwriteOutput();
-            if (options.Codec.VideoFormat is not null)
-                builder.Format(options.Codec.VideoFormat);
+            if (options.VideoFormat is not null)
+                builder.Format(options.VideoFormat);
             
-            var path = Path.Combine(outputPath, $"{options.Basename}{options.Extension}");
+            // Overwrite external filenames
+            if (options.StreamFilenames is null || !options.StreamFilenames.TryGetValue(0, out var filename))
+            {
+                filename = $"{options.Basename}{options.Extension}";
+            }
+
+            // Add working file extension 
+            if (WorkingFileExtension is not null)
+            {
+                var newFilename = $"{filename}{WorkingFileExtension}";
+                renameMap.Add(filename, newFilename);
+                filename = newFilename;
+            }
+
+            var path = Path.Combine(outputPath, filename);
             builder.Output(path);
             
             
@@ -140,15 +161,32 @@ public class TitleExporter
                     builder.OverwriteOutput();
 
                     // Overwrite external filenames
-                    if (options.StreamFilenames is null || !options.StreamFilenames.TryGetValue(stream.Id, out var filename))
+                    if (options.StreamFilenames is null || !options.StreamFilenames.TryGetValue(stream.Id, out filename))
                     {
                         filename = $"{options.Basename}.{stream.LanguageCode}.{stream.Id}.sup";
                     }
                     
+                    // Add working file extension 
+                    if (WorkingFileExtension is not null)
+                    {
+                        var newFilename = $"{filename}{WorkingFileExtension}";
+                        renameMap.Add(filename, newFilename);
+                        filename = newFilename;
+                    }
+                    
                     path = Path.Combine(outputPath, filename);
+                    builder.Format("sup");
                     builder.Output(path);
                 }
             }
         }, onUpdate, cancellationToken);
+
+        // Rename working files
+        foreach (var (filename, workingFilename) in renameMap)
+        {
+            var path = Path.Combine(outputPath, filename);
+            var workingPath = Path.Combine(outputPath, workingFilename);
+            File.Move(workingPath, path);
+        }
     }
 }

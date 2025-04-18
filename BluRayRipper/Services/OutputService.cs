@@ -170,15 +170,21 @@ public class OutputService(IDiskService diskService) : IOutputService
         var format = VideoFormat.FromExtension(outputFile.Extension) ?? VideoFormat.Mkv;
         var options = TitleExportOptions.From(title, outputFile.BaseName);
         options.Extension = format.Extension;
+        options.VideoFormat = format.FFmpegFormat;
         options.Codec = outputFile.Codec;
         options.ExportSubtitlesAsSeparateFiles = !format.SupportPgs;
         
-        // Subtitle filenames
         options.StreamFilenames = new Dictionary<ushort, string>();
+        
+        // Change the main video filename
+        var filename = $"{options.Basename}{options.Extension}";
+        options.StreamFilenames.Add(0, filename);
+        
+        // Change subtitle filenames
         foreach (var stream in outputFile.SubtitleStreams)
         {
             if (stream.Extension is null) continue;
-            var filename = $"{options.Basename}{stream.Extension}";
+            filename = $"{options.Basename}{stream.Extension}";
             options.StreamFilenames.Add(stream.Id, filename);
         }
         

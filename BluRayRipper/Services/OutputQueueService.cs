@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Avalonia.Threading;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
 

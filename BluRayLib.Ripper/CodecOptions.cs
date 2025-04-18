@@ -6,12 +6,6 @@ namespace BluRayLib.Ripper;
 public class CodecOptions
 {
     /// <summary>
-    /// Gets and sets the FFmpeg video format.
-    /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public string? VideoFormat { get; set; }
-    
-    /// <summary>
     /// Gets and sets the FFmpeg video codec.
     /// </summary>
     public string VideoCodec { get; set; } = "copy";
