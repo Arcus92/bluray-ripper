@@ -18,23 +18,16 @@ public class OutputQueueService : IOutputQueueService
         _diskService = diskService;
         _outputService = outputService;
     }
-    
+
     /// <summary>
-    /// The list containing a map of all queued outputs and their current progress objects, if queued.
+    /// The output queue.
     /// </summary>
-    private readonly Dictionary<OutputFile, OutputProgress> _outputToProgress = new();
+    private readonly List<OutputModel> _queue = [];
     
     /// <summary>
     /// Gets and sets if the queue is currently running.
     /// </summary>
     private bool _isRunning;
-    
-    /// <inheritdoc />
-    public void Clear()
-    {
-        Stop();
-        _outputToProgress.Clear();
-    }
 
     /// <inheritdoc />
     public void Start()
@@ -43,41 +36,32 @@ public class OutputQueueService : IOutputQueueService
             return;
         
         // Build the initial progress map
-        _outputToProgress.Clear();
+        _queue.Clear();
         foreach (var output in _outputService.Items)
         {
-            if (output.Status == OutputFileStatus.Completed) continue;
-            _outputToProgress.Add(output, new OutputProgress());
+            if (output.Status == OutputStatus.Completed) continue;
+            if (output.DiskName != _diskService.DiskName) continue;
+            _queue.Add(output);
         }
         
         // Start the thread
         _isRunning = true;
         Task.Run(async () =>
         {
-            await InvokeQueueProgressChangedAsync();
-            
             var exporter = _diskService.CreateTitleExporter();
 
-            foreach (var (output, progress) in _outputToProgress)
+            foreach (var output in _queue)
             {
-                var options = _outputService.BuildExportOptionsFormOutputInfo(output);
+                var options = _outputService.BuildExportOptionsFormOutputInfo(output.File);
                 var outputPath = _outputService.OutputPath;
 
-                output.Status = OutputFileStatus.Running;
-                await _outputService.UpdateAsync(output);
-
-                await InvokeQueueProgressChangedAsync();
-                
+                output.Status = OutputStatus.Running;
                 await exporter.ExportAsync(outputPath, options, onUpdate: update =>
                 {
-                    progress.Progress = update.Percentage ?? 0.0;
+                    output.Progress = update.Percentage ?? 0.0;
                 });
-                progress.Progress = 1.0;
-                
-                output.Status = OutputFileStatus.Completed;
-                await _outputService.UpdateAsync(output);
-
-                await InvokeQueueProgressChangedAsync();
+                output.Progress = 1.0;
+                output.Status = OutputStatus.Completed;
             }
 
             _isRunning = false;
@@ -87,23 +71,6 @@ public class OutputQueueService : IOutputQueueService
     /// <inheritdoc />
     public void Stop()
     {
-        throw new System.NotImplementedException();
-    }
-
-    /// <inheritdoc />
-    public event EventHandler? QueueProgressChanged;
-
-    private async Task InvokeQueueProgressChangedAsync()
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            QueueProgressChanged?.Invoke(this, EventArgs.Empty);
-        });
-    }
-
-    /// <inheritdoc />
-    public bool TryGetProcess(OutputFile output, [MaybeNullWhen(false)] out OutputProgress progress)
-    {
-        return _outputToProgress.TryGetValue(output, out progress);
+        throw new NotImplementedException();
     }
 }

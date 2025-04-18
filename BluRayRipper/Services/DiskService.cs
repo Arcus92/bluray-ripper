@@ -73,7 +73,7 @@ public class DiskService : IDiskService
 
     /// <inheritdoc />
     public string DiskPath => _bluRay?.DiskPath ?? string.Empty;
-
+    
     /// <inheritdoc />
     public string DiskName { get; private set; } = "";
 

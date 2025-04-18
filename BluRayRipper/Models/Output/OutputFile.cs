@@ -10,6 +10,11 @@ namespace BluRayRipper.Models.Output;
 public class OutputFile
 {
     /// <summary>
+    /// Gets and sets the source type.
+    /// </summary>
+    public OutputSource Source { get; set; }
+    
+    /// <summary>
     /// Gets and sets the disk name from which this output file was generated.
     /// </summary>
     public string DiskName { get; set; } = "";
@@ -23,11 +28,6 @@ public class OutputFile
     /// Gets and sets the main output file extension.
     /// </summary>
     public string Extension { get; set; } = "";
-    
-    /// <summary>
-    /// Gets and sets the output status.
-    /// </summary>
-    public OutputFileStatus Status { get; set; }
     
     /// <summary>
     /// Gets and sets the playlist id from which this output file was generated.
@@ -47,15 +47,15 @@ public class OutputFile
     /// <summary>
     /// Gets and sets the exported video streams.
     /// </summary>
-    public OutputStream[] VideoStreams { get; set; } = [];
+    public OutputFileStream[] VideoStreams { get; set; } = [];
     
     /// <summary>
     /// Gets and sets the exported audio streams.
     /// </summary>
-    public OutputStream[] AudioStreams { get; set; } = [];
+    public OutputFileStream[] AudioStreams { get; set; } = [];
     
     /// <summary>
     /// Gets and sets the exported subtitle streams.
     /// </summary>
-    public OutputStream[] SubtitleStreams { get; set; } = [];
+    public OutputFileStream[] SubtitleStreams { get; set; } = [];
 }

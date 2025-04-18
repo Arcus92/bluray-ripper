@@ -29,22 +29,34 @@ public static class ObservableExtensions
         // Add an event listener for future changes.
         NotifyCollectionChangedEventHandler handler = (_, args) =>
         {
-            if (args.NewItems is not null)
+            switch (args.Action)
             {
-                var index = args.NewStartingIndex;
-                foreach (TSource source in args.NewItems)
-                {
-                    var target = transformer(source);
-                    targets.Insert(index++, target);
-                }
-            }
-
-            if (args.OldItems is not null)
-            {
-                for (var i = 0; i < args.OldItems.Count; i++)
-                {
-                    targets.RemoveAt(args.OldStartingIndex);
-                }
+                case NotifyCollectionChangedAction.Add:
+                    if (args.NewItems is not null)
+                    {
+                        var index = args.NewStartingIndex;
+                        foreach (TSource source in args.NewItems)
+                        {
+                            var target = transformer(source);
+                            targets.Insert(index++, target);
+                        }
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    if (args.OldItems is not null)
+                    {
+                        for (var i = 0; i < args.OldItems.Count; i++)
+                        {
+                            targets.RemoveAt(args.OldStartingIndex);
+                        }
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Move:
+                    throw new NotImplementedException();
+                case NotifyCollectionChangedAction.Reset:
+                    targets.Clear();
+                    break;
             }
         };
 

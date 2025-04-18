@@ -41,7 +41,7 @@ public static class OutputFileSerializer
     /// <returns>Returns a list of all output info files.</returns>
     public static async IAsyncEnumerable<OutputFile> DeserializeFromDirectoryAsync(string path)
     {
-        foreach (var file in Directory.EnumerateFiles(path, "*.info"))
+        foreach (var file in Directory.EnumerateFiles(path, "*.json"))
         {
             var outputInfo = await DeserializeAsync(file);
             if (outputInfo is null) continue;

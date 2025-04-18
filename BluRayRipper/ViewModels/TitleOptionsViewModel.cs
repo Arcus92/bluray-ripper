@@ -84,7 +84,7 @@ public class TitleOptionsViewModel : ViewModelBase
         var title = selectedNode.Playlist;
         var output = _outputService.GetByPlaylist(_diskService.DiskName, title.Id);
         if (output is null) return;
-        if (output.Status == OutputFileStatus.Completed) return; // Do not remove completed outputs!
+        if (output.Status == OutputStatus.Completed) return; // Do not remove completed outputs!
         await _outputService.RemoveAsync(output);
     }
 

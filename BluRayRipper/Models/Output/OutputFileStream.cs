@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace BluRayRipper.Models.Output;
 
 [Serializable]
-public class OutputStream
+public class OutputFileStream
 {
     /// <summary>
     /// Gets and sets the stream id.

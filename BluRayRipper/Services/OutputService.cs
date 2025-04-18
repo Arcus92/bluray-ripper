@@ -31,34 +31,36 @@ public class OutputService(IDiskService diskService) : IOutputService
     #region List
 
     /// <inheritdoc />
-    public ObservableCollection<OutputFile> Items { get; } = [];
+    public ObservableCollection<OutputModel> Items { get; } = [];
     
     /// <inheritdoc />
-    public async Task AddAsync(OutputFile outputFile)
+    public async Task<OutputModel> AddAsync(OutputFile outputFile)
     {
         // Prevent an item to be added twice.
-        if (GetByPlaylist(outputFile.DiskName, outputFile.PlaylistId) is not null) return;
-        
-        Items.Add(outputFile);
+        var model = GetByPlaylist(outputFile.DiskName, outputFile.PlaylistId);
+        if (model is not null) return model;
+
+        model = new OutputModel(outputFile);
+        Items.Add(model);
         await UpdateOutputInfoAsync(outputFile);
+        return model;
     }
 
     /// <inheritdoc />
-    public async Task RemoveAsync(OutputFile outputFile)
+    public async Task RemoveAsync(OutputModel output)
     {
-        await RemoveOutputInfoAsync(outputFile);
-        
-        Items.Remove(outputFile);
+        await RemoveOutputInfoAsync(output.File);
+        Items.Remove(output);
     }
 
     /// <inheritdoc />
-    public async Task UpdateAsync(OutputFile outputFile)
+    public async Task UpdateAsync(OutputModel output)
     {
-        await UpdateOutputInfoAsync(outputFile);
+        await UpdateOutputInfoAsync(output.File);
     }
 
     /// <inheritdoc />
-    public OutputFile? GetByPlaylist(string diskName, ushort playlistId)
+    public OutputModel? GetByPlaylist(string diskName, ushort playlistId)
     {
         return Items.FirstOrDefault(f => f.DiskName == diskName && f.PlaylistId == playlistId);
     }
@@ -69,7 +71,8 @@ public class OutputService(IDiskService diskService) : IOutputService
         Items.Clear();
         await foreach (var file in OutputFileSerializer.DeserializeFromDirectoryAsync(OutputPath))
         {
-            Items.Add(file);
+            var model = new OutputModel(file);
+            Items.Add(model);
         }
     }
     
@@ -81,7 +84,7 @@ public class OutputService(IDiskService diskService) : IOutputService
     /// <param name="outputFile">The output info file.</param>
     private async Task UpdateOutputInfoAsync(OutputFile outputFile)
     {
-        var path = Path.Combine(OutputPath, $"{outputFile.BaseName}.info");
+        var path = Path.Combine(OutputPath, $"{outputFile.BaseName}.json");
         await OutputFileSerializer.SerializeAsync(path, outputFile);
     }
     
@@ -91,7 +94,7 @@ public class OutputService(IDiskService diskService) : IOutputService
     /// <param name="outputFile">The output info file.</param>
     private Task RemoveOutputInfoAsync(OutputFile outputFile)
     {
-        var path = Path.Combine(OutputPath, $"{outputFile.BaseName}.info");
+        var path = Path.Combine(OutputPath, $"{outputFile.BaseName}.json");
         File.Delete(path);
         return Task.CompletedTask;
     }
@@ -103,8 +106,8 @@ public class OutputService(IDiskService diskService) : IOutputService
     /// <param name="newFilename">The new filename.</param>
     private async Task RenameOutputInfoAsync(OutputFile outputFile, string newFilename)
     {
-        var oldPath = Path.Combine(OutputPath, $"{outputFile.BaseName}.info");
-        var newPath = Path.Combine(OutputPath, $"{newFilename}.info");
+        var oldPath = Path.Combine(OutputPath, $"{outputFile.BaseName}.json");
+        var newPath = Path.Combine(OutputPath, $"{newFilename}.json");
         
         if (File.Exists(oldPath))
             File.Move(oldPath, newPath);
@@ -128,19 +131,20 @@ public class OutputService(IDiskService diskService) : IOutputService
             PlaylistId = title.Id,
             BaseName = baseName,
             Extension = videoFormat.Extension,
+            Source = OutputSource.BluRay,
             DiskName = diskService.DiskName,
             Codec = codecOptions,
             SegmentIds = title.Segments.Select(s => s.Id).ToArray(),
-            VideoStreams = segment.VideoStreams.Select(s => new OutputStream()
+            VideoStreams = segment.VideoStreams.Select(s => new OutputFileStream()
             {
                 Id = s.Id,
             }).ToArray(),
-            AudioStreams = segment.AudioStreams.Select(s => new OutputStream()
+            AudioStreams = segment.AudioStreams.Select(s => new OutputFileStream()
             {
                 Id = s.Id,
                 LanguageCode = s.LanguageCode,
             }).ToArray(),
-            SubtitleStreams = segment.SubtitleStreams.Select(s => new OutputStream()
+            SubtitleStreams = segment.SubtitleStreams.Select(s => new OutputFileStream()
             {
                 Id = s.Id,
                 LanguageCode = s.LanguageCode,

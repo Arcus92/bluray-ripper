@@ -13,40 +13,22 @@ namespace BluRayRipper.ViewModels;
 public class OutputListViewModel : ViewModelBase
 {
     private readonly IOutputService _outputService;
-    private readonly IOutputQueueService _outputQueueService;
 
-    public OutputListViewModel(IOutputService outputService, IOutputQueueService outputQueueService)
+    public OutputListViewModel(IOutputService outputService)
     {
         _outputService = outputService;
-        _outputQueueService = outputQueueService;
 
         _outputService.Items.MapAndObserve(Items, ModelToViewModel);
-        _outputQueueService.QueueProgressChanged += OutputQueueServiceOnQueueProgressChanged;
     }
-
-    private void OutputQueueServiceOnQueueProgressChanged(object? sender, EventArgs e)
-    {
-    }
-
-
+    
     /// <summary>
     /// Gets the list of outputs.
     /// </summary>
-    public ObservableCollection<OutputFileViewModel> Items { get; } = [];
+    public ObservableCollection<OutputViewModel> Items { get; } = [];
 
-    /// <summary>
-    /// Refreshes the output list.
-    /// </summary>
-    public async Task RefreshAsync()
+    private OutputViewModel ModelToViewModel(OutputModel output)
     {
-        await _outputService.RefreshAsync();
-    }
-
-    private OutputFileViewModel ModelToViewModel(OutputFile output)
-    {
-        var viewModel = new OutputFileViewModel(output);
-        if (_outputQueueService.TryGetProcess(output, out var queueProgress))
-            viewModel.QueueProgress = queueProgress;
+        var viewModel = new OutputViewModel(output);
         return viewModel;
     }
     
