@@ -22,25 +22,13 @@ public static class BluRayData
                 continue;
             
             var clip = bluRay.Clips[clipId];
-            var pidToIndex = new Dictionary<ushort, int>();
-            foreach (var program in clip.Programs)
-            {
-                // Order by Pid to match the FFmpeg stream order
-                foreach (var stream in program.Streams.OrderBy(s => s.Pid))
-                {
-                    pidToIndex.Add(stream.Pid, pidToIndex.Count);
-                }
-            }
             
             // Video streams
             var videoStreamInfos = new List<VideoData>();
             foreach (var stream in item.StreamNumberTable.PrimaryVideoStreams)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new VideoData(stream.Entry.RefToStreamId)
-                {
-                    Index = pidToIndex[stream.Entry.RefToStreamId],
-                };
+                var streamInfo = new VideoData(stream.Entry.RefToStreamId);
                 videoStreamInfos.Add(streamInfo);
             }
             foreach (var stream in item.StreamNumberTable.SecondaryVideoStream)
@@ -48,7 +36,6 @@ public static class BluRayData
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new VideoData(stream.Entry.RefToStreamId)
                 {
-                    Index = pidToIndex[stream.Entry.RefToStreamId],
                     IsSecondary = true
                 };
                 videoStreamInfos.Add(streamInfo);
@@ -61,7 +48,6 @@ public static class BluRayData
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new AudioInfo(stream.Entry.RefToStreamId)
                 {
-                    Index = pidToIndex[stream.Entry.RefToStreamId],
                     LanguageCode = stream.Attributes.LanguageCode
                 };
                 audioStreamInfos.Add(streamInfo);
@@ -71,7 +57,6 @@ public static class BluRayData
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new AudioInfo(stream.Entry.RefToStreamId)
                 {
-                    Index = pidToIndex[stream.Entry.RefToStreamId],
                     LanguageCode = stream.Attributes.LanguageCode,
                     IsSecondary = true
                 };
@@ -85,7 +70,6 @@ public static class BluRayData
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new SubtitleData(stream.Entry.RefToStreamId)
                 {
-                    Index = pidToIndex[stream.Entry.RefToStreamId],
                     LanguageCode = stream.Attributes.LanguageCode
                 };
                 subtitleStreamInfos.Add(streamInfo);
@@ -95,7 +79,6 @@ public static class BluRayData
                 if (stream.Entry.RefToStreamId == 0) continue;
                 var streamInfo = new SubtitleData(stream.Entry.RefToStreamId)
                 {
-                    Index = pidToIndex[stream.Entry.RefToStreamId],
                     LanguageCode = stream.Attributes.LanguageCode,
                     IsSecondary = true
                 };

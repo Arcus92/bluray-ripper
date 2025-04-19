@@ -11,5 +11,5 @@ public class SubtitleData : StreamData
     /// </summary>
     public string LanguageCode { get; set; } = "";
     
-    public override string ToString() => $"Subtitle #{Index} [0x{Id:x4}] - [{LanguageCode}] {(IsSecondary ?" (secondary)" : "")}";
+    public override string ToString() => $"Subtitle [0x{Id:x4}] - [{LanguageCode}] {(IsSecondary ?" (secondary)" : "")}";
 }

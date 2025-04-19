@@ -29,9 +29,30 @@ public class TitleExporter
     public async Task ExportAsync(string outputPath, TitleExportOptions options, Action<ConverterUpdate>? onUpdate = null,
         CancellationToken cancellationToken = default)
     {
-        var renameMap = new Dictionary<string, string>();
-        
         var ffmpeg = new Engine();
+
+        // Before converting, we need to fetch the internal FFmpeg stream index. We cannot use the PIDs for that and 
+        // the order of stream may differ ot hidden streams change the order.
+        var metadata = await ffmpeg.GetMetadataAsync(builder =>
+        {
+            var firstSegment = options.Title.Segments.First();
+            var inputStream = builder.CreateInputStream(() => _bluRay.GetM2TsStream(firstSegment.Id));
+            builder.Input(inputStream);
+        }, cancellationToken);
+
+        // Mapping the pid to the FFmpeg index
+        var pidToIndex = new Dictionary<ushort, int>();
+        foreach (var input in metadata)
+        {
+            foreach (var stream in input.Streams)
+            {
+                // I had multiple audio entries with the same PID. Using the last one worked for me.
+                pidToIndex[stream.Pid] = (int)stream.Id;
+            }
+        }
+        
+        // Convert the file
+        var renameMap = new Dictionary<string, string>();
         await ffmpeg.ConvertAsync(builder =>
         {
             // Builds the concat text file in memory
@@ -90,13 +111,13 @@ public class TitleExporter
             foreach (var stream in firstSegment.VideoStreams)
             {
                 if (options.IgnoredStreamIds?.Contains(stream.Id) ?? false) continue;
-                builder.Map(input, stream.Index);
+                builder.Map(input, pidToIndex[stream.Id]);
                 outputStreamCount++;
             }
             foreach (var stream in firstSegment.AudioStreams)
             {
                 if (options.IgnoredStreamIds?.Contains(stream.Id) ?? false) continue;
-                builder.Map(input, stream.Index);
+                builder.Map(input, pidToIndex[stream.Id]);
                 if (!string.IsNullOrEmpty(stream.LanguageCode))
                     builder.Metadata(outputStreamCount, "language", stream.LanguageCode);
                 if (options.DefaultAudioStreamId == stream.Id)
@@ -109,7 +130,7 @@ public class TitleExporter
                 foreach (var stream in firstSegment.SubtitleStreams)
                 {
                     if (options.IgnoredStreamIds?.Contains(stream.Id) ?? false) continue;
-                    builder.Map(input, stream.Index);
+                    builder.Map(input, pidToIndex[stream.Id]);
                     if (!string.IsNullOrEmpty(stream.LanguageCode))
                         builder.Metadata(outputStreamCount, "language", stream.LanguageCode);
                     if (options.DefaultSubtitleStreamId == stream.Id)
@@ -151,7 +172,7 @@ public class TitleExporter
                 {
                     if (options.IgnoredStreamIds?.Contains(stream.Id) ?? false) continue;
                     
-                    builder.Map(input, stream.Index);
+                    builder.Map(input, pidToIndex[stream.Id]);
                     builder.Metadata(0, "language", stream.LanguageCode);
                     // Single exports don't need a default flag.
                     

@@ -16,44 +16,55 @@ public class Engine
     /// </summary>
     public string Binary { get; }
 
-    /// <summary>
-    /// Runs ffmpeg with the given arguments.
-    /// </summary>
-    /// <param name="builderCallback">The argument builder callback.</param>
-    /// <param name="onUpdate">The status update event.</param>
-    /// <param name="cancellationToken">The cancellation token</param>
-    public async Task ConvertAsync(Action<CommandBuilder> builderCallback, Action<ConverterUpdate>? onUpdate = null,
-        CancellationToken cancellationToken = default)
+    #region Run
+    
+    private readonly struct StartInfo
     {
-        var builder = new CommandBuilder();
-        builderCallback(builder);
-        await ConvertAsync(builder.Arguments, builder.InputStreams, onUpdate, cancellationToken);
+        /// <summary>
+        /// Gets the FFMpeg arguments.
+        /// </summary>
+        public string Arguments { get; init; }
+        
+        /// <summary>
+        /// Gets the list of all bond input streams.
+        /// </summary>
+        public IList<InputStream>? InputStreams { get; init; }
+        
+        /// <summary>
+        /// Gets the update / progress callback.
+        /// </summary>
+        public Action<ConverterUpdate>? OnUpdate { get; init; }
     }
-
-    /// <summary>
-    /// Runs ffmpeg with the given arguments.
-    /// </summary>
-    /// <param name="arguments">The ffmpeg arguments.</param>
-    /// <param name="inputStreams">The list of input streams.</param>
-    /// <param name="onUpdate">The status update event.</param>
-    /// <param name="cancellationToken">The cancellation token</param>
-    public async Task ConvertAsync(string arguments, IList<InputStream>? inputStreams = null, Action<ConverterUpdate>? onUpdate = null,
-        CancellationToken cancellationToken = default)
+    
+    private readonly struct Result
+    {
+        /// <summary>
+        /// Gets the FFmpeg exit code.
+        /// </summary>
+        public int ExitCode { get; init; }
+        
+        /// <summary>
+        /// Gets the metadata of the input files.
+        /// </summary>
+        public InputMetadata[] Inputs { get; init; }
+    }
+    
+    private async Task<Result> ExecuteAsync(StartInfo startInfo, CancellationToken cancellationToken = default)
     {
         var process = new Process();
         process.StartInfo = new ProcessStartInfo()
         {
             FileName = Binary,
-            Arguments = arguments,
+            Arguments = startInfo.Arguments,
             UseShellExecute = false,
             RedirectStandardError = true,
             RedirectStandardOutput = true
         };
         
         // Start the input streams
-        if (inputStreams is not null)
+        if (startInfo.InputStreams is not null)
         {
-            foreach (var inputStream in inputStreams)
+            foreach (var inputStream in startInfo.InputStreams)
             {
                 await inputStream.StartAsync();
             }
@@ -75,7 +86,7 @@ public class Engine
             if (lineRoot.StartsWith("frame="))
             {
                 // No need to check frame updates
-                if (onUpdate is null) continue;
+                if (startInfo.OnUpdate is null) continue;
 
                 var frameStart = 6;
                 
@@ -115,24 +126,25 @@ public class Engine
                     Percentage = percentage
                 };
 
-                onUpdate(update);
+                startInfo.OnUpdate(update);
             }
         }
         
         try
         {
             await process.WaitForExitAsync(cancellationToken);
-            if (process.ExitCode != 0)
+            return new Result()
             {
-                throw new IOException($"FFmpeg returned {process.ExitCode}!");
-            }
+                ExitCode = process.ExitCode,
+                Inputs = inputs.ToArray(),
+            };
         }
         finally
         {
             // Close the input streams.
-            if (inputStreams is not null)
+            if (startInfo.InputStreams is not null)
             {
-                foreach (var inputStream in inputStreams)
+                foreach (var inputStream in startInfo.InputStreams)
                 {
                     inputStream.Dispose();
                 }
@@ -140,42 +152,103 @@ public class Engine
         }
     }
     
+    #endregion Run
+    
+    #region Convert
+
+    /// <summary>
+    /// Runs ffmpeg with the given arguments.
+    /// </summary>
+    /// <param name="builderCallback">The argument builder callback.</param>
+    /// <param name="onUpdate">The status update event.</param>
+    /// <param name="cancellationToken">The cancellation token</param>
+    public async Task ConvertAsync(Action<CommandBuilder> builderCallback, Action<ConverterUpdate>? onUpdate = null,
+        CancellationToken cancellationToken = default)
+    {
+        var builder = new CommandBuilder();
+        builderCallback(builder);
+        await ConvertAsync(builder.Arguments, builder.InputStreams, onUpdate, cancellationToken);
+    }
+
+    /// <summary>
+    /// Runs ffmpeg with the given arguments.
+    /// </summary>
+    /// <param name="arguments">The ffmpeg arguments.</param>
+    /// <param name="inputStreams">The list of input streams.</param>
+    /// <param name="onUpdate">The status update event.</param>
+    /// <param name="cancellationToken">The cancellation token</param>
+    public async Task ConvertAsync(string arguments, IList<InputStream>? inputStreams = null, Action<ConverterUpdate>? onUpdate = null,
+        CancellationToken cancellationToken = default)
+    {
+        var startInfo = new StartInfo()
+        {
+            Arguments = arguments,
+            InputStreams = inputStreams,
+            OnUpdate = onUpdate,
+        };
+        var result = await ExecuteAsync(startInfo, cancellationToken);
+        if (result.ExitCode != 0)
+        {
+            throw new IOException($"FFmpeg returned {result.ExitCode}!");
+        }
+    }
+    
+    #endregion Convert
+    
     #region Probe
 
     /// <summary>
     /// Returns the metadata of the given file using ffmpeg.
     /// </summary>
     /// <param name="path">The input file.</param>
+    /// <param name="cancellationToken">The cancellation token</param>
     /// <returns></returns>
-    public async Task<InputMetadata> GetMetadataAsync(string path)
+    public async Task<InputMetadata> GetMetadataAsync(string path, CancellationToken cancellationToken = default)
     {
-        var arguments = $"-i \"{path}\"";
-        
-        var process = new Process();
-        process.StartInfo = new ProcessStartInfo()
+        var inputs = await GetMetadataAsync(builder =>
         {
-            FileName = Binary,
-            Arguments = arguments,
-            UseShellExecute = false,
-            RedirectStandardError = true,
-            RedirectStandardOutput = true
-        };
-        
-        process.Start();
-        await process.WaitForExitAsync();
+            builder.Input(path);
+        }, cancellationToken);
 
-        var intentReader = new IntentTextReader(process.StandardError, 2);
-        
-        // Read root block
-        await foreach (var lineRoot in intentReader.ReadBlockAsync())
+        if (inputs.Length != 1)
         {
-            if (lineRoot.StartsWith("Input #"))
-            {
-                return await ReadInputMedaDataAsync(intentReader);
-            }
+            throw new IOException($"FFmpeg returned wrong number of inputs! Should be one, but is {inputs.Length}.");
         }
         
-        throw new ArgumentException("No input stream found!");
+        return inputs[0];
+    }
+
+    /// <summary>
+    /// Returns the metadata of the given file using ffmpeg.
+    /// </summary>
+    /// <param name="builderCallback">The argument builder callback.</param>
+    /// <param name="cancellationToken">The cancellation token</param>
+    /// <returns></returns>
+    public async Task<InputMetadata[]> GetMetadataAsync(Action<CommandBuilder> builderCallback,
+        CancellationToken cancellationToken = default)
+    {
+        var builder = new CommandBuilder();
+        builderCallback(builder);
+        return await GetMetadataAsync(builder.Arguments, builder.InputStreams, cancellationToken);
+    }
+
+    /// <summary>
+    /// Returns the metadata of the given file using ffmpeg.
+    /// </summary>
+    /// <param name="arguments">The ffmpeg arguments.</param>
+    /// <param name="inputStreams">The list of input streams.</param>
+    /// <param name="cancellationToken">The cancellation token</param>
+    /// <returns></returns>
+    public async Task<InputMetadata[]> GetMetadataAsync(string arguments, IList<InputStream>? inputStreams = null,
+        CancellationToken cancellationToken = default)
+    {
+        var startInfo = new StartInfo()
+        {
+            Arguments = arguments,
+            InputStreams = inputStreams,
+        };
+        var result = await ExecuteAsync(startInfo, cancellationToken);
+        return result.Inputs;
     }
 
     /// <summary>
@@ -322,31 +395,42 @@ public class Engine
         
         var indexStreamId = line.IndexOf(':', indexInputId + 1);
         if (indexStreamId < 0) return stream;
-
+        
         stream.InputId = ulong.Parse(line.Substring(indexInputId + 1, indexStreamId - indexInputId - 1));
         
-        var indexLanguageStart = line.IndexOf('(', indexStreamId + 1);
         var indexType = line.IndexOf(':', indexStreamId + 1);
         if (indexType < 0) return stream;
+
+        var indexStreamIdEnd = indexType;
+        
+        // The transport stream pid: [0x0000]
+        var indexPidStart = line.IndexOf('[', indexStreamId + 1);
+        if (indexPidStart >= 0 && indexPidStart < indexType)
+        {
+            indexStreamIdEnd = indexPidStart;
+            
+            var indexPidEnd = line.IndexOf(']', indexPidStart + 1);
+            if (indexPidEnd < 0) return stream;
+            
+            var pidStr = line.Substring(indexPidStart + 3, indexPidEnd - indexPidStart - 3);
+            stream.Pid = (ushort)Convert.ToInt32(pidStr, 16);
+        }
         
         // Language is not always available
+        var indexLanguageStart = line.IndexOf('(', indexStreamId + 1);
         if (indexLanguageStart >= 0 && indexLanguageStart < indexType)
         {
-            var streamIdStr = line.Substring(indexStreamId + 1, indexLanguageStart - indexStreamId - 1);
-            if (ulong.TryParse(streamIdStr, out var streamId))
-                stream.Id = streamId;
+            indexStreamIdEnd = indexLanguageStart;
             
             var indexLanguageEnd = line.IndexOf(')', indexLanguageStart + 1);
             if (indexLanguageEnd < 0) return stream;
 
             stream.Language = line.Substring(indexLanguageStart + 1, indexLanguageEnd - indexLanguageStart - 1);
         }
-        else
-        {
-            var streamIdStr = line.Substring(indexStreamId + 1, indexType - indexStreamId - 1);
-            if (ulong.TryParse(streamIdStr, out var streamId))
-                stream.Id = streamId;
-        }
+        
+        var streamIdStr = line.Substring(indexStreamId + 1, indexStreamIdEnd - indexStreamId - 1);
+        if (ulong.TryParse(streamIdStr, out var streamId))
+            stream.Id = streamId;
 
         var indexFormat = line.IndexOf(':', indexType + 1);
         if (indexFormat < 0) return stream;

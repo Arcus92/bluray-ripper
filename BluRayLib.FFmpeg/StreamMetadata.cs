@@ -13,6 +13,11 @@ public class StreamMetadata
     public ulong InputId { get; set; }
     
     /// <summary>
+    /// Gets the pid from the transport stream.
+    /// </summary>
+    public ushort Pid { get; set; }
+
+    /// <summary>
     /// Gets the title.
     /// </summary>
     public string? Title { get; set; }

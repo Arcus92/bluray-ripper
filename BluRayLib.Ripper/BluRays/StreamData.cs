@@ -13,11 +13,6 @@ public abstract class StreamData
     public ushort Id { get; }
     
     /// <summary>
-    /// Gets the track index.
-    /// </summary>
-    public int Index { get; set; }
-    
-    /// <summary>
     /// Gets if this track is a secondary track.
     /// </summary>
     public bool IsSecondary { get; set; }

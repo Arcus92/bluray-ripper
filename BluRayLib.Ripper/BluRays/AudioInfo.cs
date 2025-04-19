@@ -11,5 +11,5 @@ public class AudioInfo : StreamData
     /// </summary>
     public string LanguageCode { get; set; } = "";
     
-    public override string ToString() => $"Audio #{Index} [0x{Id:x4}] - [{LanguageCode}] {(IsSecondary ?" (secondary)" : "")}";
+    public override string ToString() => $"Audio [0x{Id:x4}] - [{LanguageCode}] {(IsSecondary ?" (secondary)" : "")}";
 }
