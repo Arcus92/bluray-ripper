@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using BluRayLib.Ripper;
@@ -53,6 +51,14 @@ public interface IOutputService
     Task UpdateAsync(OutputModel output);
     
     /// <summary>
+    /// Renames the given output file.
+    /// </summary>
+    /// <param name="outputFile"></param>
+    /// <param name="nameMap"></param>
+    /// <returns></returns>
+    Task RenameAsync(OutputFile outputFile, TitleNameMap nameMap);
+    
+    /// <summary>
     /// Gets a file from the loaded output directory if found.
     /// </summary>
     /// <param name="diskName">The disk name.</param>
@@ -68,12 +74,5 @@ public interface IOutputService
     /// <param name="codecOptions">The codec options.</param>
     /// <param name="baseName">The initial base name.</param>
     /// <returns>Returns the output info instance.</returns>
-    OutputFile BuildOutputInfo(TitleData title, VideoFormat videoFormat, CodecOptions codecOptions, string baseName);
-
-    /// <summary>
-    /// Maps the output info to an export option object that can be used by the exporter class.
-    /// </summary>
-    /// <param name="outputFile">The output info.</param>
-    /// <returns>Returns the title export options that can be used by the exporter class.</returns>
-    TitleExportOptions BuildExportOptionsFormOutputInfo(OutputFile outputFile);
+    OutputFile BuildOutputFile(TitleData title, VideoFormat videoFormat, CodecOptions codecOptions, string baseName);
 }

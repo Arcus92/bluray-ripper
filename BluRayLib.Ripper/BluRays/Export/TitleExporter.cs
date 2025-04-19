@@ -125,7 +125,7 @@ public class TitleExporter
                 builder.Format(options.VideoFormat);
             
             // Overwrite external filenames
-            if (options.StreamFilenames is null || !options.StreamFilenames.TryGetValue(0, out var filename))
+            if (options.NameMap is null || !options.NameMap.TryGetValue(0, out var filename))
             {
                 filename = $"{options.Basename}{options.Extension}";
             }
@@ -161,7 +161,7 @@ public class TitleExporter
                     builder.OverwriteOutput();
 
                     // Overwrite external filenames
-                    if (options.StreamFilenames is null || !options.StreamFilenames.TryGetValue(stream.Id, out filename))
+                    if (options.NameMap is null || !options.NameMap.TryGetValue(stream.Id, out filename))
                     {
                         filename = $"{options.Basename}.{stream.LanguageCode}.{stream.Id}.sup";
                     }

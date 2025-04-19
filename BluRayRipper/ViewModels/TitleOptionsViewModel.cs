@@ -70,7 +70,7 @@ public class TitleOptionsViewModel : ViewModelBase
             return;
         
         var baseName = $"{_outputSelector.OutputFilename}_{title.Id}";
-        var outputInfo = _outputService.BuildOutputInfo(title, _videoFormat, DefaultCodecOptions, baseName);
+        var outputInfo = _outputService.BuildOutputFile(title, _videoFormat, DefaultCodecOptions, baseName);
 
         await _outputService.AddAsync(outputInfo);
     }

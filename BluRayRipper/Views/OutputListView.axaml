@@ -9,6 +9,7 @@
              x:DataType="vm:OutputListViewModel"
              Design.DataContext="{utils:DesignResolve {x:Type vm:OutputListViewModel}}">
     
-    <ItemsControl ItemsSource="{Binding Items}" />
-    
+    <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Items}" />
+    </ScrollViewer>
 </UserControl>

@@ -69,7 +69,7 @@ public class TitleExportOptions
     /// Gets and sets the external stream filenames. If set and <see cref="ExportSubtitlesAsSeparateFiles"/> is enabled,
     /// this can overwrite the default subtitle filenames. Set ID 0 to overwrite the main video file.
     /// </summary>
-    public Dictionary<ushort, string>? StreamFilenames { get; set; }
+    public TitleNameMap? NameMap { get; set; }
 
     /// <summary>
     /// Adds the given stream id to <see cref="IgnoredStreamIds"/>.

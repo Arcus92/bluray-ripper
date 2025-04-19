@@ -1,25 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using BluRayLib.Ripper;
+using BluRayLib.Ripper.BluRays;
+using BluRayLib.Ripper.BluRays.Export;
+using BluRayRipper.Models;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace BluRayRipper.Services;
 
-public class OutputQueueService : IOutputQueueService
+public class OutputQueueService(
+    ILogger<OutputQueueService> logger,
+    IDiskService diskService,
+    IOutputService outputService)
+    : IOutputQueueService
 {
-    private readonly ILogger<OutputQueueService> _logger;
-    private readonly IDiskService _diskService;
-    private readonly IOutputService _outputService;
-    
-    public OutputQueueService(ILogger<OutputQueueService> logger, IDiskService diskService, IOutputService outputService)
-    {
-        _logger = logger;
-        _diskService = diskService;
-        _outputService = outputService;
-    }
-
     /// <summary>
     /// The output queue.
     /// </summary>
@@ -38,10 +36,10 @@ public class OutputQueueService : IOutputQueueService
         
         // Build the initial progress map
         _queue.Clear();
-        foreach (var output in _outputService.Items)
+        foreach (var output in outputService.Items)
         {
             if (output.Status == OutputStatus.Completed) continue;
-            if (output.DiskName != _diskService.DiskName) continue;
+            if (output.DiskName != diskService.DiskName) continue;
             _queue.Add(output);
         }
         
@@ -49,14 +47,14 @@ public class OutputQueueService : IOutputQueueService
         _isRunning = true;
         await Task.Run(async () =>
         {
-            var exporter = _diskService.CreateTitleExporter();
+            var exporter = diskService.CreateTitleExporter();
 
             foreach (var output in _queue)
             {
                 try
                 {
-                    var options = _outputService.BuildExportOptionsFormOutputInfo(output.File);
-                    var outputPath = _outputService.OutputPath;
+                    var options = BuildExportOptionsFormOutputFile(output.File);
+                    var outputPath = outputService.OutputPath;
                     
                     output.Status = OutputStatus.Running;
                     await exporter.ExportAsync(outputPath, options,
@@ -66,7 +64,7 @@ public class OutputQueueService : IOutputQueueService
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Failed FFmpeg export for playlist {PlaylistId:00000}!", output.PlaylistId);
+                    logger.LogError(ex, "Failed FFmpeg export for playlist {PlaylistId:00000}!", output.PlaylistId);
                     output.Status = OutputStatus.Failed;
                 }
             }
@@ -79,5 +77,33 @@ public class OutputQueueService : IOutputQueueService
     public Task StopAsync()
     {
         throw new NotImplementedException();
+    }
+    
+    /// <inheritdoc />
+    public TitleExportOptions BuildExportOptionsFormOutputFile(OutputFile outputFile)
+    {
+        var title = diskService.GetTitle(outputFile.PlaylistId);
+        var format = VideoFormat.FromExtension(outputFile.Extension) ?? VideoFormat.Mkv;
+        var options = TitleExportOptions.From(title, outputFile.BaseName);
+        options.Extension = format.Extension;
+        options.VideoFormat = format.FFmpegFormat;
+        options.Codec = outputFile.Codec;
+        options.ExportSubtitlesAsSeparateFiles = !format.SupportPgs;
+        
+        options.NameMap = new TitleNameMap();
+        
+        // Change the main video filename
+        var filename = $"{options.Basename}{options.Extension}";
+        options.NameMap.Add(0, filename);
+        
+        // Change subtitle filenames
+        foreach (var stream in outputFile.SubtitleStreams)
+        {
+            if (stream.Extension is null) continue;
+            filename = $"{options.Basename}{stream.Extension}";
+            options.NameMap.Add(stream.Id, filename);
+        }
+        
+        return options;
     }
 }

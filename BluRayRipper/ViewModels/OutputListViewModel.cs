@@ -1,7 +1,4 @@
-using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
@@ -28,7 +25,7 @@ public class OutputListViewModel : ViewModelBase
 
     private OutputViewModel ModelToViewModel(OutputModel output)
     {
-        var viewModel = new OutputViewModel(output);
+        var viewModel = new OutputViewModel(_outputService, output);
         return viewModel;
     }
     

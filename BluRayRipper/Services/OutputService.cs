@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -94,6 +93,57 @@ public class OutputService(IDiskService diskService) : IOutputService
     
     #endregion List
     
+    #region Rename
+
+    /// <inheritdoc />
+    public async Task RenameAsync(OutputFile outputFile, TitleNameMap nameMap)
+    {
+        var oldBaseName = outputFile.BaseName;
+        var newBaseName = outputFile.BaseName;
+        
+        // Rename base file
+        if (nameMap.TryGetValue(0, out var fileName))
+        {
+            newBaseName = Path.GetFileNameWithoutExtension(fileName);
+            var oldPath = Path.Combine(OutputPath, $"{oldBaseName}{outputFile.Extension}");
+            var newPath = Path.Combine(OutputPath, $"{newBaseName}{outputFile.Extension}");
+            if (oldPath != newPath && File.Exists(oldPath))
+                File.Move(oldPath, newPath);
+
+            if (oldBaseName != newBaseName)
+            {
+                // Remove the old output file
+                await RemoveOutputInfoAsync(outputFile);
+            }
+        }
+        
+        // Move all the external streams.
+        foreach (var stream in outputFile.SubtitleStreams)
+        {
+            // No external file
+            if (stream.Extension is null) continue;
+                
+            var oldFilename = $"{oldBaseName}{stream.Extension}";
+            var newFilename = $"{newBaseName}{stream.Extension}";
+
+            if (nameMap.TryGetValue(stream.Id, out fileName))
+            {
+                newFilename = fileName;
+            }
+
+            var oldPath = Path.Combine(OutputPath, oldFilename);
+            var newPath = Path.Combine(OutputPath, newFilename);
+            if (oldPath != newPath && File.Exists(oldPath))
+                File.Move(oldPath, newPath);
+        }
+        
+        // Create a new one with the new base name
+        outputFile.BaseName = newBaseName;
+        await UpdateOutputInfoAsync(outputFile);
+    }
+    
+    #endregion Rename
+    
     /// <summary>
     /// Writes the given output info file to the output directory.
     /// </summary>
@@ -114,28 +164,9 @@ public class OutputService(IDiskService diskService) : IOutputService
         File.Delete(path);
         return Task.CompletedTask;
     }
-
-    /// <summary>
-    /// Renames the given output info to the new filename.
-    /// </summary>
-    /// <param name="outputFile">The output info file.</param>
-    /// <param name="newFilename">The new filename.</param>
-    private async Task RenameOutputInfoAsync(OutputFile outputFile, string newFilename)
-    {
-        var oldPath = Path.Combine(OutputPath, $"{outputFile.BaseName}.json");
-        var newPath = Path.Combine(OutputPath, $"{newFilename}.json");
-        
-        if (File.Exists(oldPath))
-            File.Move(oldPath, newPath);
-        
-        outputFile.BaseName = newPath;
-        await UpdateOutputInfoAsync(outputFile);
-    }
-    
-    #region Output
     
     /// <inheritdoc />
-    public OutputFile BuildOutputInfo(TitleData title, VideoFormat videoFormat, CodecOptions codecOptions, string baseName)
+    public OutputFile BuildOutputFile(TitleData title, VideoFormat videoFormat, CodecOptions codecOptions, string baseName)
     {
         if (title.Segments.Length == 0)
             throw new ArgumentException("Cannot create output for title without segments!", nameof(title));
@@ -178,34 +209,4 @@ public class OutputService(IDiskService diskService) : IOutputService
 
         return outputInfo;
     }
-    
-    /// <inheritdoc />
-    public TitleExportOptions BuildExportOptionsFormOutputInfo(OutputFile outputFile)
-    {
-        var title = diskService.GetTitle(outputFile.PlaylistId);
-        var format = VideoFormat.FromExtension(outputFile.Extension) ?? VideoFormat.Mkv;
-        var options = TitleExportOptions.From(title, outputFile.BaseName);
-        options.Extension = format.Extension;
-        options.VideoFormat = format.FFmpegFormat;
-        options.Codec = outputFile.Codec;
-        options.ExportSubtitlesAsSeparateFiles = !format.SupportPgs;
-        
-        options.StreamFilenames = new Dictionary<ushort, string>();
-        
-        // Change the main video filename
-        var filename = $"{options.Basename}{options.Extension}";
-        options.StreamFilenames.Add(0, filename);
-        
-        // Change subtitle filenames
-        foreach (var stream in outputFile.SubtitleStreams)
-        {
-            if (stream.Extension is null) continue;
-            filename = $"{options.Basename}{stream.Extension}";
-            options.StreamFilenames.Add(stream.Id, filename);
-        }
-        
-        return options;
-    }
-    
-    #endregion Output
 }
