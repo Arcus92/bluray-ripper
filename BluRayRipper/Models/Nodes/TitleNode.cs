@@ -10,17 +10,17 @@ public class TitleNode : BaseNode
     {
         Playlist = playlist;
 
-        var segmentNode = new TextNode("Segments")
+        SegmentNode = new TextNode<SegmentNode>("Segments")
         {
             IsExpanded = true,
             SubNodes = new ObservableCollection<BaseNode>(Playlist.Segments.Select(s => new SegmentNode(s) { IsChecked = true }))
         };
-        var chapterNode = new TextNode("Chapters")
+        ChapterNode = new TextNode<ChapterNode>("Chapters")
         {
             IsExpanded = true,
             SubNodes = new ObservableCollection<BaseNode>(Playlist.Chapters.Select(c => new ChapterNode(c) { IsChecked = true }))
         };
-        SubNodes = [ segmentNode, chapterNode ];
+        SubNodes = [ SegmentNode, ChapterNode ];
     }
 
     /// <summary>
@@ -39,9 +39,20 @@ public class TitleNode : BaseNode
     public string DisplayName => Playlist.ToString();
     
     /// <summary>
+    /// Gets the segment category node.
+    /// </summary>
+    public TextNode<SegmentNode> SegmentNode { get; }
+    
+    /// <summary>
+    /// Gets the chapter category node.
+    /// </summary>
+    public TextNode<ChapterNode> ChapterNode { get; }
+    
+    /// <summary>
     /// Gets the sub-nodes.
     /// </summary>
-    public ObservableCollection<BaseNode> SubNodes { get; }
+    public ObservableCollection<TextNode> SubNodes { get; }
+    
     
     /// <inheritdoc cref="IsIgnored"/>
     private bool _isIgnored;

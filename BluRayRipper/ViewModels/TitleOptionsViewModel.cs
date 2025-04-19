@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using BluRayLib.Ripper;
+using BluRayLib.Ripper.BluRays;
 using BluRayRipper.Models;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
@@ -66,18 +67,24 @@ public class TitleOptionsViewModel : ViewModelBase
     /// </summary>
     public async Task QueueSelectionAsync()
     {
-        if (!_titleTree.TryGetSelectedTitle(out var title))
+        if (!_titleTree.TryGetSelectedTitleNode(out var titleNode))
             return;
-        
+
+        var title = titleNode.Playlist;
         var baseName = $"{_outputSelector.OutputFilename}_{title.Id}";
         var outputInfo = _outputService.BuildOutputFile(title, _videoFormat, DefaultCodecOptions, baseName);
 
+        foreach (var streamNode in titleNode.SegmentNode.SubNodes)
+        {
+            
+        }
+        
         await _outputService.AddAsync(outputInfo);
     }
 
     public async Task DequeueSelectionAsync()
     {
-        if (!_titleTree.TryGetSelectedTitle(out var title))
+        if (!_titleTree.TryGetSelectedTitleNode(out var title))
             return;
         
         var output = _outputService.GetByPlaylist(_diskService.DiskName, title.Id);
@@ -88,13 +95,17 @@ public class TitleOptionsViewModel : ViewModelBase
 
     public async Task PlayPreviewAsync()
     {
-        if (!_titleTree.TryGetSelectedSegment(out var segment))
+        SegmentData segment;
+        if (_titleTree.TryGetSelectedSegmentNode(out var segmentNode))
         {
-            if (!_titleTree.TryGetSelectedTitle(out var title))
-                return;
-            
+            segment = segmentNode.Segment;
+        }
+        else if (_titleTree.TryGetSelectedTitleNode(out var titleNode))
+        {
+            var title = titleNode.Playlist;
             segment = title.Segments.First();
         }
+        else return;
 
         // Pipe-ing the decrypted segment stream into your player. You won't be able to seek properly.
         // You can skip a few seconds ahead, but not backwards. Changing audio or subtitle tracks will force you to 

@@ -23,7 +23,8 @@ public class OutputViewModel : ViewModelBase
         
         Output = output;
         Output.PropertyChanged += OutputOnPropertyChanged;
-        BaseName = Output.BaseName;
+        
+        _baseName = Output.BaseName;
     }
 
     /// <inheritdoc cref="OutputModel.BaseName"/>

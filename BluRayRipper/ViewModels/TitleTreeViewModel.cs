@@ -32,11 +32,11 @@ public class TitleTreeViewModel : ViewModelBase
         set => SetProperty(ref _selectedNode, value);
     }
 
-    public bool TryGetSelectedTitle([MaybeNullWhen(false)] out TitleData title)
+    public bool TryGetSelectedTitleNode([MaybeNullWhen(false)] out TitleNode title)
     {
         if (_selectedNode is TitleNode node)
         {
-            title = node.Playlist;
+            title = node;
             return true;
         }
 
@@ -44,11 +44,11 @@ public class TitleTreeViewModel : ViewModelBase
         return false;
     }
     
-    public bool TryGetSelectedSegment([MaybeNullWhen(false)] out SegmentData segment)
+    public bool TryGetSelectedSegmentNode([MaybeNullWhen(false)] out SegmentNode segment)
     {
         if (_selectedNode is SegmentNode node)
         {
-            segment = node.Segment;
+            segment = node;
             return true;
         }
 

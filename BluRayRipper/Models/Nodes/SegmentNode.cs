@@ -10,22 +10,22 @@ public class SegmentNode : BaseNode
     {
         Segment = segment;
         
-        var videoStreamNode = new TextNode("Videos")
+        VideoStreamNode = new TextNode<VideoNode>("Videos")
         {
             IsExpanded = true,
             SubNodes = new ObservableCollection<BaseNode>(Segment.VideoStreams.Select(s => new VideoNode(s) { IsChecked = true }))
         };
-        var audioStreamNode = new TextNode("Audios")
+        AudioStreamNode = new TextNode<AudioNode>("Audios")
         {
             IsExpanded = true,
             SubNodes = new ObservableCollection<BaseNode>(Segment.AudioStreams.Select(s => new AudioNode(s) { IsChecked = true }))
         };
-        var subtitleStreamNode = new TextNode("Subtitles")
+        SubtitleStreamNode = new TextNode<SubtitleNode>("Subtitles")
         {
             IsExpanded = true,
             SubNodes = new ObservableCollection<BaseNode>(Segment.SubtitleStreams.Select(s => new SubtitleNode(s) { IsChecked = true }))
         };
-        SubNodes = [ videoStreamNode, audioStreamNode, subtitleStreamNode ];
+        SubNodes = [ VideoStreamNode, AudioStreamNode, SubtitleStreamNode ];
     }
     
     /// <summary>
@@ -42,6 +42,21 @@ public class SegmentNode : BaseNode
     /// Gets the display name.
     /// </summary>
     public string DisplayName => Segment.ToString();
+    
+    /// <summary>
+    /// Gets the video stream sub node.
+    /// </summary>
+    public TextNode<VideoNode> VideoStreamNode { get; }
+    
+    /// <summary>
+    /// Gets the audio stream sub node.
+    /// </summary>
+    public TextNode<AudioNode> AudioStreamNode { get; }
+    
+    /// <summary>
+    /// Gets the subtitle stream sub node.
+    /// </summary>
+    public TextNode<SubtitleNode> SubtitleStreamNode { get; }
     
     /// <summary>
     /// Gets the sub-nodes.
