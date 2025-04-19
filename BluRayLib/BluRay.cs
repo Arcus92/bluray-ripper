@@ -99,6 +99,17 @@ public class BluRay
         return File.OpenRead(path);
     }
     
+    /// <summary>
+    /// Returns the file info for the M2TS file.
+    /// </summary>
+    /// <param name="clipId"></param>
+    /// <returns></returns>
+    public FileInfo GetM2TsFileInfo(ushort clipId)
+    {
+        var path = Path.Combine(DiskPath, "BDMV/STREAM", $"{clipId:00000}.m2ts");
+        return new FileInfo(path);
+    }
+    
     #endregion Streams
     
     #region Clip

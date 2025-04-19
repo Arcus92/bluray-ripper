@@ -21,11 +21,23 @@ public class InputStream : IDisposable
     /// The name of the pipe.
     /// </summary>
     public string PipeName { get; }
+
+    private long? _fixedPosition;
+    
+    /// <summary>
+    /// Gets the current file position.
+    /// </summary>
+    public long Position => _fixedPosition ?? _stream?.Position ?? 0;
     
     /// <summary>
     /// The callback to create the stream.
     /// </summary>
     private readonly Func<Stream> _streamFunc;
+    
+    /// <summary>
+    /// The current stream.
+    /// </summary>
+    private Stream? _stream;
 
     /// <summary>
     /// The current task.
@@ -74,8 +86,10 @@ public class InputStream : IDisposable
             // Opens the underlying stream once a client connects.
             await _pipe.WaitForConnectionAsync();
             await using var stream = _streamFunc();
+            _stream = stream;
             await stream.CopyToAsync(_pipe);
             await _pipe.DisposeAsync();
+            _fixedPosition = stream.Position;
         });
 
         await semaphore.WaitAsync();

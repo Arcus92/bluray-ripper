@@ -21,7 +21,7 @@ public class DiskService : IDiskService
     {
         _logger = logger;
         
-        // Use MakeMkv as decryption handler. I might add native AACS with key-config file later.
+        // Use MakeMkv as a decryption handler. I might add native AACS with a key-config file later.
         MakeMkv.RegisterAsDecryptionHandler();
         MakeMkv.RegisterLibraryImportResolver();
     }
@@ -104,7 +104,7 @@ public class DiskService : IDiskService
     public TitleExporter CreateTitleExporter()
     {
         if (_bluRay is null) throw new ArgumentException("BluRay is not loaded!");
-        return new TitleExporter(_bluRay);
+        return new TitleExporter(_logger, _bluRay);
     }
     
     /// <inheritdoc />

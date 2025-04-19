@@ -1,4 +1,5 @@
 using BluRayLib.FFmpeg;
+using Microsoft.Extensions.Logging;
 
 namespace BluRayLib.Ripper.BluRays.Export;
 
@@ -7,10 +8,12 @@ namespace BluRayLib.Ripper.BluRays.Export;
 /// </summary>
 public class TitleExporter
 {
+    private readonly ILogger _logger;
     private readonly BluRay _bluRay;
 
-    public TitleExporter(BluRay bluRay)
+    public TitleExporter(ILogger logger, BluRay bluRay)
     {
+        _logger = logger;
         _bluRay = bluRay;
     }
 
@@ -29,14 +32,24 @@ public class TitleExporter
     public async Task ExportAsync(string outputPath, TitleExportOptions options, Action<ConverterUpdate>? onUpdate = null,
         CancellationToken cancellationToken = default)
     {
+        if (options.Title.Segments.Length == 0)
+        {
+            _logger.LogError("Cannot export playlist {PlaylistId:00000} with no segments.", options.Title.Id);
+            return;
+        }
+        var firstSegment = options.Title.Segments.First();
+        
+        
         var ffmpeg = new Engine();
-
-        // Before converting, we need to fetch the internal FFmpeg stream index. We cannot use the PIDs for that and 
+        
+        _logger.LogInformation("Collecting metadata from segment {SegmentId:00000} for playlist {PlaylistId:00000}", 
+            firstSegment.Id, options.Title.Id);
+        
+        // Before converting, we need to fetch the internal FFmpeg stream index. We cannot use the PIDs for that, and 
         // the order of stream may differ ot hidden streams change the order.
         var metadata = await ffmpeg.GetMetadataAsync(builder =>
         {
-            var firstSegment = options.Title.Segments.First();
-            var inputStream = builder.CreateInputStream(() => _bluRay.GetM2TsStream(firstSegment.Id));
+            var inputStream = builder.CreateInputStream(() => OpenSegmentStream(firstSegment.Id));
             builder.Input(inputStream);
         }, cancellationToken);
 
@@ -51,6 +64,38 @@ public class TitleExporter
             }
         }
         
+        // Collecting total input filesize. The FFmpeg time code doesn't work for progress tracking.
+        // It will only show the time code for the last stream in our output. This is almost always a subtitle. To be
+        // exact, a forced subtitle that is only used a few times in the video.
+        // To have a better progress status, we'll track the file position of the virtual input streams.
+        long totalInputSize = 0;
+        var inputStreams = new List<InputStream>();
+        foreach (var segment in options.Title.Segments)
+        {
+            var fileInfo = _bluRay.GetM2TsFileInfo(segment.Id);
+            totalInputSize += fileInfo.Length;
+        }
+        
+        // Build a better update event to calculate the percentage value by consumed bytes.
+        Action<ConverterUpdate>? newOnUpdate = null;
+        if (onUpdate is not null)
+        {
+            newOnUpdate = update =>
+            {
+                long position = 0;
+                foreach (var inputStream in inputStreams)
+                {
+                    position += inputStream.Position;
+                }
+
+                update.Percentage = position / (double)totalInputSize;
+                onUpdate(update);
+            };
+        }
+        
+        _logger.LogInformation("Starting export of playlist {PlaylistId:00000} to {OutputPath} as {Basename}", 
+            options.Title.Id, outputPath, options.Basename); 
+        
         // Convert the file
         var renameMap = new Dictionary<string, string>();
         await ffmpeg.ConvertAsync(builder =>
@@ -60,8 +105,9 @@ public class TitleExporter
             var concatWriter = new StreamWriter(concatStream);
             foreach (var segment in options.Title.Segments)
             {
-                var inputStream = builder.CreateInputStream(() => _bluRay.GetM2TsStream(segment.Id));
+                var inputStream = builder.CreateInputStream(() => OpenSegmentStream(segment.Id));
                 concatWriter.WriteLine($"file '{inputStream.GetPath()}'");
+                inputStreams.Add(inputStream);
             }
             concatWriter.Flush();
             concatStream.Position = 0;
@@ -107,7 +153,6 @@ public class TitleExporter
             
             // Map the output streams
             var outputStreamCount = 0;
-            var firstSegment = options.Title.Segments.First();
             foreach (var stream in firstSegment.VideoStreams)
             {
                 if (options.IgnoredStreamIds?.Contains(stream.Id) ?? false) continue;
@@ -200,7 +245,7 @@ public class TitleExporter
                     builder.Output(path);
                 }
             }
-        }, onUpdate, cancellationToken);
+        }, newOnUpdate, cancellationToken);
 
         // Rename working files
         foreach (var (filename, workingFilename) in renameMap)
@@ -208,6 +253,28 @@ public class TitleExporter
             var path = Path.Combine(outputPath, filename);
             var workingPath = Path.Combine(outputPath, workingFilename);
             File.Move(workingPath, path);
+        }
+        
+        _logger.LogInformation("Playlist {PlaylistId:00000} was exported to {OutputPath}", 
+            options.Title.Id, outputPath); 
+    }
+
+    /// <summary>
+    /// Handles the opening of a segment.
+    /// </summary>
+    /// <param name="clipId">The segment id.</param>
+    /// <returns></returns>
+    private Stream OpenSegmentStream(ushort clipId)
+    {
+        try
+        {
+            _logger.LogInformation("Opening segment {SegmentId:00000}.m2ts", clipId);
+            return _bluRay.GetM2TsStream(clipId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception while opening segment {SegmentId:00000}.m2ts!", clipId);
+            throw;
         }
     }
 }
