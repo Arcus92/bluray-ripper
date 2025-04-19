@@ -134,6 +134,27 @@ public class TitleOptionsViewModel : ViewModelBase
         
         await process.WaitForExitAsync();
     }
+
+    public async Task SaveSegmentAsync()
+    {
+        SegmentData segment;
+        if (_titleTree.TryGetSelectedSegmentNode(out var segmentNode))
+        {
+            segment = segmentNode.Segment;
+        }
+        else if (_titleTree.TryGetSelectedTitleNode(out var titleNode))
+        {
+            var title = titleNode.Playlist;
+            segment = title.Segments.First();
+        }
+        else return;
+        
+        var path = Path.Combine(_outputSelector.OutputPath, $"{_outputSelector.OutputFilename}_{segment.Id:00000}.m2ts");
+        
+        await using var stream = _diskService.GetSegmentStream(segment.Id);
+        await using var output = File.Create(path);
+        await stream.CopyToAsync(output);
+    }
     
     #endregion Export
     

@@ -23,6 +23,7 @@
             <Button Command="{Binding QueueSelectionAsync}" Content="{DynamicResource QueueSelection}" />
             <Button Command="{Binding DequeueSelectionAsync}" Content="{DynamicResource DequeueSelection}" />
             <Button Command="{Binding PlayPreviewAsync}" Content="{DynamicResource Play}" />
+            <Button Command="{Binding SaveSegmentAsync}" Content="{DynamicResource SaveRawSegment}" />
         </StackPanel>
     </Border>
     
