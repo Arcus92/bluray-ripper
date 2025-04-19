@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using BluRayLib.Ripper;
 using BluRayLib.Ripper.BluRays;
+using BluRayLib.Ripper.Output;
 using BluRayRipper.Models;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
@@ -71,13 +72,7 @@ public class TitleOptionsViewModel : ViewModelBase
             return;
 
         var title = titleNode.Playlist;
-        var baseName = $"{_outputSelector.OutputFilename}_{title.Id}";
-        var outputInfo = _outputService.BuildOutputFile(title, _videoFormat, DefaultCodecOptions, baseName);
-
-        foreach (var streamNode in titleNode.SegmentNode.SubNodes)
-        {
-            
-        }
+        var outputInfo = title.ToOutputInfo(DefaultCodecOptions, _videoFormat, _diskService.DiskName);
         
         await _outputService.AddAsync(outputInfo);
     }
@@ -87,7 +82,7 @@ public class TitleOptionsViewModel : ViewModelBase
         if (!_titleTree.TryGetSelectedTitleNode(out var title))
             return;
         
-        var output = _outputService.GetByPlaylist(_diskService.DiskName, title.Id);
+        var output = _outputService.GetBySource(OutputSourceType.BluRay, _diskService.DiskName, title.Id);
         if (output is null) return;
         if (output.Status == OutputStatus.Completed) return; // Do not remove completed outputs!
         await _outputService.RemoveAsync(output);

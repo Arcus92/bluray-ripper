@@ -1,9 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using BluRayLib.Ripper;
-using BluRayLib.Ripper.BluRays;
 using BluRayLib.Ripper.BluRays.Export;
-using BluRayRipper.Models;
+using BluRayLib.Ripper.Output;
 using BluRayRipper.Models.Output;
 
 namespace BluRayRipper.Services.Interfaces;
@@ -30,13 +28,13 @@ public interface IOutputService
     /// <summary>
     /// Gets the list of loaded output files.
     /// </summary>
-    ObservableCollection<OutputModel> Items { get; }
+    ObservableCollection<OutputModel> Outputs { get; }
 
     /// <summary>
     /// Creates a new output file to the list.
     /// </summary>
-    /// <param name="outputFile"></param>
-    Task<OutputModel> AddAsync(OutputFile outputFile);
+    /// <param name="info"></param>
+    Task<OutputModel> AddAsync(OutputInfo info);
 
     /// <summary>
     /// Removes the given file from the list.
@@ -53,26 +51,24 @@ public interface IOutputService
     /// <summary>
     /// Renames the given output file.
     /// </summary>
-    /// <param name="outputFile"></param>
+    /// <param name="outputInfo"></param>
     /// <param name="nameMap"></param>
     /// <returns></returns>
-    Task RenameAsync(OutputFile outputFile, TitleNameMap nameMap);
+    Task RenameAsync(OutputInfo outputInfo, TitleNameMap nameMap);
     
     /// <summary>
     /// Gets a file from the loaded output directory if found.
     /// </summary>
+    /// <param name="type">The source type.</param>
     /// <param name="diskName">The disk name.</param>
     /// <param name="playlistId">The playlist id.</param>
     /// <returns>Returns the output info if found.</returns>
-    OutputModel? GetByPlaylist(string diskName, ushort playlistId);
+    OutputModel? GetBySource(OutputSourceType type, string diskName, ushort playlistId);
     
     /// <summary>
-    /// Creates an output info definition from the given title and output options.
+    /// Gets a file from the loaded output directory if found.
     /// </summary>
-    /// <param name="title">The title / playlist to export.</param>
-    /// <param name="videoFormat">The video format.</param>
-    /// <param name="codecOptions">The codec options.</param>
-    /// <param name="baseName">The initial base name.</param>
-    /// <returns>Returns the output info instance.</returns>
-    OutputFile BuildOutputFile(TitleData title, VideoFormat videoFormat, CodecOptions codecOptions, string baseName);
+    /// <param name="source">The output source to look for.</param>
+    /// <returns>Returns the output info if found.</returns>
+    OutputModel? GetBySource(OutputSource source) => GetBySource(source.Type, source.DiskName, source.PlaylistId);
 }

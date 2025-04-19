@@ -1,6 +1,4 @@
-using System;
-
-namespace BluRayRipper.Models;
+namespace BluRayLib.Ripper;
 
 public class VideoFormat
 {
@@ -21,7 +19,7 @@ public class VideoFormat
     public string FFmpegFormat { get; }
     
     /// <summary>
-    /// Gets if this format support PGS subtitles.
+    /// Gets if this format supports PGS subtitles.
     /// </summary>
     public bool SupportPgs { get; init; }
 

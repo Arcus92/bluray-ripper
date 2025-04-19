@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BluRayRipper.ViewModels"
              xmlns:utils="clr-namespace:BluRayRipper.Utils"
-             xmlns:m="clr-namespace:BluRayRipper.Models"
+             xmlns:ripper="clr-namespace:BluRayLib.Ripper;assembly=BluRayLib.Ripper"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BluRayRipper.Views.TitleOptionsView"
              x:DataType="vm:TitleOptionsViewModel"
@@ -14,7 +14,7 @@
         <StackPanel Orientation="Horizontal" Spacing="10">
             <ComboBox ItemsSource="{Binding AllOutputFormats}" SelectedValue="{Binding VideoFormat}">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate DataType="m:VideoFormat">
+                    <DataTemplate DataType="ripper:VideoFormat">
                         <TextBlock Text="{Binding Extension}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>

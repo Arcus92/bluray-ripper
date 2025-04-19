@@ -1,11 +1,8 @@
-using System.Collections.Generic;
-using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 
-namespace BluRayRipper.Models.Output;
+namespace BluRayLib.Ripper.Output;
 
-public static class OutputFileSerializer
+public static class OutputInfoSerializer
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
@@ -17,7 +14,7 @@ public static class OutputFileSerializer
     /// </summary>
     /// <param name="path">The path to the output info file.</param>
     /// <param name="output">The output info file to write.</param>
-    public static async Task SerializeAsync(string path, OutputFile output)
+    public static async Task SerializeAsync(string path, OutputInfo output)
     {
         await using var stream = File.Create(path);
         await JsonSerializer.SerializeAsync(stream, output, SerializerOptions);
@@ -28,10 +25,10 @@ public static class OutputFileSerializer
     /// </summary>
     /// <param name="path">The path to the output info file.</param>
     /// <returns>Returns the output info file if valid.</returns>
-    public static async Task<OutputFile?> DeserializeAsync(string path)
+    public static async Task<OutputInfo?> DeserializeAsync(string path)
     {
         await using var stream = File.OpenRead(path);
-        return await JsonSerializer.DeserializeAsync<OutputFile>(stream, SerializerOptions);
+        return await JsonSerializer.DeserializeAsync<OutputInfo>(stream, SerializerOptions);
     }
 
     /// <summary>
@@ -39,7 +36,7 @@ public static class OutputFileSerializer
     /// </summary>
     /// <param name="path">The path.</param>
     /// <returns>Returns a list of all output info files.</returns>
-    public static async IAsyncEnumerable<OutputFile> DeserializeFromDirectoryAsync(string path)
+    public static async IAsyncEnumerable<OutputInfo> DeserializeFromDirectoryAsync(string path)
     {
         foreach (var file in Directory.EnumerateFiles(path, "*.json"))
         {

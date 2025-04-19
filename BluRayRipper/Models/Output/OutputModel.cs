@@ -1,3 +1,5 @@
+using System.Linq;
+using BluRayLib.Ripper.Output;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BluRayRipper.Models.Output;
@@ -7,24 +9,21 @@ public class OutputModel : ObservableObject
     /// <summary>
     /// Gets the output file data.
     /// </summary>
-    public OutputFile File { get; }
+    public OutputInfo Info { get; }
 
-    public OutputModel(OutputFile file)
+    public OutputModel(OutputInfo info)
     {
-        File = file;
+        Info = info;
+        Files = info.Files.Select(f => new OutputFileModel(f)).ToArray();
     }
-    
-    /// <inheritdoc cref="OutputFile.PlaylistId"/>
-    public ushort PlaylistId => File.PlaylistId;
-    
-    /// <inheritdoc cref="OutputFile.DiskName"/>
-    public string DiskName => File.DiskName;
-    
-    /// <inheritdoc cref="OutputFile.BaseName"/>
-    public string BaseName => File.BaseName;
-    
-    /// <inheritdoc cref="OutputFile.Extension"/>
-    public string Extension => File.Extension;
+
+    /// <summary>
+    /// Gets the file models.
+    /// </summary>
+    public OutputFileModel[] Files { get; }
+
+    /// <inheritdoc cref="OutputInfo.Name"/>
+    public string Name => Info.Name;
     
     /// <inheritdoc cref="Status"/>
     private OutputStatus _status;
@@ -49,6 +48,4 @@ public class OutputModel : ObservableObject
         get => _progress;
         set => SetProperty(ref _progress, value);
     }
-    
-    
 }

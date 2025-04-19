@@ -46,8 +46,6 @@ public class DiskService : IDiskService
             await _bluRay.LoadAsync();
             IsLoaded = true;
             
-            DiskName = Path.GetFileName(path);
-            
             _logger.LogInformation("Disk loaded: {DiskPath}", path);
             Loaded?.Invoke(this, EventArgs.Empty);
         }
@@ -75,7 +73,7 @@ public class DiskService : IDiskService
     public string DiskPath => _bluRay?.DiskPath ?? string.Empty;
     
     /// <inheritdoc />
-    public string DiskName { get; private set; } = "";
+    public string DiskName => _bluRay?.DiskName ?? string.Empty;
 
     /// <inheritdoc />
     public bool IsLoaded { get; private set; }

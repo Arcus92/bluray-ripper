@@ -1,4 +1,5 @@
 using BluRayLib.FFmpeg;
+using BluRayLib.Ripper.Output;
 using Microsoft.Extensions.Logging;
 
 namespace BluRayLib.Ripper.BluRays.Export;
@@ -26,24 +27,35 @@ public class TitleExporter
     /// Exports the playlist as a video file using FFmpeg.
     /// </summary>
     /// <param name="outputPath">The output path.</param>
-    /// <param name="options">The title export options.</param>
+    /// <param name="output">The output definition.</param>
     /// <param name="onUpdate">The status update event.</param>
     /// <param name="cancellationToken">The cancellation token</param>
-    public async Task ExportAsync(string outputPath, TitleExportOptions options, Action<ConverterUpdate>? onUpdate = null,
+    public async Task ExportAsync(string outputPath, OutputInfo output, Action<ConverterUpdate>? onUpdate = null,
         CancellationToken cancellationToken = default)
     {
-        if (options.Title.Segments.Length == 0)
+        if (output.Source.Type != OutputSourceType.BluRay)
         {
-            _logger.LogError("Cannot export playlist {PlaylistId:00000} with no segments.", options.Title.Id);
-            return;
+            throw new ArgumentException("Output source is not from BluRay!", nameof(output));
         }
-        var firstSegment = options.Title.Segments.First();
+        if (output.Source.DiskName != _bluRay.DiskName)
+        {
+            throw new ArgumentException("Output source disk name mismatch!", nameof(output));
+        }
+        if (output.Source.Segments.Length == 0)
+        {
+            throw new ArgumentException("Output source has no segments!", nameof(output));
+        }
+        if (!_bluRay.Playlists.TryGetValue(output.Source.PlaylistId, out var playlist))
+        {
+            throw new ArgumentException("Couldn't load playlist from disk!", nameof(output));
+        }
+        var firstSegment = output.Source.Segments[0];
         
         
         var ffmpeg = new Engine();
         
         _logger.LogInformation("Collecting metadata from segment {SegmentId:00000} for playlist {PlaylistId:00000}", 
-            firstSegment.Id, options.Title.Id);
+            firstSegment.Id, output.Source.PlaylistId);
         
         // Before converting, we need to fetch the internal FFmpeg stream index. We cannot use the PIDs for that, and 
         // the order of stream may differ ot hidden streams change the order.
@@ -70,7 +82,7 @@ public class TitleExporter
         // To have a better progress status, we'll track the file position of the virtual input streams.
         long totalInputSize = 0;
         var inputStreams = new List<InputStream>();
-        foreach (var segment in options.Title.Segments)
+        foreach (var segment in output.Source.Segments)
         {
             var fileInfo = _bluRay.GetM2TsFileInfo(segment.Id);
             totalInputSize += fileInfo.Length;
@@ -94,7 +106,7 @@ public class TitleExporter
         }
         
         _logger.LogInformation("Starting export of playlist {PlaylistId:00000} to {OutputPath} as {Basename}", 
-            options.Title.Id, outputPath, options.Basename); 
+            output.Source.PlaylistId, outputPath, output.Name); 
         
         // Convert the file
         var renameMap = new Dictionary<string, string>();
@@ -103,7 +115,7 @@ public class TitleExporter
             // Builds the concat text file in memory
             var concatStream = new MemoryStream();
             var concatWriter = new StreamWriter(concatStream);
-            foreach (var segment in options.Title.Segments)
+            foreach (var segment in output.Source.Segments)
             {
                 var inputStream = builder.CreateInputStream(() => OpenSegmentStream(segment.Id));
                 concatWriter.WriteLine($"file '{inputStream.GetPath()}'");
@@ -116,12 +128,12 @@ public class TitleExporter
             builder.Safe(0);
             var input = builder.Input(concatStream);
             
-            if (options.ExportChapters)
+            if (output.ExportChapters)
             {
                 // Builds the chapter file in memory
                 var chapterStream = new MemoryStream();
                 var chapterWriter = new StreamWriter(chapterStream);
-                foreach (var chapter in options.Title.Chapters)
+                foreach (var chapter in output.Chapters)
                 {
                     var start = (ulong)(chapter.Start.TotalSeconds * 1000);
                     var end = (ulong)(chapter.End.TotalSeconds * 1000);
@@ -142,109 +154,50 @@ public class TitleExporter
                 builder.MapChapters(inputChapter);
             }
 
-            // Define codec
-            builder.Codec(StreamType.Video, options.Codec.VideoCodec);
-            builder.Codec(StreamType.Audio, options.Codec.AudioCodec);
-            builder.Codec(StreamType.Subtitle, options.Codec.SubtitleCodec);
+            // FFmpeg supports multiple outputs. We can export the subtitle files in a single run as well.
+            // We just need to create a new mapping and then define a new output.
+            foreach (var file in output.Files)
+            {
+                // Define codec
+                builder.Codec(StreamType.Video, output.Codec.VideoCodec);
+                builder.Codec(StreamType.Audio, output.Codec.AudioCodec);
+                builder.Codec(StreamType.Subtitle, output.Codec.SubtitleCodec);
             
-            if (options.Codec.ConstantRateFactor.HasValue) builder.ConstantRateFactor(options.Codec.ConstantRateFactor.Value);
-            if (options.Codec.MaxRate.HasValue) builder.MaxRate(options.Codec.MaxRate.Value);
-            if (options.Codec.BufferSize.HasValue) builder.BufferSize(options.Codec.BufferSize.Value);
-            
-            // Map the output streams
-            var outputStreamCount = 0;
-            foreach (var stream in firstSegment.VideoStreams)
-            {
-                if (options.IgnoredStreamIds?.Contains(stream.Id) ?? false) continue;
-                builder.Map(input, pidToIndex[stream.Id]);
-                outputStreamCount++;
-            }
-            foreach (var stream in firstSegment.AudioStreams)
-            {
-                if (options.IgnoredStreamIds?.Contains(stream.Id) ?? false) continue;
-                builder.Map(input, pidToIndex[stream.Id]);
-                if (!string.IsNullOrEmpty(stream.LanguageCode))
-                    builder.Metadata(outputStreamCount, "language", stream.LanguageCode);
-                if (options.DefaultAudioStreamId == stream.Id)
-                    builder.Disposition(outputStreamCount, "default");
-
-                outputStreamCount++;
-            }
-            if (!options.ExportSubtitlesAsSeparateFiles) // Only included if not exported as separate files...
-            {
-                foreach (var stream in firstSegment.SubtitleStreams)
+                if (output.Codec.ConstantRateFactor.HasValue) builder.ConstantRateFactor(output.Codec.ConstantRateFactor.Value);
+                if (output.Codec.MaxRate.HasValue) builder.MaxRate(output.Codec.MaxRate.Value);
+                if (output.Codec.BufferSize.HasValue) builder.BufferSize(output.Codec.BufferSize.Value);
+                
+                // Map the output streams
+                var outputStreamCount = 0;
+                foreach (var stream in file.Streams)
                 {
-                    if (options.IgnoredStreamIds?.Contains(stream.Id) ?? false) continue;
+                    if (!stream.Enabled) continue;
                     builder.Map(input, pidToIndex[stream.Id]);
                     if (!string.IsNullOrEmpty(stream.LanguageCode))
                         builder.Metadata(outputStreamCount, "language", stream.LanguageCode);
-                    if (options.DefaultSubtitleStreamId == stream.Id)
+                    if (stream.Default)
                         builder.Disposition(outputStreamCount, "default");
-                    
                     outputStreamCount++;
                 }
-            }
-            
-            // Video output
-            builder.OverwriteOutput();
-            if (options.VideoFormat is not null)
-                builder.Format(options.VideoFormat);
-            
-            // Overwrite external filenames
-            if (options.NameMap is null || !options.NameMap.TryGetValue(0, out var filename))
-            {
-                filename = $"{options.Basename}{options.Extension}";
-            }
+                
+                // Video output
+                builder.OverwriteOutput();
+                builder.Format(file.Format);
 
-            // Add working file extension 
-            if (WorkingFileExtension is not null)
-            {
-                var newFilename = $"{filename}{WorkingFileExtension}";
-                renameMap.Add(filename, newFilename);
-                filename = newFilename;
-            }
-
-            var path = Path.Combine(outputPath, filename);
-            builder.Output(path);
-            
-            
-            // FFmpeg supports multiple outputs. We can export the subtitle files in a single run as well.
-            // We just need to create a new mapping and then define a new output.
-            if (options.ExportSubtitlesAsSeparateFiles)
-            {
-                // Export subtitle files
-                foreach (var stream in firstSegment.SubtitleStreams)
+                var filename = file.Filename;
+                
+                // Add working file extension 
+                if (WorkingFileExtension is not null)
                 {
-                    if (options.IgnoredStreamIds?.Contains(stream.Id) ?? false) continue;
-                    
-                    builder.Map(input, pidToIndex[stream.Id]);
-                    builder.Metadata(0, "language", stream.LanguageCode);
-                    // Single exports don't need a default flag.
-                    
-                    builder.Codec(StreamType.Subtitle, options.Codec.SubtitleCodec);
-
-                    // Subtitle output
-                    builder.OverwriteOutput();
-
-                    // Overwrite external filenames
-                    if (options.NameMap is null || !options.NameMap.TryGetValue(stream.Id, out filename))
-                    {
-                        filename = $"{options.Basename}.{stream.LanguageCode}.{stream.Id}.sup";
-                    }
-                    
-                    // Add working file extension 
-                    if (WorkingFileExtension is not null)
-                    {
-                        var newFilename = $"{filename}{WorkingFileExtension}";
-                        renameMap.Add(filename, newFilename);
-                        filename = newFilename;
-                    }
-                    
-                    path = Path.Combine(outputPath, filename);
-                    builder.Format("sup");
-                    builder.Output(path);
+                    var newFilename = $"{filename}{WorkingFileExtension}";
+                    renameMap.Add(filename, newFilename);
+                    filename = newFilename;
                 }
+                
+                var path = Path.Combine(outputPath, filename);
+                builder.Output(path);
             }
+
         }, newOnUpdate, cancellationToken);
 
         // Rename working files
@@ -256,7 +209,7 @@ public class TitleExporter
         }
         
         _logger.LogInformation("Playlist {PlaylistId:00000} was exported to {OutputPath}", 
-            options.Title.Id, outputPath); 
+            output.Source.PlaylistId, outputPath); 
     }
 
     /// <summary>

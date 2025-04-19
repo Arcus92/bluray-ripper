@@ -1,12 +1,9 @@
-using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BluRayLib.Ripper;
-using BluRayLib.Ripper.BluRays;
 using BluRayLib.Ripper.BluRays.Export;
-using BluRayRipper.Models;
+using BluRayLib.Ripper.Output;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
 
@@ -30,64 +27,80 @@ public class OutputService(IDiskService diskService) : IOutputService
     #region List
 
     /// <inheritdoc />
-    public ObservableCollection<OutputModel> Items { get; } = [];
+    public ObservableCollection<OutputModel> Outputs { get; } = [];
     
     /// <inheritdoc />
-    public async Task<OutputModel> AddAsync(OutputFile outputFile)
+    public async Task<OutputModel> AddAsync(OutputInfo info)
     {
         // Prevent an item to be added twice.
-        var model = GetByPlaylist(outputFile.DiskName, outputFile.PlaylistId);
+        var model = GetBySource(info.Source.Type, info.Source.DiskName, info.Source.PlaylistId);
         if (model is not null) return model;
 
-        model = new OutputModel(outputFile);
-        Items.Add(model);
-        await UpdateOutputInfoAsync(outputFile);
+        model = new OutputModel(info);
+        Outputs.Add(model);
+        await UpdateOutputInfoAsync(info);
         return model;
     }
 
     /// <inheritdoc />
     public async Task RemoveAsync(OutputModel output)
     {
-        await RemoveOutputInfoAsync(output.File);
-        Items.Remove(output);
+        await RemoveOutputInfoAsync(output.Info);
+        Outputs.Remove(output);
     }
 
     /// <inheritdoc />
     public async Task UpdateAsync(OutputModel output)
     {
-        await UpdateOutputInfoAsync(output.File);
+        await UpdateOutputInfoAsync(output.Info);
     }
 
     /// <inheritdoc />
-    public OutputModel? GetByPlaylist(string diskName, ushort playlistId)
+    public OutputModel? GetBySource(OutputSourceType type, string diskName, ushort playlistId)
     {
-        return Items.FirstOrDefault(f => f.DiskName == diskName && f.PlaylistId == playlistId);
+        return Outputs.FirstOrDefault(f =>
+            f.Info.Source.Type == type && f.Info.Source.DiskName == diskName &&
+            f.Info.Source.PlaylistId == playlistId);
     }
 
     /// <inheritdoc />
     public async Task RefreshAsync()
     {
-        Items.Clear();
-        await foreach (var file in OutputFileSerializer.DeserializeFromDirectoryAsync(OutputPath))
+        Outputs.Clear();
+        await foreach (var info in OutputInfoSerializer.DeserializeFromDirectoryAsync(OutputPath))
         {
-            var model = new OutputModel(file);
+            var model = new OutputModel(info);
             
             // Check the initial status
-            var path = Path.Combine(OutputPath, $"{model.BaseName}{model.Extension}");
-            if (File.Exists(path))
+            var hasAllFiles = true;
+            foreach (var file in model.Files)
+            {
+                var path = Path.Combine(OutputPath, file.Filename);
+                var fileInfo = new FileInfo(path);
+                if (fileInfo.Exists)
+                {
+                    file.Size = fileInfo.Length;
+                }
+                else
+                {
+                    hasAllFiles = false;
+                }
+            }
+            
+            if (hasAllFiles)
             {
                 model.Status = OutputStatus.Completed;
             }
             else
             {
                 // Queued output file, but from a different disk.
-                if (diskService.DiskName != model.DiskName)
+                if (diskService.DiskName != info.Source.DiskName)
                 {
                     model.Status = OutputStatus.QueuedMismatchDisk;
                 }
             }
             
-            Items.Add(model);
+            Outputs.Add(model);
         }
     }
     
@@ -96,50 +109,9 @@ public class OutputService(IDiskService diskService) : IOutputService
     #region Rename
 
     /// <inheritdoc />
-    public async Task RenameAsync(OutputFile outputFile, TitleNameMap nameMap)
+    public async Task RenameAsync(OutputInfo outputInfo, TitleNameMap nameMap)
     {
-        var oldBaseName = outputFile.BaseName;
-        var newBaseName = outputFile.BaseName;
-        
-        // Rename base file
-        if (nameMap.TryGetValue(0, out var fileName))
-        {
-            newBaseName = Path.GetFileNameWithoutExtension(fileName);
-            var oldPath = Path.Combine(OutputPath, $"{oldBaseName}{outputFile.Extension}");
-            var newPath = Path.Combine(OutputPath, $"{newBaseName}{outputFile.Extension}");
-            if (oldPath != newPath && File.Exists(oldPath))
-                File.Move(oldPath, newPath);
-
-            if (oldBaseName != newBaseName)
-            {
-                // Remove the old output file
-                await RemoveOutputInfoAsync(outputFile);
-            }
-        }
-        
-        // Move all the external streams.
-        foreach (var stream in outputFile.SubtitleStreams)
-        {
-            // No external file
-            if (stream.Extension is null) continue;
-                
-            var oldFilename = $"{oldBaseName}{stream.Extension}";
-            var newFilename = $"{newBaseName}{stream.Extension}";
-
-            if (nameMap.TryGetValue(stream.Id, out fileName))
-            {
-                newFilename = fileName;
-            }
-
-            var oldPath = Path.Combine(OutputPath, oldFilename);
-            var newPath = Path.Combine(OutputPath, newFilename);
-            if (oldPath != newPath && File.Exists(oldPath))
-                File.Move(oldPath, newPath);
-        }
-        
-        // Create a new one with the new base name
-        outputFile.BaseName = newBaseName;
-        await UpdateOutputInfoAsync(outputFile);
+        // TODO
     }
     
     #endregion Rename
@@ -147,66 +119,21 @@ public class OutputService(IDiskService diskService) : IOutputService
     /// <summary>
     /// Writes the given output info file to the output directory.
     /// </summary>
-    /// <param name="outputFile">The output info file.</param>
-    private async Task UpdateOutputInfoAsync(OutputFile outputFile)
+    /// <param name="outputInfo">The output info file.</param>
+    private async Task UpdateOutputInfoAsync(OutputInfo outputInfo)
     {
-        var path = Path.Combine(OutputPath, $"{outputFile.BaseName}.json");
-        await OutputFileSerializer.SerializeAsync(path, outputFile);
+        var path = Path.Combine(OutputPath, $"{outputInfo.Name}.json");
+        await OutputInfoSerializer.SerializeAsync(path, outputInfo);
     }
     
     /// <summary>
     /// Removes the given output info file from the output directory.
     /// </summary>
-    /// <param name="outputFile">The output info file.</param>
-    private Task RemoveOutputInfoAsync(OutputFile outputFile)
+    /// <param name="outputInfo">The output info file.</param>
+    private Task RemoveOutputInfoAsync(OutputInfo outputInfo)
     {
-        var path = Path.Combine(OutputPath, $"{outputFile.BaseName}.json");
+        var path = Path.Combine(OutputPath, $"{outputInfo.Name}.json");
         File.Delete(path);
         return Task.CompletedTask;
-    }
-    
-    /// <inheritdoc />
-    public OutputFile BuildOutputFile(TitleData title, VideoFormat videoFormat, CodecOptions codecOptions, string baseName)
-    {
-        if (title.Segments.Length == 0)
-            throw new ArgumentException("Cannot create output for title without segments!", nameof(title));
-        
-        var segment = title.Segments[0];
-        var exportSubtitlesAsSeparateFiles = !videoFormat.SupportPgs;
-        var outputInfo = new OutputFile()
-        {
-            PlaylistId = title.Id,
-            BaseName = baseName,
-            Extension = videoFormat.Extension,
-            Source = OutputSource.BluRay,
-            DiskName = diskService.DiskName,
-            Codec = codecOptions,
-            SegmentIds = title.Segments.Select(s => s.Id).ToArray(),
-            VideoStreams = segment.VideoStreams.Select(s => new OutputFileStream()
-            {
-                Id = s.Id,
-            }).ToArray(),
-            AudioStreams = segment.AudioStreams.Select(s => new OutputFileStream()
-            {
-                Id = s.Id,
-                LanguageCode = s.LanguageCode,
-            }).ToArray(),
-            SubtitleStreams = segment.SubtitleStreams.Select(s => new OutputFileStream()
-            {
-                Id = s.Id,
-                LanguageCode = s.LanguageCode,
-                Extension = exportSubtitlesAsSeparateFiles ? $".{s.LanguageCode}.{s.Id}.sup" : null,
-            }).ToArray()
-        };
-
-        // Select the default streams
-        if (outputInfo.VideoStreams.Length > 0)
-            outputInfo.VideoStreams[0].Default = true;
-        if (outputInfo.AudioStreams.Length > 0)
-            outputInfo.AudioStreams[0].Default = true;
-        if (outputInfo.SubtitleStreams.Length > 0)
-            outputInfo.SubtitleStreams[0].Default = true;
-
-        return outputInfo;
     }
 }

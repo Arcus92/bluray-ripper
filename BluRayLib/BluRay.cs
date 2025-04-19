@@ -11,9 +11,16 @@ public class BluRay
     /// </summary>
     public string DiskPath { get; }
 
+    /// <summary>
+    /// Gets the BluRay disk name.
+    /// </summary>
+    public string DiskName { get; }
+    
     public BluRay(string diskPath)
     {
+        diskPath = Path.GetFullPath(diskPath).TrimEnd('/', '\\'); // Sanitize
         DiskPath = diskPath;
+        DiskName = Path.GetFileName(diskPath);
     }
     
     #region Info

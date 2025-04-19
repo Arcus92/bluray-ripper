@@ -21,7 +21,8 @@
             </StackPanel>
         </Expander.Header>
         <StackPanel Orientation="Vertical" Spacing="10">
-            <TextBox Text="{Binding BaseName}"></TextBox>
+            <ItemsControl ItemsSource="{Binding Files}" />
+            
             <Button Command="{Binding RenameAsync}">Rename</Button>
         </StackPanel>
     </Expander>

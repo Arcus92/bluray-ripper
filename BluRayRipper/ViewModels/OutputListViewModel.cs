@@ -15,7 +15,7 @@ public class OutputListViewModel : ViewModelBase
     {
         _outputService = outputService;
 
-        _outputService.Items.MapAndObserve(Items, ModelToViewModel);
+        _outputService.Outputs.MapAndObserve(Items, ModelToViewModel);
     }
     
     /// <summary>

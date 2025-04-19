@@ -1,7 +1,8 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using BluRayLib.Ripper.BluRays.Export;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.Views;
@@ -15,33 +16,34 @@ public class OutputViewModel : ViewModelBase
     /// <summary>
     /// Gets the title output instance.
     /// </summary>
-    public OutputModel Output { get; }
+    public OutputModel Model { get; }
     
-    public OutputViewModel(IOutputService outputService, OutputModel output)
+    public OutputViewModel(IOutputService outputService, OutputModel model)
     {
         _outputService = outputService;
         
-        Output = output;
-        Output.PropertyChanged += OutputOnPropertyChanged;
+        Model = model;
+        Model.PropertyChanged += ModelOnPropertyChanged;
         
-        _baseName = Output.BaseName;
+        // Build externals
+        Files = new ObservableCollection<OutputFileViewModel>(model.Files.Select(f => new OutputFileViewModel(f)));
     }
 
-    /// <inheritdoc cref="OutputModel.BaseName"/>
-    public string Name => Output.BaseName;
+    /// <inheritdoc cref="OutputModel.Name"/>
+    public string Name => Model.Name;
     
     /// <inheritdoc cref="OutputModel.Progress"/>
-    public double Progress => Output.Progress;
+    public double Progress => Model.Progress;
     
     /// <inheritdoc cref="OutputModel.Status"/>
-    public OutputStatus Status => Output.Status;
+    public OutputStatus Status => Model.Status;
     
     /// <summary>
     /// Gets if the progress bar is visible.
     /// </summary>
-    public bool IsProgressBarVisible => Output.Status == OutputStatus.Running;
+    public bool IsProgressBarVisible => Model.Status == OutputStatus.Running;
 
-    private void OutputOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void ModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {
@@ -57,26 +59,17 @@ public class OutputViewModel : ViewModelBase
 
     #region Rename
 
-    private string _baseName;
-
-    public string BaseName
-    {
-        get => _baseName;
-        set => SetProperty(ref _baseName, value);
-    }
-    
     /// <summary>
-    /// Applies the <see cref="BaseName"/> 
+    /// Gets a collection of all external streams.
+    /// </summary>
+    public ObservableCollection<OutputFileViewModel> Files { get; }
+
+    /// <summary>
+    /// Renames all files.
     /// </summary>
     public async Task RenameAsync()
     {
-        if (BaseName == Output.BaseName) return;
-        if (Status != OutputStatus.Completed) return;
-
-        var nameMap = new TitleNameMap();
-        nameMap.Add(0, $"{BaseName}{Output.Extension}");
-        
-        await _outputService.RenameAsync(Output.File, nameMap);
+        // TODO
     }
     
     #endregion Rename
