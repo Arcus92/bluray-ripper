@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using BluRayLib.Ripper;
 using BluRayLib.Ripper.BluRays;
 using BluRayLib.Ripper.BluRays.Export;
 
@@ -17,6 +18,11 @@ public interface IDiskService
     /// Gets the currently loaded disk name.
     /// </summary>
     string DiskName { get; }
+    
+    /// <summary>
+    /// Gets the disk info.
+    /// </summary>
+    DiskInfo Info { get; }
     
     /// <summary>
     /// Opens the disk at the given path.

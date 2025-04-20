@@ -1,18 +1,14 @@
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace BluRayLib.Ripper.Output;
 
 /// <summary>
 /// Defines the type of <see cref="OutputStream"/>.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter<OutputStreamType>))]
 public enum OutputStreamType
 {
-    [EnumMember(Value = "video")]
     Video,
-        
-    [EnumMember(Value = "audio")]
     Audio,
-        
-    [EnumMember(Value = "subtitle")]
     Subtitle,
 }

@@ -1,6 +1,7 @@
 ﻿using BluRayLib.Clip;
 using BluRayLib.Movie;
 using BluRayLib.Mpls;
+using BluRayLib.Utils;
 
 namespace BluRayLib;
 
@@ -29,6 +30,11 @@ public class BluRay
     /// Gets if the BluRay is encrypted.
     /// </summary>
     public bool IsEncrypted { get; private set; }
+    
+    /// <summary>
+    /// Gets the content hash of the disc. This content hash is compatible with TheDiscDb.
+    /// </summary>
+    public string ContentHash { get; private set; } = "";
 
     /// <summary>
     /// Gets the loaded movie object.
@@ -44,7 +50,7 @@ public class BluRay
     /// Gets all loaded clips.
     /// </summary>
     public Dictionary<ushort, ClipInfo> Clips { get; } = new();
-
+    
     /// <summary>
     /// Loads the BluRay disks content and populates the <see cref="Playlists"/> and <see cref="Clips"/> lists.
     /// </summary>
@@ -72,16 +78,32 @@ public class BluRay
                 Clips.Add(id, item);
             }
             
+            var fileInfos = new List<ContentHash.HashFileInfo>();
+            
             // Load the playlist from the directory
             path = Path.Combine(DiskPath, "BDMV/PLAYLIST/");
             foreach (var file in Directory.EnumerateFiles(path, "*.mpls"))
             {
                 var name = Path.GetFileNameWithoutExtension(file);
                 if (!ushort.TryParse(name, out var id)) continue;
+                
+                // Collect infos for the content hash calculation
+                var fileInfo = new FileInfo(file);
+                fileInfos.Add(new ContentHash.HashFileInfo()
+                {
+                    Name = name,
+                    CreationTime = fileInfo.CreationTime,
+                    Size = fileInfo.Length,
+                });
+                
+                // Read the playlist file
                 var item = new Playlist();
                 item.Read(file);
                 Playlists.Add(id, item);
             }
+            
+            // Order the playlist files before calculating the hash.
+            ContentHash = fileInfos.OrderBy(i => i.Name).CalculateHash();
         });
     }
     

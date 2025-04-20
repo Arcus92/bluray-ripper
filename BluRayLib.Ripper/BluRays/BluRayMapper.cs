@@ -10,14 +10,14 @@ public static class BluRayMapper
     /// <param name="title">The BluRay title.</param>
     /// <param name="codec">The codec options.</param>
     /// <param name="format">The video format.</param>
-    /// <param name="diskName">The disk name.</param>
+    /// <param name="diskInfo">The disk info.</param>
     /// <returns></returns>
-    public static OutputInfo ToOutputInfo(this TitleData title, CodecOptions codec, VideoFormat format, string diskName)
+    public static OutputInfo ToOutputInfo(this TitleData title, CodecOptions codec, VideoFormat format, DiskInfo diskInfo)
     {
         if (title.Segments.Length == 0)
             throw new ArgumentException("Cannot create output for title without segments!", nameof(title));
 
-        var baseName = $"{diskName}_{title.Id}";
+        var baseName = $"{diskInfo.DiskName}_{title.Id}";
         var segment = title.Segments[0];
         var exportSubtitlesAsSeparateFiles = !format.SupportPgs;
         
@@ -25,7 +25,8 @@ public static class BluRayMapper
         var source = new OutputSource()
         {
             Type = OutputSourceType.BluRay,
-            DiskName = diskName,
+            DiskName = diskInfo.DiskName,
+            ContentHash = diskInfo.ContentHash,
             PlaylistId = title.Id,
             Segments = title.Segments.Select(s => new OutputSegment()
             {

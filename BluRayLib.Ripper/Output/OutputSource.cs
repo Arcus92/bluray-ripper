@@ -20,6 +20,12 @@ public class OutputSource
     public string DiskName { get; set; } = "";
     
     /// <summary>
+    /// Gets and sets the content hash of the source.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string ContentHash { get; set; } = "";
+    
+    /// <summary>
     /// Gets and sets the playlist id from which this output file was generated.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

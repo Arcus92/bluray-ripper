@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using BluRayLib;
 using BluRayLib.Decrypt;
+using BluRayLib.Ripper;
 using BluRayLib.Ripper.BluRays;
 using BluRayLib.Ripper.BluRays.Export;
 using BluRayRipper.Services.Interfaces;
@@ -75,6 +76,13 @@ public class DiskService : IDiskService
     /// <inheritdoc />
     public string DiskName => _bluRay?.DiskName ?? string.Empty;
 
+    /// <inheritdoc />
+    public DiskInfo Info => new()
+    {
+        DiskName = _bluRay?.DiskName ?? string.Empty,
+        ContentHash = _bluRay?.ContentHash ?? string.Empty,
+    };
+    
     /// <inheritdoc />
     public bool IsLoaded { get; private set; }
     

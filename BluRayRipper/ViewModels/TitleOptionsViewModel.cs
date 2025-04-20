@@ -6,7 +6,6 @@ using Avalonia.Controls;
 using BluRayLib.Ripper;
 using BluRayLib.Ripper.BluRays;
 using BluRayLib.Ripper.Output;
-using BluRayRipper.Models;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.Views;
@@ -72,7 +71,7 @@ public class TitleOptionsViewModel : ViewModelBase
             return;
 
         var title = titleNode.Playlist;
-        var outputInfo = title.ToOutputInfo(DefaultCodecOptions, _videoFormat, _diskService.DiskName);
+        var outputInfo = title.ToOutputInfo(DefaultCodecOptions, _videoFormat, _diskService.Info);
         
         await _outputService.AddAsync(outputInfo);
     }

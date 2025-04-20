@@ -1,6 +1,6 @@
 namespace BluRayLib.Ripper;
 
-public class VideoFormat
+public readonly struct VideoFormat
 {
     public VideoFormat(string extension, string fFmpegFormat)
     {

@@ -1,18 +1,14 @@
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace BluRayLib.Ripper.Output;
 
 /// <summary>
 /// Defines the source of an <see cref="OutputInfo"/>.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter<OutputSourceType>))]
 public enum OutputSourceType
 {
-    [EnumMember(Value = "bluray")]
     BluRay,
-    
-    [EnumMember(Value = "dvd")]
     Dvd,
-    
-    [EnumMember(Value = "file")]
     File,
 }
