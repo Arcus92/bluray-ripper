@@ -16,4 +16,12 @@
     <system:String x:Key="AudioStreams">Audio streams</system:String>
     <system:String x:Key="SubtitleStreams">Subtitle streams</system:String>
     
+    <system:String x:Key="MediaTypeUnset">-/-</system:String>
+    <system:String x:Key="MediaTypeMovie">Movie</system:String>
+    <system:String x:Key="MediaTypeEpisode">Episode</system:String>
+    <system:String x:Key="MediaTypeExtra">Extra</system:String>
+    <system:String x:Key="MediaTypeMakingOf">Making of</system:String>
+    <system:String x:Key="MediaTypeBehindTheScenes">Behind the scenes</system:String>
+    <system:String x:Key="MediaTypeInterview">Interview</system:String>
+    <system:String x:Key="MediaTypeTrailer">Trailer</system:String>
 </ResourceDictionary>

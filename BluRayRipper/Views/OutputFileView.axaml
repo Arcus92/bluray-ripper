@@ -11,12 +11,12 @@
         <TextBlock>
             <TextBlock.Text>
                 <MultiBinding StringFormat="{}{0} ({1})">
-                    <Binding Path="Filename"/>
-                    <Binding Path="Size"/>
+                    <Binding Path="Model.Filename"/>
+                    <Binding Path="Model.Size"/>
                 </MultiBinding>
             </TextBlock.Text>
         </TextBlock>
-        <TextBox Text="{Binding Filename}"/>
+        <TextBox Text="{Binding Model.Filename}"/>
     </StackPanel>
     
 </UserControl>

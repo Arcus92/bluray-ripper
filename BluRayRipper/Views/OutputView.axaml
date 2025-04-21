@@ -13,17 +13,27 @@
         <Expander.Header>
             <StackPanel Orientation="Vertical" Spacing="10">
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                    <TextBlock Text="{Binding Progress, StringFormat='{}{0:P0}'}" IsVisible="{Binding IsProgressBarVisible}" />
-                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Text="{Binding Model.Progress, StringFormat='{}{0:P0}'}" IsVisible="{Binding IsProgressBarVisible}" />
+                    <TextBlock Text="{Binding Model.Name}" />
                 </StackPanel>
             
-                <ProgressBar Value="{Binding Progress}" Maximum="1.0" IsVisible="{Binding IsProgressBarVisible}" />
+                <ProgressBar Value="{Binding Model.Progress}" Maximum="1.0" IsVisible="{Binding IsProgressBarVisible}" />
             </StackPanel>
         </Expander.Header>
         <StackPanel Orientation="Vertical" Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <ComboBox ItemsSource="{Binding AllMediaTypes}" SelectedValue="{Binding MediaType}"/>
+                
+                <TextBlock Text="Season:" VerticalAlignment="Center"/>
+                <NumericUpDown Width="110" Minimum="1" Maximum="1000" Value="{Binding Season}" FormatString="N0" ParsingNumberStyle="Integer"/>
+                
+                <TextBlock Text="Episode:" VerticalAlignment="Center"/>
+                <NumericUpDown Width="110" Minimum="1" Maximum="1000" Value="{Binding Episode}" FormatString="N0" ParsingNumberStyle="Integer"/>
+            </StackPanel>
+            
             <ItemsControl ItemsSource="{Binding Files}" />
             
-            <Button Command="{Binding RenameAsync}">Rename</Button>
+            <Button Command="{Binding ApplyAsync}" CommandParameter="{Binding Model}">Apply</Button>
         </StackPanel>
     </Expander>
 </UserControl>

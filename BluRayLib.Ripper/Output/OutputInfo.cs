@@ -17,6 +17,11 @@ public class OutputInfo
     public string Name { get; set; } = "";
     
     /// <summary>
+    /// Gets and sets the media info.
+    /// </summary>
+    public OutputMediaInfo MediaInfo { get; set; } = new();
+
+    /// <summary>
     /// Gets and sets the duration.
     /// </summary>
     public TimeSpan Duration { get; set; }
