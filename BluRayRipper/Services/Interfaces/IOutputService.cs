@@ -71,4 +71,10 @@ public interface IOutputService
     /// <param name="source">The output source to look for.</param>
     /// <returns>Returns the output info if found.</returns>
     OutputModel? GetBySource(OutputSource source) => GetBySource(source.Type, source.DiskName, source.PlaylistId);
+
+    /// <summary>
+    /// Updates the status of an output, by checking the existing files in the output directory.
+    /// </summary>
+    /// <param name="model">The model to check and update.</param>
+    void UpdateStatus(OutputModel model);
 }

@@ -70,37 +70,42 @@ public class OutputService(IDiskService diskService) : IOutputService
         await foreach (var info in OutputInfoSerializer.DeserializeFromDirectoryAsync(OutputPath))
         {
             var model = new OutputModel(info);
-            
-            // Check the initial status
-            var hasAllFiles = true;
-            foreach (var file in model.Files)
+            UpdateStatus(model);
+            Outputs.Add(model);
+        }
+    }
+
+    /// <inheritdoc />
+    public void UpdateStatus(OutputModel model)
+    {
+        // Check the initial status
+        var hasAllFiles = true;
+        foreach (var file in model.Files)
+        {
+            var path = Path.Combine(OutputPath, file.Filename);
+            var fileInfo = new FileInfo(path);
+            if (fileInfo.Exists)
             {
-                var path = Path.Combine(OutputPath, file.Filename);
-                var fileInfo = new FileInfo(path);
-                if (fileInfo.Exists)
-                {
-                    file.Size = fileInfo.Length;
-                }
-                else
-                {
-                    hasAllFiles = false;
-                }
-            }
-            
-            if (hasAllFiles)
-            {
-                model.Status = OutputStatus.Completed;
+                file.Size = fileInfo.Length;
             }
             else
             {
-                // Queued output file, but from a different disk.
-                if (diskService.DiskName != info.Source.DiskName)
-                {
-                    model.Status = OutputStatus.QueuedMismatchDisk;
-                }
+                file.Size = 0;
+                hasAllFiles = false;
             }
+        }
             
-            Outputs.Add(model);
+        if (hasAllFiles)
+        {
+            model.Status = OutputStatus.Completed;
+        }
+        else
+        {
+            // Queued output file, but from a different disk.
+            if (diskService.DiskName != model.Info.Source.DiskName)
+            {
+                model.Status = OutputStatus.QueuedMismatchDisk;
+            }
         }
     }
     

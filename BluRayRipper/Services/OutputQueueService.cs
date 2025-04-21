@@ -60,7 +60,9 @@ public class OutputQueueService(
                     await exporter.ExportAsync(outputPath, model.Info,
                         onUpdate: update => { model.Progress = update.Percentage ?? 0.0; });
                     model.Progress = 1.0;
-                    model.Status = OutputStatus.Completed;
+                    
+                    // Updates the status
+                    outputService.UpdateStatus(model);
                 }
                 catch (Exception ex)
                 {

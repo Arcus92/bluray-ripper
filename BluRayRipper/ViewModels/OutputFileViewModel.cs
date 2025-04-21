@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Avalonia.Controls;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Views;
@@ -11,8 +12,22 @@ public class OutputFileViewModel : ViewModelBase
     public OutputFileViewModel(OutputFileModel model)
     {
         _model = model;
+        _model.PropertyChanged += OnModelPropertyChanged;
     }
-    
+
+    private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(OutputFileModel.Filename):
+                OnPropertyChanged(nameof(Filename));
+                break;
+            case nameof(OutputFileModel.Size):
+                OnPropertyChanged(nameof(Size));
+                break;
+        }
+    }
+
     /// <inheritdoc cref="OutputFileModel.Filename"/>
     public string Filename => _model.Filename;
     
