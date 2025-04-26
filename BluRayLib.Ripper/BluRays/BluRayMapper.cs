@@ -111,7 +111,10 @@ public static class BluRayMapper
         return new OutputInfo()
         {
             Source = source,
-            Name = baseName,
+            MediaInfo = new OutputMediaInfo()
+            {
+                Name = baseName,
+            },
             Duration = title.Duration,
             Codec = codec,
             Files = files.ToArray(),

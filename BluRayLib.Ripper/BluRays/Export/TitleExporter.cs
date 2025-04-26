@@ -106,7 +106,7 @@ public class TitleExporter
         }
         
         _logger.LogInformation("Starting export of playlist {PlaylistId:00000} to {OutputPath} as {Basename}", 
-            output.Source.PlaylistId, outputPath, output.Name); 
+            output.Source.PlaylistId, outputPath, output.MediaInfo.Name); 
         
         // Convert the file
         var renameMap = new Dictionary<string, string>();

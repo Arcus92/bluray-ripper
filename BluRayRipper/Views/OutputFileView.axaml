@@ -8,15 +8,10 @@
              x:DataType="vm:OutputFileViewModel">
     
     <StackPanel Orientation="Vertical" Margin="5" Spacing="10">
-        <TextBlock>
-            <TextBlock.Text>
-                <MultiBinding StringFormat="{}{0} ({1})">
-                    <Binding Path="Model.Filename"/>
-                    <Binding Path="Model.Size"/>
-                </MultiBinding>
-            </TextBlock.Text>
-        </TextBlock>
-        <TextBox Text="{Binding Model.Filename}"/>
+        <TextBlock Text="{Binding DisplayName}" />
+
+        <TextBox Text="{Binding Model.Name}"/>
+        
     </StackPanel>
     
 </UserControl>

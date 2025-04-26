@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using Avalonia.Controls;
 using BluRayLib.Ripper;
-using BluRayLib.Ripper.BluRays;
 using BluRayRipper.Models.Nodes;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.Views;

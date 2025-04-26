@@ -11,16 +11,25 @@
     
     <Expander VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="5">
         <Expander.Header>
-            <StackPanel Orientation="Vertical" Spacing="10">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <TextBlock Text="{Binding Model.Progress, StringFormat='{}{0:P0}'}" IsVisible="{Binding IsProgressBarVisible}" />
-                    <TextBlock Text="{Binding Model.Name}" />
-                </StackPanel>
-            
-                <ProgressBar Value="{Binding Model.Progress}" Maximum="1.0" IsVisible="{Binding IsProgressBarVisible}" />
-            </StackPanel>
+            <DockPanel>
+                
+                <ProgressBar Value="{Binding Model.Progress}" 
+                             Maximum="1.0" 
+                             IsVisible="{Binding IsProgressBarVisible}" 
+                             Margin="0,5,0,0"
+                             DockPanel.Dock="Bottom" />
+                <TextBlock Text="{Binding Model.Progress, StringFormat='{}{0:P0}'}" 
+                           IsVisible="{Binding IsProgressBarVisible}" 
+                           VerticalAlignment="Center" 
+                           TextAlignment="Center"
+                           Width="60"
+                           DockPanel.Dock="Right" />
+                <TextBlock Text="{Binding Model.Basename}" />
+            </DockPanel>
         </Expander.Header>
         <StackPanel Orientation="Vertical" Spacing="10">
+            <TextBox Text="{Binding Name}" />
+            
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <ComboBox ItemsSource="{Binding AllMediaTypes}" SelectedValue="{Binding MediaType}"/>
                 

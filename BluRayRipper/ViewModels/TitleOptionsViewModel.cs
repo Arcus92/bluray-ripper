@@ -143,7 +143,7 @@ public class TitleOptionsViewModel : ViewModelBase
         }
         else return;
         
-        var path = Path.Combine(_outputSelector.OutputPath, $"{_outputSelector.OutputFilename}_{segment.Id:00000}.m2ts");
+        var path = Path.Combine(_outputSelector.OutputPath, $"{_diskService.DiskName}_{segment.Id:00000}.m2ts");
         
         await using var stream = _diskService.GetSegmentStream(segment.Id);
         await using var output = File.Create(path);

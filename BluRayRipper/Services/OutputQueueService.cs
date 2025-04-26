@@ -1,12 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using BluRayLib.Ripper;
-using BluRayLib.Ripper.BluRays;
-using BluRayLib.Ripper.BluRays.Export;
-using BluRayLib.Ripper.Output;
-using BluRayRipper.Models;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
 using Microsoft.Extensions.Logging;

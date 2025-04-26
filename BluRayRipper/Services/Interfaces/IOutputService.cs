@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using BluRayLib.Ripper.BluRays.Export;
 using BluRayLib.Ripper.Output;
 using BluRayRipper.Models.Output;
 
@@ -39,22 +38,14 @@ public interface IOutputService
     /// <summary>
     /// Removes the given file from the list.
     /// </summary>
-    /// <param name="output">The output info.</param>
-    Task RemoveAsync(OutputModel output);
+    /// <param name="model">The output info.</param>
+    Task RemoveAsync(OutputModel model);
 
     /// <summary>
     /// Updates the output file and writes the json to disk.
     /// </summary>
-    /// <param name="output">The output info.</param>
-    Task UpdateAsync(OutputModel output);
-    
-    /// <summary>
-    /// Renames the given output file.
-    /// </summary>
-    /// <param name="outputInfo"></param>
-    /// <param name="nameMap"></param>
-    /// <returns></returns>
-    Task RenameAsync(OutputInfo outputInfo, TitleNameMap nameMap);
+    /// <param name="model">The output info.</param>
+    Task UpdateAsync(OutputModel model);
     
     /// <summary>
     /// Gets a file from the loaded output directory if found.

@@ -12,7 +12,6 @@
     <Border Padding="10">
         <StackPanel Orientation="Horizontal" Spacing="10">
             <TextBox Width="250" Text="{Binding OutputPath}"></TextBox>
-            <TextBox Width="150" Text="{Binding OutputFilename}"></TextBox>
         </StackPanel>
     </Border>
     

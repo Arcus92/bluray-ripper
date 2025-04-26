@@ -12,6 +12,12 @@ public class OutputMediaInfo
     public OutputMediaType Type { get; set; } = OutputMediaType.Unset;
 
     /// <summary>
+    /// Gets and sets the name of this file.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Name { get; set; } = "";
+    
+    /// <summary>
     /// Gets and sets the season.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

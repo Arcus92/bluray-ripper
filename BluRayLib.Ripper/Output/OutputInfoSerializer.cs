@@ -36,14 +36,16 @@ public static class OutputInfoSerializer
     /// </summary>
     /// <param name="path">The path.</param>
     /// <returns>Returns a list of all output info files.</returns>
-    public static async IAsyncEnumerable<OutputInfo> DeserializeFromDirectoryAsync(string path)
+    public static async IAsyncEnumerable<(string, OutputInfo)> DeserializeFromDirectoryAsync(string path)
     {
         foreach (var file in Directory.EnumerateFiles(path, "*.json"))
         {
             var outputInfo = await DeserializeAsync(file);
             if (outputInfo is null) continue;
             
-            yield return outputInfo;
+            var filename = Path.GetFileNameWithoutExtension(file);
+            
+            yield return (filename, outputInfo);
         }
     }
 }

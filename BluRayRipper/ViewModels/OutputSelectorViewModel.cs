@@ -1,7 +1,5 @@
 using System;
-using System.IO;
 using Avalonia.Controls;
-using BluRayRipper.Services;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.Views;
 
@@ -26,7 +24,6 @@ public class OutputSelectorViewModel : ViewModelBase
     }
     private void OnDiskLoaded(object? sender, EventArgs e)
     {
-        OutputFilename = _diskService.DiskName;
     }
     
     /// <inheritdoc cref="OutputPath"/>
@@ -39,18 +36,6 @@ public class OutputSelectorViewModel : ViewModelBase
     {
         get => _outputPath;
         set => SetProperty(ref _outputPath, value);
-    }
-
-    /// <inheritdoc cref="OutputFilename"/>
-    private string _outputFilename = "";
-
-    /// <summary>
-    /// Gets and sets the output filename.
-    /// </summary>
-    public string OutputFilename
-    {
-        get => _outputFilename;
-        set => SetProperty(ref _outputFilename, value);
     }
     
     /// <inheritdoc />

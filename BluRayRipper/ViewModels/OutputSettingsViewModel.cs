@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
 using BluRayRipper.Views;
 

@@ -10,11 +10,6 @@ public class OutputInfo
     /// Gets and sets the source this output was generated from.
     /// </summary>
     public OutputSource Source { get; set; } = new();
-
-    /// <summary>
-    /// Gets and sets the name of this file.
-    /// </summary>
-    public string Name { get; set; } = "";
     
     /// <summary>
     /// Gets and sets the media info.

@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BluRayLib.Ripper.BluRays.Export;
 using BluRayLib.Ripper.Output;
 using BluRayRipper.Models.Output;
 using BluRayRipper.Services.Interfaces;
@@ -36,23 +36,55 @@ public class OutputService(IDiskService diskService) : IOutputService
         var model = GetBySource(info.Source.Type, info.Source.DiskName, info.Source.PlaylistId);
         if (model is not null) return model;
 
-        model = new OutputModel(info);
+        model = new OutputModel(info, info.MediaInfo.Name);
         Outputs.Add(model);
-        await UpdateOutputInfoAsync(info);
+        await WriteOutputInfoAsync(model);
         return model;
     }
 
     /// <inheritdoc />
-    public async Task RemoveAsync(OutputModel output)
+    public async Task RemoveAsync(OutputModel model)
     {
-        await RemoveOutputInfoAsync(output.Info);
-        Outputs.Remove(output);
+        await RemoveOutputInfoAsync(model);
+        Outputs.Remove(model);
     }
 
     /// <inheritdoc />
-    public async Task UpdateAsync(OutputModel output)
+    public async Task UpdateAsync(OutputModel model)
     {
-        await UpdateOutputInfoAsync(output.Info);
+        // Checks for renaming some files.
+        // Renaming is more complex the through. For example, when swapping filenames of two files, we need an
+        // intermediate rename step to not block any filename. 
+        var renameMap = new Dictionary<string, string>();
+        
+        var basename = model.BuildBasename();
+        if (basename != model.Basename)
+        {
+            await RemoveOutputInfoAsync(model);
+            model.Basename = basename;
+        }
+        foreach (var file in model.Files)
+        {
+            file.Basename = basename;
+            var filename = file.BuildFilename();
+            if (filename == file.Filename) continue; // No rename
+            
+            // TODO: Check for collisions
+            renameMap.Add(file.Filename, filename);
+            
+            file.Filename = filename;
+        }
+
+        // Apply the rename operations
+        foreach (var (oldFilename, newFilename) in renameMap)
+        {
+            var oldPath = Path.Combine(OutputPath, oldFilename);
+            var newPath = Path.Combine(OutputPath, newFilename);
+            if (!File.Exists(oldPath) || File.Exists(newPath)) continue;
+            File.Move(oldPath, newPath);
+        }
+        
+        await WriteOutputInfoAsync(model);
     }
 
     /// <inheritdoc />
@@ -67,9 +99,9 @@ public class OutputService(IDiskService diskService) : IOutputService
     public async Task RefreshAsync()
     {
         Outputs.Clear();
-        await foreach (var info in OutputInfoSerializer.DeserializeFromDirectoryAsync(OutputPath))
+        await foreach (var (filename, info) in OutputInfoSerializer.DeserializeFromDirectoryAsync(OutputPath))
         {
-            var model = new OutputModel(info);
+            var model = new OutputModel(info, filename);
             UpdateStatus(model);
             Outputs.Add(model);
         }
@@ -111,33 +143,23 @@ public class OutputService(IDiskService diskService) : IOutputService
     
     #endregion List
     
-    #region Rename
-
-    /// <inheritdoc />
-    public async Task RenameAsync(OutputInfo outputInfo, TitleNameMap nameMap)
-    {
-        // TODO
-    }
-    
-    #endregion Rename
-    
     /// <summary>
     /// Writes the given output info file to the output directory.
     /// </summary>
-    /// <param name="outputInfo">The output info file.</param>
-    private async Task UpdateOutputInfoAsync(OutputInfo outputInfo)
+    /// <param name="model">The output info file.</param>
+    private async Task WriteOutputInfoAsync(OutputModel model)
     {
-        var path = Path.Combine(OutputPath, $"{outputInfo.Name}.json");
-        await OutputInfoSerializer.SerializeAsync(path, outputInfo);
+        var path = Path.Combine(OutputPath, $"{model.Basename}.json");
+        await OutputInfoSerializer.SerializeAsync(path, model.Info);
     }
     
     /// <summary>
     /// Removes the given output info file from the output directory.
     /// </summary>
     /// <param name="outputInfo">The output info file.</param>
-    private Task RemoveOutputInfoAsync(OutputInfo outputInfo)
+    private Task RemoveOutputInfoAsync(OutputModel outputInfo)
     {
-        var path = Path.Combine(OutputPath, $"{outputInfo.Name}.json");
+        var path = Path.Combine(OutputPath, $"{outputInfo.Basename}.json");
         File.Delete(path);
         return Task.CompletedTask;
     }
