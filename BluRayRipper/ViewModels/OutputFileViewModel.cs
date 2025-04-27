@@ -28,6 +28,8 @@ public class OutputFileViewModel : ViewModelBase
 
             foreach (var stream in Model.File.Streams)
             {
+                if (!stream.Enabled) continue;
+                
                 builder.Append('[');
                 builder.Append(stream.Type);
                 if (!string.IsNullOrEmpty(stream.LanguageCode))

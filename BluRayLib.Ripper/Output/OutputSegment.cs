@@ -12,10 +12,4 @@ public class OutputSegment
     /// Gets and sets the segment id.
     /// </summary>
     public ushort Id { get; set; }
-
-    /// <summary>
-    /// Gets and sets if this segment is enabled for export.
-    /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public bool Enabled { get; set; } = true;
 }

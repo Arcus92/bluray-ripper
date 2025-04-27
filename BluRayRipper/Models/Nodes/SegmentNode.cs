@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using BluRayLib.Ripper.BluRays;
@@ -57,21 +59,33 @@ public class SegmentNode : BaseNode
     /// Gets the subtitle stream sub node.
     /// </summary>
     public TextNode<SubtitleNode> SubtitleStreamNode { get; }
+
+    /// <summary>
+    /// Gets the enumerable for all stream nodes.
+    /// </summary>
+    public IEnumerable<StreamNode> StreamNodes
+    {
+        get
+        {
+            foreach (var stream in VideoStreamNode.Items)
+            {
+                yield return stream;
+            }
+
+            foreach (var stream in AudioStreamNode.Items)
+            {
+                yield return stream;
+            }
+
+            foreach (var stream in SubtitleStreamNode.Items)
+            {
+                yield return stream;
+            }
+        }
+    }
     
     /// <summary>
     /// Gets the sub-nodes.
     /// </summary>
     public ObservableCollection<BaseNode> SubNodes { get; }
-    
-    /// <inheritdoc cref="IsChecked"/>
-    private bool _isChecked;
-    
-    /// <summary>
-    /// Gets and sets if this segment is selected for export.
-    /// </summary>
-    public bool IsChecked
-    {
-        get => _isChecked;
-        set => SetProperty(ref _isChecked, value);
-    }
 }

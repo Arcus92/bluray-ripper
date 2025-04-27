@@ -1,3 +1,6 @@
+using BluRayLib.Enums;
+using BluRayLib.Mpls;
+
 namespace BluRayLib.Ripper.BluRays;
 
 public static class BluRayData
@@ -24,65 +27,82 @@ public static class BluRayData
             var clip = bluRay.Clips[clipId];
             
             // Video streams
+            var first = true;
             var videoStreamInfos = new List<VideoData>();
             foreach (var stream in item.StreamNumberTable.PrimaryVideoStreams)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new VideoData(stream.Entry.RefToStreamId);
+                var streamInfo = new VideoData(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
+                {
+                    IsDefault = first
+                };
                 videoStreamInfos.Add(streamInfo);
+                first = false;
             }
             foreach (var stream in item.StreamNumberTable.SecondaryVideoStream)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new VideoData(stream.Entry.RefToStreamId)
+                var streamInfo = new VideoData(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
                 {
-                    IsSecondary = true
+                    IsSecondary = true,
+                    IsDefault = first
                 };
                 videoStreamInfos.Add(streamInfo);
+                first = false;
             }
 
             // Audio streams
+            first = true;
             var audioStreamInfos = new List<AudioInfo>();
             foreach (var stream in item.StreamNumberTable.PrimaryAudioStreams)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new AudioInfo(stream.Entry.RefToStreamId)
+                var streamInfo = new AudioInfo(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
                 {
-                    LanguageCode = stream.Attributes.LanguageCode
+                    LanguageCode = stream.Attributes.LanguageCode,
+                    IsDefault = first
                 };
                 audioStreamInfos.Add(streamInfo);
+                first = false;
             }
             foreach (var stream in item.StreamNumberTable.SecondaryAudioStream)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new AudioInfo(stream.Entry.RefToStreamId)
+                var streamInfo = new AudioInfo(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
                 {
                     LanguageCode = stream.Attributes.LanguageCode,
-                    IsSecondary = true
+                    IsSecondary = true,
+                    IsDefault = first
                 };
                 audioStreamInfos.Add(streamInfo);
+                first = false;
             }
             
             // Subtitle streams
+            first = true;
             var subtitleStreamInfos = new List<SubtitleData>();
             foreach (var stream in item.StreamNumberTable.PrimaryPgStreams)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new SubtitleData(stream.Entry.RefToStreamId)
+                var streamInfo = new SubtitleData(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
                 {
-                    LanguageCode = stream.Attributes.LanguageCode
+                    LanguageCode = stream.Attributes.LanguageCode,
+                    IsDefault = first
                 };
                 subtitleStreamInfos.Add(streamInfo);
+                first = false;
             }
             foreach (var stream in item.StreamNumberTable.SecondaryPgStream)
             {
                 if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new SubtitleData(stream.Entry.RefToStreamId)
+                var streamInfo = new SubtitleData(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
                 {
                     LanguageCode = stream.Attributes.LanguageCode,
-                    IsSecondary = true
+                    IsSecondary = true,
+                    IsDefault = first
                 };
                 subtitleStreamInfos.Add(streamInfo);
+                first = false;
             }
                 
             var segmentInfo = new SegmentData(clipId)
@@ -202,6 +222,37 @@ public static class BluRayData
         }
         
         return titles.ToArray();
+    }
+    
+    private static string GetDescriptionFromStream(PlaylistStream stream)
+    {
+        return stream.Attributes.CodingType switch
+        {
+            // Video
+            StreamCodingType.MPEG1VideoStream => "MPEG1",
+            StreamCodingType.MPEG2VideoStream => "MPEG2",
+            StreamCodingType.MPEG4AVCVideoStream => "MPEG4 AVC",
+            StreamCodingType.MPEG4MVCVideoStream => "MPEG4 MVC",
+            StreamCodingType.SMTPEVC1VideoStream => "SMTPEVC1",
+            StreamCodingType.HEVCVideoStream => "HEVC",
+            // Audio
+            StreamCodingType.MPEG1AudioStream => "MPEG1",
+            StreamCodingType.MPEG2AudioStream => "MPEG2",
+            StreamCodingType.LPCMAudioStream => "LPCM",
+            StreamCodingType.DolbyDigitalAudioStream => "DolbyDigital",
+            StreamCodingType.DtsAudioStream => "DTS",
+            StreamCodingType.DolbyDigitalTrueHDAudioStream => "Dolby TrueHD",
+            StreamCodingType.DolbyDigitalPlusAudioStream => "Dolby Digital Plus",
+            StreamCodingType.DtsHDHighResolutionAudioStream => "DTS HD",
+            StreamCodingType.DtsHDMasterAudioStream => "DTS HD Master",
+            StreamCodingType.DolbyDigitalPlusSecondaryAudioStream => "Dolby Digital Plus (secondary)",
+            StreamCodingType.DtsHDSecondaryAudioStream => "DTS HD (secondary)",
+            // Subtitle
+            StreamCodingType.PresentationGraphicsStream => "PGS",
+            StreamCodingType.InteractiveGraphicsStream => "IGS",
+            StreamCodingType.TextSubtitleStream => "STR",
+            _ => "Stream"
+        };
     }
     
     /// <summary>

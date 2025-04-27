@@ -13,12 +13,12 @@ public class TitleNode : BaseNode
         SegmentNode = new TextNode<SegmentNode>("Segments")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(Playlist.Segments.Select(s => new SegmentNode(s) { IsChecked = true }))
+            SubNodes = new ObservableCollection<BaseNode>(Playlist.Segments.Select(s => new SegmentNode(s)))
         };
         ChapterNode = new TextNode<ChapterNode>("Chapters")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(Playlist.Chapters.Select(c => new ChapterNode(c) { IsChecked = true }))
+            SubNodes = new ObservableCollection<BaseNode>(Playlist.Chapters.Select(c => new ChapterNode(c)))
         };
         SubNodes = [ SegmentNode, ChapterNode ];
     }

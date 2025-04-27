@@ -34,16 +34,4 @@ public class ChapterNode : BaseNode
     /// Gets the display name of this chapter.
     /// </summary>
     public string DisplayName => Chapter.ToString();
-    
-    /// <inheritdoc cref="IsChecked"/>
-    private bool _isChecked;
-    
-    /// <summary>
-    /// Gets and sets if this chapter marker is selected for export.
-    /// </summary>
-    public bool IsChecked
-    {
-        get => _isChecked;
-        set => SetProperty(ref _isChecked, value);
-    }
 }

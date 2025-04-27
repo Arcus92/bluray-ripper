@@ -27,7 +27,6 @@
                 <!-- Segment node -->
                 <TreeDataTemplate x:DataType="nodes:SegmentNode" ItemsSource="{Binding SubNodes}">
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}"/> 
                         <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </TreeDataTemplate>
@@ -59,7 +58,6 @@
                 <!-- Chapter node -->
                 <TreeDataTemplate x:DataType="nodes:ChapterNode">
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsChecked}"/> 
                         <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </TreeDataTemplate>
@@ -76,7 +74,7 @@
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                 </Style>
                 
-                <!-- Slightly hide ignored titles -->
+                <!-- Slight hide ignored titles -->
                 <Style Selector="TextBlock.transparent">
                     <Setter Property="Opacity" Value="0.5"/>
                 </Style>

@@ -36,18 +36,15 @@ public static class BluRayMapper
         
         // Collect all streams
         var streams = new List<OutputStream>();
-        var first = true;
         foreach (var stream in segment.VideoStreams)
         {
             streams.Add(new OutputStream()
             {
                 Id = stream.Id,
                 Type = OutputStreamType.Video,
-                Default = first,
+                Default = stream.IsDefault,
             });
-            first = false;
         }
-        first = true;
         foreach (var stream in segment.AudioStreams)
         {
             streams.Add(new OutputStream()
@@ -55,11 +52,9 @@ public static class BluRayMapper
                 Id = stream.Id,
                 Type = OutputStreamType.Audio,
                 LanguageCode = stream.LanguageCode,
-                Default = first,
+                Default = stream.IsDefault,
             });
-            first = false;
         }
-        first = true;
         foreach (var stream in segment.SubtitleStreams)
         {
             streams.Add(new OutputStream()
@@ -67,9 +62,8 @@ public static class BluRayMapper
                 Id = stream.Id,
                 Type = OutputStreamType.Subtitle,
                 LanguageCode = stream.LanguageCode,
-                Default = first,
+                Default = stream.IsDefault,
             });
-            first = false;
         }
         
         var files = new List<OutputFile>();

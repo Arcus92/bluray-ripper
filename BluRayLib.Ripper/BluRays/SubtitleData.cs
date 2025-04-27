@@ -2,7 +2,7 @@ namespace BluRayLib.Ripper.BluRays;
 
 public class SubtitleData : StreamData
 {
-    public SubtitleData(ushort id) : base(id)
+    public SubtitleData(ushort id, string description) : base(id, description)
     {
     }
     
@@ -11,5 +11,5 @@ public class SubtitleData : StreamData
     /// </summary>
     public string LanguageCode { get; set; } = "";
     
-    public override string ToString() => $"Subtitle [0x{Id:x4}] - [{LanguageCode}] {(IsSecondary ?" (secondary)" : "")}";
+    public override string ToString() => $"{Description} [0x{Id:x4}] - [{LanguageCode}]{(IsSecondary ?" (secondary)" : "")}{(IsDefault ?" (default)" : "")}";
 }
