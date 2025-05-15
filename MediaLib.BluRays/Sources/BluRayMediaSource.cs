@@ -1,6 +1,5 @@
+using System.Text;
 using BluRayLib;
-using BluRayLib.Enums;
-using BluRayLib.Mpls;
 using MediaLib.BluRays.Providers;
 using MediaLib.Models;
 using MediaLib.Output;
@@ -168,11 +167,43 @@ public class BluRayMediaSource : IMediaSource
         // Adds subtitle files
         if (exportSubtitlesAsSeparateFiles)
         {
+            // Guessing the subtitle type by order.
+            var languageCounter = new Dictionary<string, int>();
+            var filename = new StringBuilder();
+            
             foreach (var stream in streams.Where(s => s.Type is OutputStreamType.Subtitle))
             {
+                // Count how often the language code was encountered.
+                var languageCode = stream.LanguageCode ?? "";
+                languageCounter.TryGetValue(languageCode, out var counter);
+
+                // Building the filename
+                filename.Clear();
+                filename.Append(baseName);
+
+                if (!string.IsNullOrEmpty(languageCode))
+                {
+                    filename.Append('.');
+                    filename.Append(languageCode);
+                }
+                
+                // Second subtitle. Assume: forced subtitle track.
+                if (counter == 1)
+                {
+                    filename.Append(".forced");
+                }
+                else if (counter >= 2) // Extra subtitles
+                {
+                    filename.Append($".extra{counter - 1}");
+                }
+                filename.Append(".sup");
+                
+                // Increment counter
+                languageCounter[languageCode] = ++counter;
+                
                 files.Add(new OutputFile()
                 {
-                    Filename = $"{baseName}.{stream.LanguageCode}.{stream.Id}.sup",
+                    Filename = filename.ToString(),
                     Format = "sup",
                     Streams = [stream]
                 });
@@ -194,7 +225,7 @@ public class BluRayMediaSource : IMediaSource
             var timestamp = BluRayMediaProvider.TimeSpanFromBluRayTime(offset + mark.TimeStamp - item.InTime);
             // Avoid negative
             if (timestamp < TimeSpan.Zero) timestamp = TimeSpan.Zero;
-            // Avoid timestamp above max length. Also add three second tolerances.
+            // Avoid timestamp above max length. Also add three-second tolerances.
             if (timestamp > duration - TimeSpan.FromSeconds(3)) timestamp = duration;
             chapterTimestamps.Add(timestamp);
         }
