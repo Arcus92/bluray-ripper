@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:MediaRipper.ViewModels"
+             xmlns:utils="clr-namespace:MediaRipper.Utils"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MediaRipper.Views.OutputView"
+             x:DataType="vm:OutputViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:OutputViewModel}}">
+    
+    <Expander VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="5">
+        <Expander.Header>
+            <DockPanel>
+                
+                <ProgressBar Value="{Binding Model.Progress}" 
+                             Maximum="1.0" 
+                             IsVisible="{Binding IsProgressBarVisible}" 
+                             Margin="0,5,0,0"
+                             DockPanel.Dock="Bottom" />
+                <TextBlock Text="{Binding Model.Progress, StringFormat='{}{0:P0}'}" 
+                           IsVisible="{Binding IsProgressBarVisible}" 
+                           VerticalAlignment="Center" 
+                           TextAlignment="Center"
+                           Width="60"
+                           DockPanel.Dock="Right" />
+                <TextBlock Text="{Binding Model.Basename}" />
+            </DockPanel>
+        </Expander.Header>
+        <StackPanel Orientation="Vertical" Spacing="10">
+            <TextBox Text="{Binding Name}" />
+            
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <ComboBox ItemsSource="{Binding AllMediaTypes}" SelectedValue="{Binding MediaType}"/>
+                
+                <TextBlock Text="Season:" VerticalAlignment="Center"/>
+                <NumericUpDown Width="110" Minimum="1" Maximum="1000" Value="{Binding Season}" FormatString="N0" ParsingNumberStyle="Integer"/>
+                
+                <TextBlock Text="Episode:" VerticalAlignment="Center"/>
+                <NumericUpDown Width="110" Minimum="1" Maximum="1000" Value="{Binding Episode}" FormatString="N0" ParsingNumberStyle="Integer"/>
+            </StackPanel>
+            
+            <ItemsControl ItemsSource="{Binding Files}" />
+            
+            <Button Command="{Binding ApplyAsync}" CommandParameter="{Binding Model}">Apply</Button>
+        </StackPanel>
+    </Expander>
+</UserControl>

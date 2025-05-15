@@ -1,5 +1,5 @@
 using BluRayLib.PresentationGraphicStream.Segments;
-using BluRayLib.Utils.IO;
+using MediaLib.Utils.IO;
 
 namespace BluRayLib.PresentationGraphicStream;
 

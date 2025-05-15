@@ -1,4 +1,4 @@
-# BluRayRipper
+# MediaRipper
 
 This is a graphical interface to archive movies and TV shows from BluRays.
 
@@ -10,7 +10,7 @@ It also has a better detection for ignored tracks, like menu backgrounds or titl
 This is a newer take on my [mkv-ripper](https://github.com/Arcus92/mkv-ripper) project.
 
 ## Work in progress
-
+1
 This is a very early proof-of-concept. Exporting and re-encoding is already working for `.mp4` and `.mkv`.
 
 The UI is currently _non-functional_. 

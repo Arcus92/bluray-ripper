@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BluRayLib.Utils\BluRayLib.Utils.csproj" />
+      <ProjectReference Include="..\MediaLib.Utils\MediaLib.Utils.csproj" />
     </ItemGroup>
 
 </Project>

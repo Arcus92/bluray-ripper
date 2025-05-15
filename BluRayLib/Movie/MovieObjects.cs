@@ -1,4 +1,4 @@
-using BluRayLib.Utils.IO;
+using MediaLib.Utils.IO;
 
 namespace BluRayLib.Movie;
 

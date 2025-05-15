@@ -1,7 +1,7 @@
 ﻿using BluRayLib.Clip;
 using BluRayLib.Movie;
 using BluRayLib.Mpls;
-using BluRayLib.Utils;
+using MediaLib.Utils;
 
 namespace BluRayLib;
 

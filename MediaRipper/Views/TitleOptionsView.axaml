@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mediaLib="clr-namespace:MediaLib;assembly=MediaLib"
+             xmlns:vm="clr-namespace:MediaRipper.ViewModels"
+             xmlns:utils="clr-namespace:MediaRipper.Utils"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MediaRipper.Views.TitleOptionsView"
+             x:DataType="vm:TitleOptionsViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:TitleOptionsViewModel}}">
+    
+    <Border Padding="10">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <ComboBox ItemsSource="{Binding AllOutputFormats}" SelectedValue="{Binding VideoFormat}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="mediaLib:VideoFormat">
+                        <TextBlock Text="{Binding Extension}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            <Button Command="{Binding QueueSelectionAsync}" Content="{DynamicResource QueueSelection}" />
+            <Button Command="{Binding DequeueSelectionAsync}" Content="{DynamicResource DequeueSelection}" />
+            <Button Command="{Binding PlayPreviewAsync}" Content="{DynamicResource Play}" />
+            <Button Command="{Binding SaveSegmentAsync}" Content="{DynamicResource SaveRawSegment}" />
+        </StackPanel>
+    </Border>
+    
+</UserControl>

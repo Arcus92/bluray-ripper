@@ -1,0 +1,25 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MediaRipper.App"
+             xmlns:local="using:BluRayRipper"
+             xmlns:mediaRipper="clr-namespace:MediaRipper"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <mediaRipper:ViewLocator/>
+    </Application.DataTemplates>
+             
+     <Application.Resources>
+         <ResourceDictionary>
+             <ResourceDictionary.MergedDictionaries>
+                 <!-- Default language -->
+                 <MergeResourceInclude Source="Resources/Strings/English.axaml" />
+             </ResourceDictionary.MergedDictionaries>
+         </ResourceDictionary>
+     </Application.Resources>
+  
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+</Application>
