@@ -76,7 +76,7 @@ public class OutputViewModel : ViewModelBase
     public string Name
     {
         get => Model.Definition.MediaInfo.Name;
-        set => SetProperty(Model.Definition.MediaInfo.Name, value, v => Model.Definition.MediaInfo.Name = v);
+        set => SetProperty(Model.Definition.MediaInfo.Name, value.Trim(), v => Model.Definition.MediaInfo.Name = v);
     }
     
     public int? Episode
