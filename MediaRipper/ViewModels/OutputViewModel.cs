@@ -62,6 +62,7 @@ public class OutputViewModel : ViewModelBase
         new(OutputMediaType.Extra, "MediaTypeExtra"),
         new(OutputMediaType.MakingOf, "MediaTypeMakingOf"),
         new(OutputMediaType.BehindTheScenes, "MediaTypeBehindTheScenes"),
+        new(OutputMediaType.DeletedScenes, "MediaTypeDeletedScenes"),
         new(OutputMediaType.Interview, "MediaTypeInterview"),
         new(OutputMediaType.Trailer, "MediaTypeTrailer"),
     ];

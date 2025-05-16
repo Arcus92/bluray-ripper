@@ -14,6 +14,7 @@ public enum OutputMediaType
     Extra,
     MakingOf,
     BehindTheScenes,
+    DeletedScenes,
     Interview,
     Trailer,
 }
