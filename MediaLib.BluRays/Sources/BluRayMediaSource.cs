@@ -19,7 +19,8 @@ public class BluRayMediaSource : IMediaSource
             Type = MediaIdentifierType.BluRay,
             ContentHash = bluRay.ContentHash,
             DiskName = bluRay.DiskName,
-            Id = playlistId
+            Id = playlistId,
+            SegmentIds = info.Segments.Select(x => x.Id).ToArray(),
         };
         Info = info;
         PlaylistId = playlistId;

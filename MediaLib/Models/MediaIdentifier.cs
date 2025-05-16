@@ -27,10 +27,16 @@ public class MediaIdentifier : IEquatable<MediaIdentifier>
     public string ContentHash { get; init; } = "";
     
     /// <summary>
-    /// Gets and sets the track id from which this output file was generated.
+    /// Gets and sets the media id from which this output file was generated.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public ushort Id { get; init; }
+
+    /// <summary>
+    /// Gets and sets the segment ids.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ushort[] SegmentIds { get; init; } = [];
     
     #region Equals
 
