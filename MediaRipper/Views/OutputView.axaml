@@ -40,9 +40,9 @@
                 <NumericUpDown Width="110" Minimum="1" Maximum="1000" Value="{Binding Episode}" FormatString="N0" ParsingNumberStyle="Integer"/>
             </StackPanel>
             
-            <ItemsControl ItemsSource="{Binding Files}" />
-            
             <Button Command="{Binding ApplyAsync}" CommandParameter="{Binding Model}">Apply</Button>
+            
+            <ItemsControl ItemsSource="{Binding Files}" />
         </StackPanel>
     </Expander>
 </UserControl>
