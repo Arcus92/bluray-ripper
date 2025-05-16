@@ -208,15 +208,28 @@ public class BluRayMediaConverter : IMediaConverter
     /// <returns></returns>
     private Stream OpenSegmentStream(ushort clipId)
     {
-        try
+        var retries = 0;
+        const int maxRetries = 5;
+        while (true)
         {
-            _logger.LogInformation("Opening segment {SegmentId:00000}.m2ts", clipId);
-            return _provider.BluRay.GetM2TsStream(clipId);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception while opening segment {SegmentId:00000}.m2ts!", clipId);
-            throw;
+            try
+            {
+                _logger.LogInformation("Opening segment {SegmentId:00000}.m2ts", clipId);
+                return _provider.BluRay.GetM2TsStream(clipId);
+            }
+            catch (Exception ex)
+            {
+                if (retries < maxRetries)
+                {
+                    retries++;
+                    _logger.LogWarning(ex, "Exception while opening segment {SegmentId:00000}.m2ts. Retry {Retry} / {MaxRetry}", clipId, retries, maxRetries);
+                }
+                else
+                {
+                    _logger.LogError(ex, "Exception while opening segment {SegmentId:00000}.m2ts!", clipId);
+                    throw;
+                }
+            }
         }
     }
 }
