@@ -17,7 +17,7 @@ public class TitleTreeViewModel : ViewModelBase
     public TitleTreeViewModel(IMediaProviderService mediaProviderService)
     {
         _mediaProviderService = mediaProviderService;
-        _mediaProviderService.Changed += OnMediaProviderServiceLoaded;
+        _mediaProviderService.Changed += OnMediaProviderServiceChanged;
     }
 
     /// <inheritdoc cref="SelectedNode"/>
@@ -44,14 +44,23 @@ public class TitleTreeViewModel : ViewModelBase
         return false;
     }
     
-    private async void OnMediaProviderServiceLoaded(object? sender, EventArgs e)
+    private async void OnMediaProviderServiceChanged(object? sender, EventArgs e)
     {
-        await BuildTrackNodesAsync();
+        try
+        {
+            await BuildTrackNodesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw; // TODO handle exception
+        }
     }
 
     private async Task BuildTrackNodesAsync()
     {
         TitleNodes.Clear();
+        if (!_mediaProviderService.IsLoaded) return;
+        
         var sources = await _mediaProviderService.GetSourcesAsync();
         foreach (var source in sources)
         {

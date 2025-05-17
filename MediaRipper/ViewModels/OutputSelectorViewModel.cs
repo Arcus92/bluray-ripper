@@ -18,11 +18,11 @@ public class OutputSelectorViewModel : ViewModelBase
         _mediaProviderService = mediaProviderService;
 
         _outputPath = _settingService.GetDefaultOutputPath();
-        _mediaProviderService.Changed += OnMediaProviderLoaded;
+        _mediaProviderService.Changed += OnMediaProviderChanged;
 
         _outputService.OpenAsync(_outputPath);
     }
-    private void OnMediaProviderLoaded(object? sender, EventArgs e)
+    private void OnMediaProviderChanged(object? sender, EventArgs e)
     {
     }
     
