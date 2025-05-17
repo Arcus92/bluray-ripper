@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Text;
 using MediaLib.Utils.IO;
 
 namespace MediaLib.FFmpeg;
@@ -47,6 +48,11 @@ public class Engine
         /// Gets the metadata of the input files.
         /// </summary>
         public InputMetadata[] Inputs { get; init; }
+        
+        /// <summary>
+        /// Gets the output text.
+        /// </summary>
+        public string Output { get; init; }
     }
     
     private async Task<Result> ExecuteAsync(StartInfo startInfo, CancellationToken cancellationToken = default)
@@ -72,6 +78,7 @@ public class Engine
         
         process.Start();
 
+        var output = new StringBuilder();
         var inputs = new List<InputMetadata>();
         var intentReader = new IntentTextReader(process.StandardError, 2);
         await foreach (var lineRoot in intentReader.ReadBlockAsync().WithCancellation(cancellationToken))
@@ -83,7 +90,7 @@ public class Engine
             }
 
             // Frame update
-            if (lineRoot.StartsWith("frame="))
+            else if (lineRoot.StartsWith("frame="))
             {
                 // No need to check frame updates
                 if (startInfo.OnUpdate is null) continue;
@@ -128,6 +135,12 @@ public class Engine
 
                 startInfo.OnUpdate(update);
             }
+            
+            // Log other output
+            else
+            {
+                output.AppendLine(lineRoot);
+            }
         }
         
         try
@@ -137,6 +150,7 @@ public class Engine
             {
                 ExitCode = process.ExitCode,
                 Inputs = inputs.ToArray(),
+                Output = output.ToString()
             };
         }
         finally
@@ -189,7 +203,7 @@ public class Engine
         var result = await ExecuteAsync(startInfo, cancellationToken);
         if (result.ExitCode != 0)
         {
-            throw new IOException($"FFmpeg returned {result.ExitCode}!");
+            throw new FFmpegException(result.ExitCode, result.Output);
         }
     }
     
