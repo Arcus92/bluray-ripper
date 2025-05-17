@@ -11,7 +11,7 @@ public class OutputDefinition
     /// <summary>
     /// Gets and sets the media identifier this output was generated from.
     /// </summary>
-    public MediaIdentifier Identifier { get; set; } = new();
+    public required MediaIdentifier Identifier { get; init; }
     
     /// <summary>
     /// Gets and sets the media info.

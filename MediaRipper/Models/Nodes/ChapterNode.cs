@@ -29,9 +29,4 @@ public class ChapterNode : BaseNode
     /// Gets the chapter send.
     /// </summary>
     public TimeSpan End => Chapter.End;
-    
-    /// <summary>
-    /// Gets the display name of this chapter.
-    /// </summary>
-    public string DisplayName => Chapter.ToString();
 }

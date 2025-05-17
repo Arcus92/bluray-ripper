@@ -64,7 +64,7 @@ public class TitleTreeViewModel : ViewModelBase
         var sources = await _mediaProviderService.GetSourcesAsync();
         foreach (var source in sources)
         {
-            var isIgnored = source.Info.IgnoreFlags != MediaIgnoreFlags.None;
+            var isIgnored = source.IgnoreFlags != MediaIgnoreFlags.None;
             TitleNodes.Add(new MediaNode(source)
             {
                 IsIgnored = isIgnored

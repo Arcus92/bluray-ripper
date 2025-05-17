@@ -6,15 +6,15 @@ namespace MediaRipper.Models.Nodes;
 
 public class TextNode : BaseNode
 {
-    public TextNode(string displayName)
+    public TextNode(string text)
     {
-        DisplayName = displayName;
+        Text = text;
     }
 
     /// <summary>
-    /// Gets the text resource key.
+    /// Gets the text.
     /// </summary>
-    public string DisplayName { get; }
+    public string Text { get; }
     
     /// <summary>
     /// Gets the sub-nodes.
@@ -24,7 +24,7 @@ public class TextNode : BaseNode
 
 public class TextNode<TChild> : TextNode where TChild : BaseNode
 {
-    public TextNode(string displayName) : base(displayName)
+    public TextNode(string text) : base(text)
     {
     }
 

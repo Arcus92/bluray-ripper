@@ -188,4 +188,18 @@ public class BluRay
     public static DecryptionHandler? M2TsDecryptionHandler { get; set; }
 
     #endregion Decryption
+    
+    #region Utils
+    
+    /// <summary>
+    /// Converts the BluRay ticks to TimeSpan.
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    public static TimeSpan TimeSpanFromBluRayTime(uint time)
+    {
+        return TimeSpan.FromSeconds(time / (double)45000);
+    }
+    
+    #endregion Utils
 }

@@ -1,36 +1,37 @@
 namespace MediaLib.Models;
 
-public class SegmentInfo
+public class SegmentInfo : IMediaInfo
 {
-    public SegmentInfo(ushort id)
-    {
-        Id = id;
-    }
-
     /// <summary>
     /// Gets the clip id of the segment.
     /// </summary>
-    public ushort Id { get; }
-    
+    public required ushort Id { get; init; }
+
+    /// <summary>
+    /// Gets the segment description.
+    /// </summary>
+    public required string Name { get; init; }
+
     /// <summary>
     /// Gets the duration.
     /// </summary>
-    public TimeSpan Duration { get; set; }
+    public TimeSpan Duration { get; init; }
     
     /// <summary>
     /// Gets the video streams.
     /// </summary>
-    public VideoInfo[] VideoStreams { get; set; } = [];
+    public VideoInfo[] VideoStreams { get; init; } = [];
     
     /// <summary>
     /// Gets the audio streams.
     /// </summary>
-    public AudioInfo[] AudioStreams { get; set; } = [];
+    public AudioInfo[] AudioStreams { get; init; } = [];
     
     /// <summary>
     /// Gets the subtitle streams.
     /// </summary>
-    public SubtitleInfo[] SubtitleStreams { get; set; } = [];
+    public SubtitleInfo[] SubtitleStreams { get; init; } = [];
     
-    public override string ToString() => $"Segment [0x{Id:x4}] ({Id:00000}) - [{Duration:hh\\:mm\\:ss}]";
+    /// <inheritdoc />
+    public override string ToString() => Name;
 }

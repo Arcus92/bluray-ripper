@@ -19,11 +19,6 @@ public class StreamNode : BaseNode
     /// </summary>
     public ushort Id => Stream.Id;
     
-    /// <summary>
-    /// Gets the title display name.
-    /// </summary>
-    public string DisplayName => Stream.ToString() ?? "";
-    
     /// <inheritdoc cref="IsChecked"/>
     private bool _isChecked;
     

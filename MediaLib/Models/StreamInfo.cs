@@ -1,22 +1,16 @@
 namespace MediaLib.Models;
 
-public abstract class StreamInfo
+public abstract class StreamInfo : IMediaInfo
 {
-    public StreamInfo(ushort id, string description)
-    {
-        Id = id;
-        Description = description;
-    }
-
     /// <summary>
     /// Gets the stream id.
     /// </summary>
-    public ushort Id { get; }
+    public required ushort Id { get; init; }
 
     /// <summary>
-    /// Gets the stream's description, like format type.
+    /// Gets the stream's description, like a format type.
     /// </summary>
-    public string Description { get; }
+    public required string Name { get; init; }
 
     /// <summary>
     /// Gets if this track is a secondary track.
@@ -27,4 +21,7 @@ public abstract class StreamInfo
     /// Gets if this track is the default track.
     /// </summary>
     public bool IsDefault { get; init; }
+
+    /// <inheritdoc />
+    public override string ToString() => Name;
 }

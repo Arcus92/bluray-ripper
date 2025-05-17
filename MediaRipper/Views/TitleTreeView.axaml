@@ -16,48 +16,55 @@
                 
                 <!-- Title node -->
                 <TreeDataTemplate x:DataType="nodes:MediaNode" ItemsSource="{Binding SubNodes}">
-                    <StackPanel Orientation="Horizontal" >
-                        
-                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" 
-                                   Classes.transparent="{Binding IsIgnored}"/>
-      
+                    <StackPanel Orientation="Horizontal" Classes="nodeRow" Classes.transparent="{Binding IsIgnored}">
+                        <TextBlock Text="{Binding Info.Name}" />
+                        <TextBlock Text="{Binding Info.Duration, StringFormat=hh\\:mm\\:ss}" />
+                        <TextBlock Text="{Binding IgnoreFlags}" />
+                        <TextBlock Text="{Binding SegmentDescriptionText}" />
                     </StackPanel>
                 </TreeDataTemplate>
                 
                 <!-- Video stream node -->
                 <TreeDataTemplate x:DataType="nodes:VideoNode">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Classes="nodeRow">
                         <CheckBox IsChecked="{Binding IsChecked}"/> 
-                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Stream.Name}" />
                     </StackPanel>
                 </TreeDataTemplate>
                 
                 <!-- Audio stream node -->
                 <TreeDataTemplate x:DataType="nodes:AudioNode">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Classes="nodeRow">
                         <CheckBox IsChecked="{Binding IsChecked}"/> 
-                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Stream.Name}" />
+                        <TextBlock Text="{Binding Stream.LanguageCode}" />
                     </StackPanel>
                 </TreeDataTemplate>
                 
                 <!-- Subtitle stream node -->
                 <TreeDataTemplate x:DataType="nodes:SubtitleNode">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Classes="nodeRow">
                         <CheckBox IsChecked="{Binding IsChecked}"/> 
-                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Stream.Name}" />
+                        <TextBlock Text="{Binding Stream.LanguageCode}" />
                     </StackPanel>
                 </TreeDataTemplate>
                 
                 <!-- Chapter node -->
                 <TreeDataTemplate x:DataType="nodes:ChapterNode">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" Classes="nodeRow">
+                        <TextBlock Text="{Binding Chapter.Name}" />
+                        <TextBlock Text="{Binding Start, StringFormat=hh\\:mm\\:ss}"/>
+                        <TextBlock Text="-" />
+                        <TextBlock Text="{Binding End, StringFormat=hh\\:mm\\:ss}" />
                     </StackPanel>
                 </TreeDataTemplate>
                 
                 <!-- Generic text node (chapter / segment) -->
                 <TreeDataTemplate x:DataType="nodes:TextNode" ItemsSource="{Binding SubNodes}">
-                    <TextBlock Text="{Binding DisplayName}"/>
+                    <StackPanel Orientation="Horizontal" Classes="nodeRow">
+                        <TextBlock Text="{Binding Text}"/>
+                    </StackPanel>
                 </TreeDataTemplate>
             </TreeView.DataTemplates>
             
@@ -67,8 +74,18 @@
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                 </Style>
                 
+                <!-- Element nodes -->
+                <Style Selector="StackPanel.nodeRow">
+                    <Setter Property="Spacing" Value="8" />
+                </Style>
+                
+                <!-- Text element in nodes -->
+                <Style Selector=".nodeRow TextBlock">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
+                
                 <!-- Slight hide ignored titles -->
-                <Style Selector="TextBlock.transparent">
+                <Style Selector=".transparent TextBlock">
                     <Setter Property="Opacity" Value="0.5"/>
                 </Style>
             </TreeView.Styles>

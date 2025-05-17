@@ -16,6 +16,11 @@ public interface IMediaSource
     MediaInfo Info { get; }
     
     /// <summary>
+    /// Gets the ignore flags of this media.
+    /// </summary>
+    MediaIgnoreFlags IgnoreFlags { get; }
+    
+    /// <summary>
     /// Creates a default output definition for this media source.
     /// </summary>
     /// <param name="codec">The codec options to use.</param>

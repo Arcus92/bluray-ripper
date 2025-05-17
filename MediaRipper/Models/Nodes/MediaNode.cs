@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
+using MediaLib;
 using MediaLib.Models;
 using MediaLib.Sources;
 
@@ -34,6 +37,9 @@ public class MediaNode : BaseNode
             SubNodes = new ObservableCollection<BaseNode>(Info.Chapters.Select(c => new ChapterNode(c)))
         };
         SubNodes = [ VideoStreamNode, AudioStreamNode, SubtitleStreamNode, ChapterNode ];
+        
+        // Build the segment description
+        SegmentDescriptionText = BuildSegmentDescription(Info.Segments);
     }
     
     /// <summary>
@@ -47,14 +53,19 @@ public class MediaNode : BaseNode
     public MediaInfo Info => Source.Info;
     
     /// <summary>
+    /// Gets the media ignore flags.
+    /// </summary>
+    public MediaIgnoreFlags IgnoreFlags => Source.IgnoreFlags;
+
+    /// <summary>
+    /// Gets the segment usage text.
+    /// </summary>
+    public string SegmentDescriptionText { get; }
+
+    /// <summary>
     /// Gets the media id.
     /// </summary>
     public ushort Id => Info.Id;
-    
-    /// <summary>
-    /// Gets the title display name.
-    /// </summary>
-    public string DisplayName => Info.ToString();
     
     /// <summary>
     /// Gets the video stream sub node.
@@ -92,5 +103,48 @@ public class MediaNode : BaseNode
     {
         get => _isIgnored;
         set => SetProperty(ref _isIgnored, value);
+    }
+
+    /// <summary>
+    /// Builds a readable segment description. This will also count multiple segments in succession.
+    /// For example, instead of repeating '1, 1, 1, 1' it will print '4x1' instead.
+    /// </summary>
+    /// <returns>Returns a string representation of the segment ids.</returns>
+    private static string BuildSegmentDescription(IEnumerable<SegmentInfo> segments)
+    {
+        var builder = new StringBuilder();
+
+        var counter = 0;
+        ushort previousId = 0;
+
+        foreach (var segment in segments)
+        {
+            if (segment.Id == previousId)
+            {
+                counter++;
+            }
+            else
+            {
+                AddSegmentId();
+                previousId = segment.Id;
+                counter = 1;
+            }
+        }
+
+        AddSegmentId();
+
+        return builder.ToString();
+
+        void AddSegmentId()
+        {
+            if (counter == 0) return;
+            if (builder.Length > 0) builder.Append(", ");
+            if (counter > 1)
+            {
+                builder.Append(counter);
+                builder.Append('x');
+            }
+            builder.Append(previousId);
+        }
     }
 }

@@ -54,9 +54,9 @@ public class BluRayMediaProvider : IMediaProvider
             var sourceA = sources[a];
             var sourceB = sources[b];
 
-            if (sourceA.Info.Matches(sourceB.Info))
+            if (sourceA.Matches(sourceB))
             {
-                sourceB.Info.IgnoreFlags |= MediaIgnoreFlags.Duplicate;
+                sourceB.IgnoreFlags |= MediaIgnoreFlags.Duplicate;
             }
         }
         
@@ -71,155 +71,30 @@ public class BluRayMediaProvider : IMediaProvider
     public BluRayMediaSource GetSource(ushort playlistId)
     {
         var playlist = BluRay.Playlists[playlistId];
-        var mediaInfo = new MediaInfo(playlistId);
         
-        // Build segments
-        var playlistDuration = TimeSpan.Zero;
-        var segmentInfos = new List<SegmentInfo>();
-        foreach (var item in playlist.Items)
+        // Builds the media identifier
+        var identifier = new MediaIdentifier()
         {
-            if (!ushort.TryParse(item.Name, out var clipId))
-                continue;
-            
-            // Video streams
-            var first = true;
-            var videoStreamInfos = new List<VideoInfo>();
-            foreach (var stream in item.StreamNumberTable.PrimaryVideoStreams)
-            {
-                if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new VideoInfo(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
-                {
-                    IsDefault = first
-                };
-                videoStreamInfos.Add(streamInfo);
-                first = false;
-            }
-            foreach (var stream in item.StreamNumberTable.SecondaryVideoStream)
-            {
-                if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new VideoInfo(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
-                {
-                    IsSecondary = true,
-                    IsDefault = first
-                };
-                videoStreamInfos.Add(streamInfo);
-                first = false;
-            }
-
-            // Audio streams
-            first = true;
-            var audioStreamInfos = new List<AudioInfo>();
-            foreach (var stream in item.StreamNumberTable.PrimaryAudioStreams)
-            {
-                if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new AudioInfo(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
-                {
-                    LanguageCode = stream.Attributes.LanguageCode,
-                    IsDefault = first
-                };
-                audioStreamInfos.Add(streamInfo);
-                first = false;
-            }
-            foreach (var stream in item.StreamNumberTable.SecondaryAudioStream)
-            {
-                if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new AudioInfo(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
-                {
-                    LanguageCode = stream.Attributes.LanguageCode,
-                    IsSecondary = true,
-                    IsDefault = first
-                };
-                audioStreamInfos.Add(streamInfo);
-                first = false;
-            }
-            
-            // Subtitle streams
-            first = true;
-            var subtitleStreamInfos = new List<SubtitleInfo>();
-            foreach (var stream in item.StreamNumberTable.PrimaryPgStreams)
-            {
-                if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new SubtitleInfo(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
-                {
-                    LanguageCode = stream.Attributes.LanguageCode,
-                    IsDefault = first
-                };
-                subtitleStreamInfos.Add(streamInfo);
-                first = false;
-            }
-            foreach (var stream in item.StreamNumberTable.SecondaryPgStream)
-            {
-                if (stream.Entry.RefToStreamId == 0) continue;
-                var streamInfo = new SubtitleInfo(stream.Entry.RefToStreamId, GetDescriptionFromStream(stream))
-                {
-                    LanguageCode = stream.Attributes.LanguageCode,
-                    IsSecondary = true,
-                    IsDefault = first
-                };
-                subtitleStreamInfos.Add(streamInfo);
-                first = false;
-            }
-                
-            var segmentInfo = new SegmentInfo(clipId)
-            {
-                Duration = TimeSpanFromBluRayTime(item.Duration),
-                VideoStreams = videoStreamInfos.ToArray(),
-                AudioStreams = audioStreamInfos.ToArray(),
-                SubtitleStreams = subtitleStreamInfos.ToArray(),
-            };
-            playlistDuration += segmentInfo.Duration;
-            segmentInfos.Add(segmentInfo);
-        }
-        mediaInfo.Duration = playlistDuration;
-        mediaInfo.Segments = segmentInfos.ToArray();
+            Type = MediaIdentifierType.BluRay,
+            ContentHash = BluRay.ContentHash,
+            DiskName = BluRay.DiskName,
+            Id = playlistId,
+            SegmentIds = playlist.Items.Select(i => ushort.Parse(i.Name)).ToArray(),
+        };
         
-        // Build chapters
-        var chapterInfos = new List<ChapterInfo>();
-        var chapterTimestamps = new List<TimeSpan>();
-        foreach (var mark in playlist.Marks)
-        {
-            // Adding all previous durations
-            uint offset = 0;
-            for (var i = 0; i < mark.PlayItemId; i++)
-            {
-                offset += playlist.Items[i].Duration;
-            }
-            var item = playlist.Items[mark.PlayItemId];
-            var timestamp = TimeSpanFromBluRayTime(offset + mark.TimeStamp - item.InTime);
-            // Avoid negative
-            if (timestamp < TimeSpan.Zero) timestamp = TimeSpan.Zero;
-            // Avoid timestamp above max length. Also add three second tolerance.
-            if (timestamp > playlistDuration - TimeSpan.FromSeconds(3)) timestamp = playlistDuration;
-            chapterTimestamps.Add(timestamp);
-        }
-        chapterTimestamps.Add(playlistDuration); // Make sure to add the end of the video.
-        for (var i = 0; i < chapterTimestamps.Count - 1; i++)
-        {
-            var start = chapterTimestamps[i];
-            var end = chapterTimestamps[i + 1];
-            if (start == end) continue;
-            var chapterInfo = new ChapterInfo()
-            {
-                Index = chapterInfos.Count,
-                Name = $"Chapter {chapterInfos.Count+1:00}",
-                Start = start,
-                End = end
-            };
-            chapterInfos.Add(chapterInfo);
-        }
-        mediaInfo.Chapters = chapterInfos.ToArray();
+        var source = new BluRayMediaSource(playlist, identifier);
 
         // Check ignore flags
         var flags = MediaIgnoreFlags.None;
 
         // Smaller than 10 seconds
-        if (mediaInfo.Duration.TotalSeconds < 10) 
+        if (source.Info.Duration.TotalSeconds < 10) 
         {
             flags |= MediaIgnoreFlags.TooShort;
         }
         
         // Longer than 5 hours
-        if (mediaInfo.Duration.TotalSeconds > 60 * 60 * 5) 
+        if (source.Info.Duration.TotalSeconds > 60 * 60 * 5) 
         {
             flags |= MediaIgnoreFlags.TooLong;
         }
@@ -227,7 +102,7 @@ public class BluRayMediaProvider : IMediaProvider
         // Scan segments
         var audioStreams = 0;
         var subtitleStreams = 0;
-        foreach (var segment in mediaInfo.Segments)
+        foreach (var segment in source.Info.Segments)
         {
             audioStreams += segment.AudioStreams.Length;
             subtitleStreams += segment.SubtitleStreams.Length;
@@ -241,9 +116,8 @@ public class BluRayMediaProvider : IMediaProvider
             flags |= MediaIgnoreFlags.NoSubtitle;
         }
         
-        mediaInfo.IgnoreFlags = flags;
+        source.IgnoreFlags = flags;
         
-        var source = new BluRayMediaSource(BluRay, mediaInfo, playlistId);
         return source;
     }
 
@@ -267,56 +141,6 @@ public class BluRayMediaProvider : IMediaProvider
     {
         return identifier.Type == MediaIdentifierType.BluRay && identifier.ContentHash == BluRay.ContentHash;
     }
-
-    #region Utils
-    
-    /// <summary>
-    /// Returns a description of a BluRay stream.
-    /// </summary>
-    /// <param name="stream">The stream.</param>
-    /// <returns>Returns the description as text.</returns>
-    private static string GetDescriptionFromStream(PlaylistStream stream)
-    {
-        return stream.Attributes.CodingType switch
-        {
-            // Video
-            StreamCodingType.MPEG1VideoStream => "MPEG1",
-            StreamCodingType.MPEG2VideoStream => "MPEG2",
-            StreamCodingType.MPEG4AVCVideoStream => "MPEG4 AVC",
-            StreamCodingType.MPEG4MVCVideoStream => "MPEG4 MVC",
-            StreamCodingType.SMTPEVC1VideoStream => "SMTPEVC1",
-            StreamCodingType.HEVCVideoStream => "HEVC",
-            // Audio
-            StreamCodingType.MPEG1AudioStream => "MPEG1",
-            StreamCodingType.MPEG2AudioStream => "MPEG2",
-            StreamCodingType.LPCMAudioStream => "LPCM",
-            StreamCodingType.DolbyDigitalAudioStream => "DolbyDigital",
-            StreamCodingType.DtsAudioStream => "DTS",
-            StreamCodingType.DolbyDigitalTrueHDAudioStream => "Dolby TrueHD",
-            StreamCodingType.DolbyDigitalPlusAudioStream => "Dolby Digital Plus",
-            StreamCodingType.DtsHDHighResolutionAudioStream => "DTS HD",
-            StreamCodingType.DtsHDMasterAudioStream => "DTS HD Master",
-            StreamCodingType.DolbyDigitalPlusSecondaryAudioStream => "Dolby Digital Plus (secondary)",
-            StreamCodingType.DtsHDSecondaryAudioStream => "DTS HD (secondary)",
-            // Subtitle
-            StreamCodingType.PresentationGraphicsStream => "PGS",
-            StreamCodingType.InteractiveGraphicsStream => "IGS",
-            StreamCodingType.TextSubtitleStream => "STR",
-            _ => "Stream"
-        };
-    }
-    
-    /// <summary>
-    /// Converts the BluRay ticks to TimeSpan.
-    /// </summary>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static TimeSpan TimeSpanFromBluRayTime(uint time)
-    {
-        return TimeSpan.FromSeconds(time / (double)45000);
-    }
-    
-    #endregion Utils
 
     #region Dispose
     

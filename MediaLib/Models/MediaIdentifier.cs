@@ -10,9 +10,14 @@ namespace MediaLib.Models;
 public class MediaIdentifier : IEquatable<MediaIdentifier>
 {
     /// <summary>
+    /// Gets and sets the media id from which this output file was generated.
+    /// </summary>
+    public required ushort Id { get; init; }
+    
+    /// <summary>
     /// Gets and sets the source type.
     /// </summary>
-    public MediaIdentifierType Type { get; init; }
+    public required MediaIdentifierType Type { get; init; }
     
     /// <summary>
     /// Gets and sets the disk name from which this output file was generated.
@@ -25,12 +30,6 @@ public class MediaIdentifier : IEquatable<MediaIdentifier>
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string ContentHash { get; init; } = "";
-    
-    /// <summary>
-    /// Gets and sets the media id from which this output file was generated.
-    /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public ushort Id { get; init; }
 
     /// <summary>
     /// Gets and sets the segment ids.
