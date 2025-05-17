@@ -30,7 +30,9 @@ public class SupFilePresentationGraphicStream : IPresentationGraphicStream, IDis
     }
     
     /// <inheritdoc />
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     public async IAsyncEnumerable<DisplaySet> ReadAsync()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
         var reader = new BigEndianBinaryReader(_stream);
 
