@@ -1,5 +1,6 @@
 using MediaLib.BluRays.Providers;
 using MediaLib.FFmpeg;
+using MediaLib.Output;
 using MediaLib.Providers;
 using Microsoft.Extensions.Logging;
 
@@ -55,13 +56,13 @@ public class BluRayMediaConverter : IMediaConverter
         }, cancellationToken);
 
         // Mapping the pid to the FFmpeg index
-        var pidToIndex = new Dictionary<ushort, int>();
+        var pidToStream = new Dictionary<ushort, StreamMetadata>();
         foreach (var input in metadata)
         {
             foreach (var stream in input.Streams)
             {
                 // I had multiple audio entries with the same PID. Using the last one worked for me.
-                pidToIndex[stream.Pid] = (int)stream.Id;
+                pidToStream[stream.Pid] = stream;
             }
         }
         
@@ -161,11 +162,23 @@ public class BluRayMediaConverter : IMediaConverter
                 foreach (var stream in file.Streams)
                 {
                     if (!stream.Enabled) continue;
-                    builder.Map(input, pidToIndex[stream.Id]);
+
+                    if (!pidToStream.TryGetValue(stream.Id, out var ffmpegStream)) continue;
+                    
+                    builder.Map(input, (int)ffmpegStream.Id);
                     if (!string.IsNullOrEmpty(stream.LanguageCode))
                         builder.Metadata(outputStreamCount, "language", stream.LanguageCode);
                     if (stream.Default)
                         builder.Disposition(outputStreamCount, "default");
+                    
+                    // BluRay PCM isn't supported outside M2TS and must be changed to regular PCM.
+                    if (stream.Type == OutputStreamType.Audio &&
+                        ffmpegStream.Format.StartsWith("pcm_bluray") &&
+                        definition.Codec.AudioCodec == "copy")
+                    {
+                        builder.Codec(outputStreamCount, "pcm_s24le");
+                    }
+                    
                     outputStreamCount++;
                 }
                 

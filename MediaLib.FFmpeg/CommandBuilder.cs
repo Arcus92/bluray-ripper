@@ -209,6 +209,16 @@ public class CommandBuilder
     }
     
     /// <summary>
+    /// Sets the codec to use for the given stream index.
+    /// </summary>
+    /// <param name="streamIndex">The index of the stream to set the codec.</param>
+    /// <param name="codec">The codec to use.</param>
+    public void Codec(int streamIndex, string codec)
+    {
+        _arguments.Append($"-c:{streamIndex} {codec} ");
+    }
+    
+    /// <summary>
     /// Maps all streams from the given input file.
     /// </summary>
     /// <param name="inputId">The id of the input file.</param>
