@@ -33,7 +33,10 @@ public partial class MakeMkv : IDisposable
     /// </summary>
     public const int UnitSize = 6144;
     
-    private bool _isOpen = false;
+    /// <summary>
+    /// The current opened disk path.
+    /// </summary>
+    private string? _path;
     
     /// <summary>
     /// Opens a BluRay disk by path.
@@ -42,10 +45,11 @@ public partial class MakeMkv : IDisposable
     /// <returns>Returns the MakeMkv error code. If successful, 0 is returned.</returns>
     public int Open(string path)
     {
-        if (_isOpen) Close();
+        if (path == _path) return 0;
+        if (_path is not null) Close();
         
         var status = NativeOpen(_ptr, path);
-        if (status == 0) _isOpen = true;
+        if (status == 0) _path = path;
         return status;
     }
     
@@ -55,7 +59,7 @@ public partial class MakeMkv : IDisposable
     /// <returns>Returns the MakeMkv error code. If successful, 0 is returned.</returns>
     public int Close()
     {
-        _isOpen = false;
+        _path = null;
         return NativeClose(_ptr);
     }
 
@@ -110,12 +114,34 @@ public partial class MakeMkv : IDisposable
     public void Dispose()
     {
         if (_ptr == IntPtr.Zero) return;
-        if (_isOpen) Close();
+        if (_path is not null) Close();
         NativeDestroyContext(_ptr);
         _ptr = IntPtr.Zero;
     }
     
     #endregion IDisposable
+    
+    #region Shared
+
+    private static MakeMkv? _shared;
+
+    /// <summary>
+    /// Gets the shared MakeMkv instance.
+    /// </summary>
+    public static MakeMkv Shared
+    {
+        get
+        {
+            if (_shared is null)
+            {
+                _shared = new MakeMkv();
+            }
+            return _shared;
+        }
+        set => _shared = value;
+    }
+    
+    #endregion Shared
     
     #region Native
     

@@ -138,13 +138,17 @@ public class MakeMkvDecryptStream : Stream
     /// <returns></returns>
     public static MakeMkvDecryptStream Open(string diskPath, FileNameFlags nameFlags)
     {
-        var makeMkv = new MakeMkv();
-        makeMkv.Open(diskPath);
+        var makeMkv = MakeMkv.Shared;
+        if (makeMkv.Open(diskPath) != 0)
+        {
+            throw new IOException($"MakeMkv couldn't open disk path: {diskPath}");
+        }
+
         var inputPath = Path.Combine(diskPath, nameFlags.GetLocalPath());
         var inputStream = File.OpenRead(inputPath);
         var stream = new MakeMkvDecryptStream(makeMkv, nameFlags, inputStream)
         {
-            DisposeMakeMkv = true,
+            DisposeMakeMkv = false, // Do not close shared instance
             DisposeInputStream = true
         };
         return stream;
