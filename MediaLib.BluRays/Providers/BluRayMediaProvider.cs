@@ -1,12 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
 using BluRayLib;
 using BluRayLib.Decrypt;
-using BluRayLib.Enums;
-using BluRayLib.Mpls;
 using MediaLib.BluRays.Exporter;
 using MediaLib.BluRays.Sources;
 using MediaLib.Models;
 using MediaLib.Providers;
 using MediaLib.Sources;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace MediaLib.BluRays.Providers;
@@ -23,9 +23,9 @@ public class BluRayMediaProvider : IMediaProvider
     /// </summary>
     public BluRay BluRay { get; }
 
-    public BluRayMediaProvider(ILogger logger, string path)
+    public BluRayMediaProvider(IServiceProvider serviceProvider, string path)
     {
-        _logger = logger;
+        _logger = serviceProvider.GetRequiredService<ILogger<BluRayMediaProvider>>();;
         BluRay = new BluRay(path);
     }
 
@@ -140,6 +140,25 @@ public class BluRayMediaProvider : IMediaProvider
     public bool Contains(MediaIdentifier identifier)
     {
         return identifier.Type == MediaIdentifierType.BluRay && identifier.ContentHash == BluRay.ContentHash;
+    }
+
+    /// <summary>
+    /// Tries to create a media converter for the given directory.
+    /// </summary>
+    /// <param name="serviceProvider">The service provider.</param>
+    /// <param name="path">The disk path.</param>
+    /// <param name="provider">Returns the created provider.</param>
+    /// <returns>Returns if the path is valid and a provider was created.</returns>
+    public static bool TryCreate(IServiceProvider serviceProvider, string path, [MaybeNullWhen(false)] out BluRayMediaProvider provider)
+    {
+        if (!Directory.Exists(Path.Combine(path, "BDMV")))
+        {
+            provider = null;
+            return false;
+        }
+        
+        provider = new BluRayMediaProvider(serviceProvider, path);
+        return true;
     }
 
     #region Dispose

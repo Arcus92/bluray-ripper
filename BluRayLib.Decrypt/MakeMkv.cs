@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using MediaLib.Utils;
 
 namespace BluRayLib.Decrypt;
 
@@ -208,7 +209,7 @@ public partial class MakeMkv : IDisposable
     /// </summary>
     public static void RegisterLibraryImportResolver()
     {
-        NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), LibraryImportResolver);
+        LibraryImportResolverList.AddGlobalResolver(Assembly.GetExecutingAssembly(), LibraryImportResolver);
     }
     
     #endregion Native

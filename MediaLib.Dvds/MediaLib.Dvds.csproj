@@ -7,9 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BluRayLib.Decrypt\BluRayLib.Decrypt.csproj" />
-      <ProjectReference Include="..\MediaLib.FFmpeg\MediaLib.FFmpeg.csproj" />
-      <ProjectReference Include="..\BluRayLib\BluRayLib.csproj" />
+      <ProjectReference Include="..\DvdLib.Decrypt\DvdLib.Decrypt.csproj" />
+      <ProjectReference Include="..\DvdLib\DvdLib.csproj" />
       <ProjectReference Include="..\MediaLib\MediaLib.csproj" />
     </ItemGroup>
 

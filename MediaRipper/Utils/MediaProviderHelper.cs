@@ -2,9 +2,8 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using MediaLib.BluRays.Providers;
+using MediaLib.Dvds.Providers;
 using MediaLib.Providers;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace MediaRipper.Utils;
 
@@ -20,10 +19,12 @@ public static class MediaProviderHelper
     {
         path = Path.GetFullPath(path).TrimEnd('/', '\\'); // Sanitize
         
-        // TODO: Implement detection
-        var logger = serviceProvider.GetRequiredService<ILogger<BluRayMediaProvider>>();
-        IMediaProvider provider = new BluRayMediaProvider(logger, path);
-
-        return Task.FromResult(provider);
+        if (BluRayMediaProvider.TryCreate(serviceProvider, path, out var bluRayMediaProvider))
+            return Task.FromResult<IMediaProvider>(bluRayMediaProvider);
+        
+        if (DvdMediaProvider.TryCreate(serviceProvider, path, out var dvdMediaProvider))
+            return Task.FromResult<IMediaProvider>(dvdMediaProvider);
+        
+        throw new ArgumentException($"{path} is not a valid path");
     }
 }
