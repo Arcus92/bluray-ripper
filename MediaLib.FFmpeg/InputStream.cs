@@ -1,4 +1,5 @@
 using System.IO.Pipes;
+using System.Net.Sockets;
 
 namespace MediaLib.FFmpeg;
 
@@ -77,22 +78,52 @@ public class InputStream : IDisposable
         // Stream read thread
         _task = Task.Run(async () =>
         {
-            // Create the pipe
-            _pipe = new NamedPipeServerStream(PipeName, PipeDirection.Out, 10, PipeTransmissionMode.Byte, PipeOptions.FirstPipeInstance, 500000, 500000);
-            
-            // Then release the semaphore. This ensures the pipe is created and the following methods can consume it.
-            semaphore.Release();
-            
-            // Opens the underlying stream once a client connects.
-            await _pipe.WaitForConnectionAsync();
-            await using var stream = _streamFunc();
-            _stream = stream;
-            await stream.CopyToAsync(_pipe);
-            await _pipe.DisposeAsync();
-            _fixedPosition = stream.Position;
+            try
+            {
+                // Create the pipe
+                _pipe = new NamedPipeServerStream(PipeName, PipeDirection.Out, 10, PipeTransmissionMode.Byte,
+                    PipeOptions.FirstPipeInstance, 500000, 500000);
+
+                // Then release the semaphore. This ensures the pipe is created and the following methods can consume it.
+                semaphore.Release();
+
+                // Opens the underlying stream once a client connects.
+                await _pipe.WaitForConnectionAsync();
+                await using var stream = _streamFunc();
+                _stream = stream;
+                await stream.CopyToAsync(_pipe);
+                _fixedPosition = stream.Position;
+            }
+            catch (IOException ex) when (ex.InnerException is SocketException { ErrorCode: 32 })
+            {
+                // Ignore Broken pipe. This happens when the consuming process closes the pipe.
+                // That's fine. We are only concerned about reading errors.  
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+                throw;
+            }
+            finally
+            {
+                if (_pipe is not null)
+                {
+                    await _pipe.DisposeAsync();
+                }
+            }
         });
 
         await semaphore.WaitAsync();
+    }
+    
+    /// <summary>
+    /// Waits for the internal stream reader task.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    public async Task WaitAsync(CancellationToken cancellationToken)
+    {
+        if (_task is null) return;
+        await _task.WaitAsync(cancellationToken);
     }
     
     /// <inheritdoc />

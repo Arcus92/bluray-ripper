@@ -146,6 +146,16 @@ public class Engine
         try
         {
             await process.WaitForExitAsync(cancellationToken);
+            
+            // Verify that the input stream didn't throw any exceptions.
+            if (startInfo.InputStreams is not null)
+            {
+                foreach (var inputStream in startInfo.InputStreams)
+                {
+                    await inputStream.WaitAsync(cancellationToken);
+                }
+            }
+            
             return new Result()
             {
                 ExitCode = process.ExitCode,
