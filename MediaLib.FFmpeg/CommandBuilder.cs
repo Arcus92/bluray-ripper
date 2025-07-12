@@ -361,6 +361,23 @@ public class CommandBuilder
     }
     
     /// <summary>
+    /// Sets the error detection handling.
+    /// </summary>
+    /// <param name="value">The error detection value.</param>
+    public void ErrorDetection(string value)
+    {
+        _arguments.Append($"-err_detect {value} ");
+    }
+
+    /// <summary>
+    /// Ignores errors in the incoming streams.
+    /// </summary>
+    public void IgnoreErrors()
+    {
+        ErrorDetection("ignore_err");
+    }
+    
+    /// <summary>
     /// Sets the filter to use for the given stream types.
     /// </summary>
     /// <param name="streamType">The stream type to set the filter.</param>
