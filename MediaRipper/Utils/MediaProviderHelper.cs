@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using MediaLib.BluRays.Providers;
 using MediaLib.Dvds.Providers;
+using MediaLib.FileSystem.Providers;
 using MediaLib.Providers;
 
 namespace MediaRipper.Utils;
@@ -24,6 +25,9 @@ public static class MediaProviderHelper
         
         if (DvdMediaProvider.TryCreate(serviceProvider, path, out var dvdMediaProvider))
             return Task.FromResult<IMediaProvider>(dvdMediaProvider);
+        
+        if (FileSystemMediaProvider.TryCreate(serviceProvider, path, out var fileSystemMediaProvider))
+            return Task.FromResult<IMediaProvider>(fileSystemMediaProvider);
         
         throw new ArgumentException($"{path} is not a valid path");
     }

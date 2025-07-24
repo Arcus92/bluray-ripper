@@ -18,8 +18,14 @@ public class BluRayMediaSource : IMediaSource
 
     public BluRayMediaSource(Playlist playlist, MediaIdentifier identifier)
     {
+        if (!ushort.TryParse(identifier.Id, out var playlistId))
+        {
+            throw new ArgumentException("Couldn't parse playlist id.", nameof(identifier));
+        }
+        
         _playlist = playlist;
         Identifier = identifier;
+        PlaylistId = playlistId;
         Info = BuildMediaInfo();
     }
 
@@ -37,7 +43,7 @@ public class BluRayMediaSource : IMediaSource
     /// <summary>
     /// Gets the playlist id.
     /// </summary>
-    public ushort PlaylistId => Identifier.Id;
+    public ushort PlaylistId { get; }
 
     /// <summary>
     /// Builds the media info from the BluRay source.

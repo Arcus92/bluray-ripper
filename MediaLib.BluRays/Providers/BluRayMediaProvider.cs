@@ -78,7 +78,7 @@ public class BluRayMediaProvider : IMediaProvider
             Type = MediaIdentifierType.BluRay,
             ContentHash = BluRay.ContentHash,
             DiskName = BluRay.DiskName,
-            Id = playlistId,
+            Id = playlistId.ToString(),
             SegmentIds = playlist.Items.Select(i => ushort.Parse(i.Name)).ToArray(),
         };
         
@@ -131,7 +131,13 @@ public class BluRayMediaProvider : IMediaProvider
     public Stream GetRawStream(IMediaSource source)
     {
         if (!Contains(source.Identifier)) throw new ArgumentException($"The given source isn't contained by this provider.", nameof(source));
-        var playlist = BluRay.Playlists[source.Identifier.Id];
+
+        if (!ushort.TryParse(source.Identifier.Id, out var playlistId))
+        {
+            throw new ArgumentException($"Couldn't parse playlist id.", nameof(source));
+        }
+        
+        var playlist = BluRay.Playlists[playlistId];
         var segmentId = ushort.Parse(playlist.Items[0].Name);
         return BluRay.GetM2TsStream(segmentId);
     }

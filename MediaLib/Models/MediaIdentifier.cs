@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using MediaLib.Serializer;
 using MediaLib.Sources;
 
 namespace MediaLib.Models;
@@ -12,7 +13,8 @@ public class MediaIdentifier : IEquatable<MediaIdentifier>
     /// <summary>
     /// Gets and sets the media id from which this output file was generated.
     /// </summary>
-    public required ushort Id { get; init; }
+    [JsonConverter(typeof(IdentifierIdConverter))]
+    public required string Id { get; init; }
     
     /// <summary>
     /// Gets and sets the source type.

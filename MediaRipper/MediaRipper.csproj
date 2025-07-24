@@ -34,6 +34,7 @@
       <ProjectReference Include="..\BluRayLib.Decrypt\BluRayLib.Decrypt.csproj" />
       <ProjectReference Include="..\BluRayLib\BluRayLib.csproj" />
       <ProjectReference Include="..\MediaLib.BluRays\MediaLib.BluRays.csproj" />
+      <ProjectReference Include="..\MediaLib.FileSystem\MediaLib.FileSystem.csproj" />
       <ProjectReference Include="..\MediaLib\MediaLib.csproj" />
     </ItemGroup>
 </Project>

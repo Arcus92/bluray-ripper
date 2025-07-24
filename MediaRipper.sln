@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaLib.Dvds", "MediaLib.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DvdLib.Decrypt", "DvdLib.Decrypt\DvdLib.Decrypt.csproj", "{C9E8E5A1-2650-40F3-B220-862B83D15CC4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaLib.FileSystem", "MediaLib.FileSystem\MediaLib.FileSystem.csproj", "{4965C71F-A541-4306-A9E6-70E0B07BC7C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,9 @@ Global
 		{C9E8E5A1-2650-40F3-B220-862B83D15CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9E8E5A1-2650-40F3-B220-862B83D15CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9E8E5A1-2650-40F3-B220-862B83D15CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4965C71F-A541-4306-A9E6-70E0B07BC7C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4965C71F-A541-4306-A9E6-70E0B07BC7C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4965C71F-A541-4306-A9E6-70E0B07BC7C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4965C71F-A541-4306-A9E6-70E0B07BC7C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

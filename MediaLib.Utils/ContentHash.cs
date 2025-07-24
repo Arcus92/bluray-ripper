@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text;
 
 namespace MediaLib.Utils;
 
@@ -41,6 +42,27 @@ public static class ContentHash
             var bytes = BitConverter.GetBytes(file.Size);
             md5.TransformBlock(bytes, 0, bytes.Length, new byte[bytes.Length], 0);
         }
+        
+        md5.TransformFinalBlock([], 0, 0);
+
+        if (md5.Hash is null)
+        {
+            throw new Exception("Failed to calculate content hash!");
+        }
+        
+        return Convert.ToHexString(md5.Hash);
+    }
+
+    /// <summary>
+    /// Calculates the content hash from the given path.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>Returns the content hash.</returns>
+    public static string CalculateHash(string path)
+    {
+        using var md5 = MD5.Create();
+        var bytes = Encoding.UTF8.GetBytes(path);
+        md5.TransformBlock(bytes, 0, bytes.Length, new byte[bytes.Length], 0);
         
         md5.TransformFinalBlock([], 0, 0);
 
