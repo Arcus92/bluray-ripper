@@ -40,7 +40,7 @@ public class FileSystemMediaSource : IMediaSource
         {
             Identifier = Identifier,
             Codec = codec,
-            Duration = TimeSpan.Zero,
+            Duration = _metadata.Duration,
             MediaInfo = new OutputMediaInfo
             {
                 Name = _name,
