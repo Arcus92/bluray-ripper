@@ -26,6 +26,11 @@ public class StreamMetadata
     /// Gets the stream type.
     /// </summary>
     public StreamType Type { get; set; }
+    
+    /// <summary>
+    /// Gets if this is the default stream.
+    /// </summary>
+    public bool IsDefault { get; set; }
 
     /// <summary>
     /// Gets the language of the stream.
@@ -39,6 +44,6 @@ public class StreamMetadata
 
     public override string ToString()
     {
-        return $"Stream #{InputId}:{Id}({Language}): {Type}: {Format}: {Title ?? "-/-"}";
+        return $"Stream #{InputId}:{Id}({Language}): {Type}: {Format}: {Title ?? "-/-"} {(IsDefault ? "(default)" : "")}";
     }
 }

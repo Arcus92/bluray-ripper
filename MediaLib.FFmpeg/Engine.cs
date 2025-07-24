@@ -474,6 +474,8 @@ public class Engine
         if (indexEnd < 0) indexEnd = line.Length;
         
         stream.Format = line.Substring(indexFormat + 1, indexEnd - indexFormat - 1).Trim();
+
+        stream.IsDefault = line.EndsWith("(default)");
         
         return stream;
     }

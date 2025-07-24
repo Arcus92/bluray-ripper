@@ -118,7 +118,7 @@ public class FileSystemMediaSource : IMediaSource
                 {
                     Id = stream.Pid,
                     Name = stream.Format,
-                    IsDefault = true
+                    IsDefault = stream.IsDefault
                 }).ToArray(),
                 AudioStreams = metadata.Streams
                     .Where(stream => stream.Type == StreamType.Audio)
@@ -127,7 +127,7 @@ public class FileSystemMediaSource : IMediaSource
                         Id = stream.Pid,
                         Name = stream.Format,
                         LanguageCode = stream.Language,
-                        IsDefault = true
+                        IsDefault = stream.IsDefault
                     }).ToArray(),
                 
                 SubtitleStreams = metadata.Streams
@@ -137,7 +137,7 @@ public class FileSystemMediaSource : IMediaSource
                         Id = stream.Pid,
                         Name = stream.Format,
                         LanguageCode = stream.Language,
-                        IsDefault = true
+                        IsDefault = stream.IsDefault
                     }).ToArray(),
             }]
         };
