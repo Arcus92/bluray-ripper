@@ -36,7 +36,8 @@ public class FileSystemMediaProvider : IMediaProvider
 
         foreach (var file in Directory.EnumerateFiles(_path, "*.mkv"))
         {
-            var source = await GetSourceAsync(file);
+            var source = await TryGetSourceAsync(file);
+            if (source is null) continue;
             list.Add(source);
         }
         
@@ -70,7 +71,7 @@ public class FileSystemMediaProvider : IMediaProvider
     /// <param name="path">The path to the source file.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Returns the source object.</returns>
-    public async Task<FileSystemMediaSource> GetSourceAsync(string path, CancellationToken cancellationToken = default)
+    public async Task<FileSystemMediaSource?> TryGetSourceAsync(string path, CancellationToken cancellationToken = default)
     {
         var identifier = new MediaIdentifier()
         {
@@ -80,11 +81,19 @@ public class FileSystemMediaProvider : IMediaProvider
             Id = Path.GetFileName(path),
             SegmentIds = [0],
         };
-
-        var ffmpeg = new Engine();
-        var metadata = await ffmpeg.GetMetadataAsync(path, cancellationToken);
         
-        return new FileSystemMediaSource(path, identifier, metadata);
+        try
+        {
+            var ffmpeg = new Engine();
+            var metadata = await ffmpeg.GetMetadataAsync(path, cancellationToken);
+
+            return new FileSystemMediaSource(path, identifier, metadata);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't fetch metadata with FFmpeg: {Exception}", ex);
+            return null;
+        }
     }
 
     /// <summary>
