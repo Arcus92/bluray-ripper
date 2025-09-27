@@ -19,17 +19,17 @@ public class MediaNode : BaseNode
         VideoStreamNode = new TextNode<VideoNode>("Videos")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(segment.VideoStreams.Select(s => new VideoNode(s) { IsChecked = true }))
+            SubNodes = new ObservableCollection<BaseNode>(segment.VideoStreams.Select(s => new VideoNode(s)))
         };
         AudioStreamNode = new TextNode<AudioNode>("Audios")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(segment.AudioStreams.Select(s => new AudioNode(s) { IsChecked = true }))
+            SubNodes = new ObservableCollection<BaseNode>(segment.AudioStreams.Select(s => new AudioNode(s)))
         };
         SubtitleStreamNode = new TextNode<SubtitleNode>("Subtitles")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(segment.SubtitleStreams.Select(s => new SubtitleNode(s) { IsChecked = true }))
+            SubNodes = new ObservableCollection<BaseNode>(segment.SubtitleStreams.Select(s => new SubtitleNode(s)))
         };
         ChapterNode = new TextNode<ChapterNode>("Chapters")
         {

@@ -19,18 +19,6 @@ public class StreamNode : BaseNode
     /// </summary>
     public ushort Id => Stream.Id;
     
-    /// <inheritdoc cref="IsChecked"/>
-    private bool _isChecked;
-    
-    /// <summary>
-    /// Gets and sets if this stream is selected for export.
-    /// </summary>
-    public bool IsChecked
-    {
-        get => _isChecked;
-        set => SetProperty(ref _isChecked, value);
-    }
-    
     /// <inheritdoc cref="IsDefault"/>
     private bool _isDefault;
     

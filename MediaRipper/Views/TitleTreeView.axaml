@@ -27,7 +27,6 @@
                 <!-- Video stream node -->
                 <TreeDataTemplate x:DataType="nodes:VideoNode">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
-                        <CheckBox IsChecked="{Binding IsChecked}"/> 
                         <TextBlock Text="{Binding Stream.Name}" />
                     </StackPanel>
                 </TreeDataTemplate>
@@ -35,7 +34,6 @@
                 <!-- Audio stream node -->
                 <TreeDataTemplate x:DataType="nodes:AudioNode">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
-                        <CheckBox IsChecked="{Binding IsChecked}"/> 
                         <TextBlock Text="{Binding Stream.Name}" />
                         <TextBlock Text="{Binding Stream.LanguageCode}" />
                     </StackPanel>
@@ -44,7 +42,6 @@
                 <!-- Subtitle stream node -->
                 <TreeDataTemplate x:DataType="nodes:SubtitleNode">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
-                        <CheckBox IsChecked="{Binding IsChecked}"/> 
                         <TextBlock Text="{Binding Stream.Name}" />
                         <TextBlock Text="{Binding Stream.LanguageCode}" />
                     </StackPanel>
