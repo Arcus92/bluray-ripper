@@ -1,6 +1,6 @@
 using System.Text;
 using Avalonia.Controls;
-using MediaRipper.Models.Output;
+using MediaRipper.Models.Outputs;
 using MediaRipper.Views;
 
 namespace MediaRipper.ViewModels;

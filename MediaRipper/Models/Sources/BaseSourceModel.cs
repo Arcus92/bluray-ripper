@@ -1,8 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace MediaRipper.Models.Nodes;
+namespace MediaRipper.Models.Sources;
 
-public class BaseNode : ObservableObject
+public class BaseSourceModel : ObservableObject
 {
     /// <inheritdoc cref="IsExpanded"/>
     private bool _isExpanded;

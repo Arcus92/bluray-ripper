@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediaLib.Providers;
-using MediaRipper.Models.Output;
+using MediaRipper.Models.Outputs;
 using MediaRipper.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 

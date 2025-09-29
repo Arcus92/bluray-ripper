@@ -5,23 +5,23 @@ namespace MediaRipper.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public DiskSelectorViewModel DiskSelector { get; }
-    public TitleTreeViewModel TitleTree { get; }
-    public TitleOptionsViewModel TitleOptions { get; }
+    public SourceSelectorViewModel SourceSelector { get; }
+    public SourceTreeViewModel SourceTree { get; }
+    public ExportSettingsViewModel ExportSettings { get; }
     public OutputSelectorViewModel OutputSelector { get; }
-    public OutputSettingsViewModel OutputSettings { get; }
-    public OutputListViewModel OutputList { get; }
+    public QueueSettingsViewModel QueueSettings { get; }
+    public OutputTreeViewModel OutputTree { get; }
     
-    public MainWindowViewModel(DiskSelectorViewModel diskSelector, TitleTreeViewModel titleTree, 
-        TitleOptionsViewModel titleOptions, OutputSelectorViewModel outputSelector, 
-        OutputSettingsViewModel outputSettings, OutputListViewModel outputList)
+    public MainWindowViewModel(SourceSelectorViewModel sourceSelector, SourceTreeViewModel sourceTree, 
+        ExportSettingsViewModel exportSettings, OutputSelectorViewModel outputSelector, 
+        QueueSettingsViewModel queueSettings, OutputTreeViewModel outputTree)
     {
-        DiskSelector = diskSelector;
-        TitleTree = titleTree;
-        TitleOptions = titleOptions;
+        SourceSelector = sourceSelector;
+        SourceTree = sourceTree;
+        ExportSettings = exportSettings;
         OutputSelector = outputSelector;
-        OutputSettings = outputSettings;
-        OutputList = outputList;
+        QueueSettings = queueSettings;
+        OutputTree = outputTree;
     }
 
     /// <inheritdoc />

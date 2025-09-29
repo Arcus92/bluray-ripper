@@ -1,4 +1,4 @@
-namespace MediaRipper.Models.Output;
+namespace MediaRipper.Models.Outputs;
 
 /// <summary>
 /// The output status.

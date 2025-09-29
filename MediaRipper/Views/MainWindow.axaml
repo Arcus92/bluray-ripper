@@ -11,57 +11,26 @@
         Title="MediaRipper"
         Design.DataContext="{utils:DesignResolve {x:Type vm:MainWindowViewModel}}">
     
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        
+    <Grid RowDefinitions="*">
+
         <!-- Content -->
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            
-            <!-- Input -->
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                
-                <!-- Disk selection -->
-                <ContentControl Grid.Row="0" Content="{Binding DiskSelector}"/>
-                
-                <!-- Title selection --> 
-                <ContentControl Grid.Row="1" Content="{Binding TitleTree}"/>
-                
-                <!-- Title properties --> 
-                <ContentControl Grid.Row="2" Content="{Binding TitleOptions}"/>
+        <Grid Grid.Row="0" ColumnDefinitions="*,auto,*">
+
+            <!-- Sources -->
+            <Grid Grid.Column="0" RowDefinitions="Auto,*,Auto,Auto">
+                <ContentControl Grid.Row="0" Content="{Binding SourceSelector}"/>
+                <ContentControl Grid.Row="1" Content="{Binding SourceTree}"/>
+                <ContentControl Grid.Row="2" Content="{Binding ExportSettings}"/>
             </Grid>
             
 
             <GridSplitter Grid.Column="1"></GridSplitter>
             
             <!-- Output -->
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                
-                <!-- Output selection -->
+            <Grid Grid.Column="2" RowDefinitions="Auto,*,Auto">
                 <ContentControl Grid.Row="0" Content="{Binding OutputSelector}"/>
-                
-                <!-- Output list --> 
-                <ContentControl Grid.Row="1" Content="{Binding OutputList}"/>
-                
-                <!-- Output settings and start buttons --> 
-                <ContentControl Grid.Row="2" Content="{Binding OutputSettings}"/>
+                <ContentControl Grid.Row="1" Content="{Binding OutputTree}"/>
+                <ContentControl Grid.Row="2" Content="{Binding QueueSettings}"/>
             </Grid>
         </Grid>
     </Grid>

@@ -7,15 +7,27 @@ using MediaRipper.Views;
 
 namespace MediaRipper.ViewModels;
 
-public class OutputListViewModel : ViewModelBase
+public class OutputTreeViewModel : ViewModelBase
 {
     private readonly IOutputService _outputService;
 
-    public OutputListViewModel(IOutputService outputService)
+    public OutputTreeViewModel(IOutputService outputService)
     {
         _outputService = outputService;
 
         _outputService.Outputs.MapAndObserve(Items, ModelToViewModel);
+    }
+    
+    /// <inheritdoc cref="SelectedItem"/>
+    private OutputViewModel? _selectedItem;
+
+    /// <summary>
+    /// Gets and sets the selected title info.
+    /// </summary>
+    public OutputViewModel? SelectedItem
+    {
+        get => _selectedItem;
+        set => SetProperty(ref _selectedItem, value);
     }
     
     /// <summary>
@@ -32,6 +44,6 @@ public class OutputListViewModel : ViewModelBase
     /// <inheritdoc />
     public override Control CreateView()
     {
-        return new OutputListView();
+        return new OutputTreeView();
     }
 }

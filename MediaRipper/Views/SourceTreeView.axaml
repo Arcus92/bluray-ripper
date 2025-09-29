@@ -4,35 +4,46 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MediaRipper.ViewModels"
              xmlns:utils="clr-namespace:MediaRipper.Utils"
-             xmlns:nodes="clr-namespace:MediaRipper.Models.Nodes"
+             xmlns:sources="clr-namespace:MediaRipper.Models.Sources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="MediaRipper.Views.TitleTreeView"
-             x:DataType="vm:TitleTreeViewModel"
-             Design.DataContext="{utils:DesignResolve {x:Type vm:TitleTreeViewModel}}">
+             x:Class="MediaRipper.Views.SourceTreeView"
+             x:DataType="vm:SourceTreeViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:SourceTreeViewModel}}">
     
     <ScrollViewer>
-        <TreeView ItemsSource="{Binding TitleNodes}" SelectedItem="{Binding SelectedNode, Mode=TwoWay}">
+        <TreeView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
             <TreeView.DataTemplates>
                 
                 <!-- Title node -->
-                <TreeDataTemplate x:DataType="nodes:MediaNode" ItemsSource="{Binding SubNodes}">
-                    <StackPanel Orientation="Horizontal" Classes="nodeRow" Classes.transparent="{Binding IsIgnored}">
-                        <TextBlock Text="{Binding Info.Name}" />
-                        <TextBlock Text="{Binding Info.Duration, StringFormat=hh\\:mm\\:ss}" />
-                        <TextBlock Text="{Binding IgnoreFlags}" />
-                        <TextBlock Text="{Binding SegmentDescriptionText}" />
-                    </StackPanel>
+                <TreeDataTemplate x:DataType="sources:MediaSourceModel" ItemsSource="{Binding SubNodes}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Classes="nodeRow" Classes.transparent="{Binding IsIgnored}">
+                            <TextBlock Text="{Binding Info.Name}" />
+                            <TextBlock Text="{Binding Info.Duration, StringFormat=hh\\:mm\\:ss}" />
+                            <TextBlock Text="{Binding IgnoreFlags}" />
+                            <TextBlock Text="{Binding SegmentDescriptionText}" />
+                        
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button>Add</Button>
+                        </StackPanel>
+                    </Grid>
+                    
                 </TreeDataTemplate>
                 
                 <!-- Video stream node -->
-                <TreeDataTemplate x:DataType="nodes:VideoNode">
+                <TreeDataTemplate x:DataType="sources:VideoSourceModel">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
                         <TextBlock Text="{Binding Stream.Name}" />
                     </StackPanel>
                 </TreeDataTemplate>
                 
                 <!-- Audio stream node -->
-                <TreeDataTemplate x:DataType="nodes:AudioNode">
+                <TreeDataTemplate x:DataType="sources:AudioSourceModel">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
                         <TextBlock Text="{Binding Stream.Name}" />
                         <TextBlock Text="{Binding Stream.LanguageCode}" />
@@ -40,7 +51,7 @@
                 </TreeDataTemplate>
                 
                 <!-- Subtitle stream node -->
-                <TreeDataTemplate x:DataType="nodes:SubtitleNode">
+                <TreeDataTemplate x:DataType="sources:SubtitleSourceModel">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
                         <TextBlock Text="{Binding Stream.Name}" />
                         <TextBlock Text="{Binding Stream.LanguageCode}" />
@@ -48,7 +59,7 @@
                 </TreeDataTemplate>
                 
                 <!-- Chapter node -->
-                <TreeDataTemplate x:DataType="nodes:ChapterNode">
+                <TreeDataTemplate x:DataType="sources:ChapterSourceModel">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
                         <TextBlock Text="{Binding Chapter.Name}" />
                         <TextBlock Text="{Binding Start, StringFormat=hh\\:mm\\:ss}"/>
@@ -58,7 +69,7 @@
                 </TreeDataTemplate>
                 
                 <!-- Generic text node (chapter / segment) -->
-                <TreeDataTemplate x:DataType="nodes:TextNode" ItemsSource="{Binding SubNodes}">
+                <TreeDataTemplate x:DataType="sources:TextSourceModel" ItemsSource="{Binding SubNodes}">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
                         <TextBlock Text="{Binding Text}"/>
                     </StackPanel>
@@ -67,7 +78,7 @@
             
             <TreeView.Styles>
                 <!-- Auto expand text nodes -->
-                <Style x:DataType="nodes:BaseNode" Selector="TreeViewItem">
+                <Style x:DataType="sources:BaseSourceModel" Selector="TreeViewItem">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                 </Style>
                 

@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace MediaRipper.Models.Nodes;
+namespace MediaRipper.Models.Sources;
 
-public class TextNode : BaseNode
+public class TextSourceModel : BaseSourceModel
 {
-    public TextNode(string text)
+    public TextSourceModel(string text)
     {
         Text = text;
     }
@@ -19,12 +19,12 @@ public class TextNode : BaseNode
     /// <summary>
     /// Gets the sub-nodes.
     /// </summary>
-    public ObservableCollection<BaseNode> SubNodes { get; init; } = [];
+    public ObservableCollection<BaseSourceModel> SubNodes { get; init; } = [];
 }
 
-public class TextNode<TChild> : TextNode where TChild : BaseNode
+public class TextSourceModel<TChild> : TextSourceModel where TChild : BaseSourceModel
 {
-    public TextNode(string text) : base(text)
+    public TextSourceModel(string text) : base(text)
     {
     }
 

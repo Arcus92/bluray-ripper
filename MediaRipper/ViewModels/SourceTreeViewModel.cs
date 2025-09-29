@@ -4,37 +4,37 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using MediaLib;
-using MediaRipper.Models.Nodes;
+using MediaRipper.Models.Sources;
 using MediaRipper.Services.Interfaces;
 using MediaRipper.Views;
 
 namespace MediaRipper.ViewModels;
 
-public class TitleTreeViewModel : ViewModelBase
+public class SourceTreeViewModel : ViewModelBase
 {
     private readonly IMediaProviderService _mediaProviderService;
     
-    public TitleTreeViewModel(IMediaProviderService mediaProviderService)
+    public SourceTreeViewModel(IMediaProviderService mediaProviderService)
     {
         _mediaProviderService = mediaProviderService;
         _mediaProviderService.Changed += OnMediaProviderServiceChanged;
     }
 
-    /// <inheritdoc cref="SelectedNode"/>
-    private BaseNode? _selectedNode;
+    /// <inheritdoc cref="SelectedItem"/>
+    private BaseSourceModel? _selectedItem;
 
     /// <summary>
     /// Gets and sets the selected title info.
     /// </summary>
-    public BaseNode? SelectedNode
+    public BaseSourceModel? SelectedItem
     {
-        get => _selectedNode;
-        set => SetProperty(ref _selectedNode, value);
+        get => _selectedItem;
+        set => SetProperty(ref _selectedItem, value);
     }
 
-    public bool TryGetSelectedTitleNode([MaybeNullWhen(false)] out MediaNode media)
+    public bool TryGetSelectedTitleNode([MaybeNullWhen(false)] out MediaSourceModel media)
     {
-        if (_selectedNode is MediaNode node)
+        if (_selectedItem is MediaSourceModel node)
         {
             media = node;
             return true;
@@ -58,14 +58,14 @@ public class TitleTreeViewModel : ViewModelBase
 
     private async Task BuildTrackNodesAsync()
     {
-        TitleNodes.Clear();
+        Items.Clear();
         if (!_mediaProviderService.IsLoaded) return;
         
         var sources = await _mediaProviderService.GetSourcesAsync();
         foreach (var source in sources)
         {
             var isIgnored = source.IgnoreFlags != MediaIgnoreFlags.None;
-            TitleNodes.Add(new MediaNode(source)
+            Items.Add(new MediaSourceModel(source)
             {
                 IsIgnored = isIgnored
             });
@@ -75,11 +75,11 @@ public class TitleTreeViewModel : ViewModelBase
     /// <summary>
     /// The title nodes for the tree-view.
     /// </summary>
-    public ObservableCollection<MediaNode> TitleNodes { get; } = [];
+    public ObservableCollection<MediaSourceModel> Items { get; } = [];
     
     /// <inheritdoc />
     public override Control CreateView()
     {
-        return new TitleTreeView();
+        return new SourceTreeView();
     }
 }

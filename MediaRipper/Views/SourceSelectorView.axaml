@@ -5,9 +5,9 @@
              xmlns:vm="clr-namespace:MediaRipper.ViewModels"
              xmlns:utils="clr-namespace:MediaRipper.Utils"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="50"
-             x:Class="MediaRipper.Views.DiskSelectorView"
-             x:DataType="vm:DiskSelectorViewModel"
-             Design.DataContext="{utils:DesignResolve {x:Type vm:DiskSelectorViewModel}}">
+             x:Class="MediaRipper.Views.SourceSelectorView"
+             x:DataType="vm:SourceSelectorViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:SourceSelectorViewModel}}">
     
     <Border Padding="10">
         <StackPanel Orientation="Horizontal" Spacing="10">

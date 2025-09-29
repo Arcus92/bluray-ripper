@@ -16,12 +16,13 @@ public static class ServiceCollectionExtensions
     {
         // View models
         collection.AddScoped<MainWindowViewModel>();
-        collection.AddScoped<DiskSelectorViewModel>();
-        collection.AddScoped<TitleTreeViewModel>();
-        collection.AddScoped<TitleOptionsViewModel>();
+        collection.AddScoped<SourceSelectorViewModel>();
+        collection.AddScoped<SourceTreeViewModel>();
+        collection.AddScoped<ExportSettingsViewModel>();
         collection.AddScoped<OutputSelectorViewModel>();
-        collection.AddScoped<OutputSettingsViewModel>();
+        collection.AddScoped<QueueSettingsViewModel>();
         collection.AddScoped<OutputListViewModel>();
+        collection.AddScoped<OutputTreeViewModel>();
         
         // Controller
         collection.AddSingleton<ISettingService, SettingService>();

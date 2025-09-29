@@ -6,35 +6,35 @@ using MediaLib;
 using MediaLib.Models;
 using MediaLib.Sources;
 
-namespace MediaRipper.Models.Nodes;
+namespace MediaRipper.Models.Sources;
 
-public class MediaNode : BaseNode
+public class MediaSourceModel : BaseSourceModel
 {
-    public MediaNode(IMediaSource source)
+    public MediaSourceModel(IMediaSource source)
     {
         Source = source;
 
         var segment = Info.Segments.First();
         
-        VideoStreamNode = new TextNode<VideoNode>("Videos")
+        VideoStreamNode = new TextSourceModel<VideoSourceModel>("Videos")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(segment.VideoStreams.Select(s => new VideoNode(s)))
+            SubNodes = new ObservableCollection<BaseSourceModel>(segment.VideoStreams.Select(s => new VideoSourceModel(s)))
         };
-        AudioStreamNode = new TextNode<AudioNode>("Audios")
+        AudioStreamNode = new TextSourceModel<AudioSourceModel>("Audios")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(segment.AudioStreams.Select(s => new AudioNode(s)))
+            SubNodes = new ObservableCollection<BaseSourceModel>(segment.AudioStreams.Select(s => new AudioSourceModel(s)))
         };
-        SubtitleStreamNode = new TextNode<SubtitleNode>("Subtitles")
+        SubtitleStreamNode = new TextSourceModel<SubtitleSourceModel>("Subtitles")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(segment.SubtitleStreams.Select(s => new SubtitleNode(s)))
+            SubNodes = new ObservableCollection<BaseSourceModel>(segment.SubtitleStreams.Select(s => new SubtitleSourceModel(s)))
         };
-        ChapterNode = new TextNode<ChapterNode>("Chapters")
+        ChapterNode = new TextSourceModel<ChapterSourceModel>("Chapters")
         {
             IsExpanded = true,
-            SubNodes = new ObservableCollection<BaseNode>(Info.Chapters.Select(c => new ChapterNode(c)))
+            SubNodes = new ObservableCollection<BaseSourceModel>(Info.Chapters.Select(c => new ChapterSourceModel(c)))
         };
         SubNodes = [ VideoStreamNode, AudioStreamNode, SubtitleStreamNode, ChapterNode ];
         
@@ -70,27 +70,27 @@ public class MediaNode : BaseNode
     /// <summary>
     /// Gets the video stream sub node.
     /// </summary>
-    public TextNode<VideoNode> VideoStreamNode { get; }
+    public TextSourceModel<VideoSourceModel> VideoStreamNode { get; }
     
     /// <summary>
     /// Gets the audio stream sub node.
     /// </summary>
-    public TextNode<AudioNode> AudioStreamNode { get; }
+    public TextSourceModel<AudioSourceModel> AudioStreamNode { get; }
     
     /// <summary>
     /// Gets the subtitle stream sub node.
     /// </summary>
-    public TextNode<SubtitleNode> SubtitleStreamNode { get; }
+    public TextSourceModel<SubtitleSourceModel> SubtitleStreamNode { get; }
     
     /// <summary>
     /// Gets the chapter category node.
     /// </summary>
-    public TextNode<ChapterNode> ChapterNode { get; }
+    public TextSourceModel<ChapterSourceModel> ChapterNode { get; }
     
     /// <summary>
     /// Gets the sub-nodes.
     /// </summary>
-    public ObservableCollection<TextNode> SubNodes { get; }
+    public ObservableCollection<TextSourceModel> SubNodes { get; }
     
     
     /// <inheritdoc cref="IsIgnored"/>

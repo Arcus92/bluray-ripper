@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediaLib.Models;
 using MediaLib.Output;
-using MediaRipper.Models.Output;
+using MediaRipper.Models.Outputs;
 using MediaRipper.Services.Interfaces;
 
 namespace MediaRipper.Services;

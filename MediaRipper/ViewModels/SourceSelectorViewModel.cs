@@ -5,12 +5,12 @@ using MediaRipper.Views;
 
 namespace MediaRipper.ViewModels;
 
-public class DiskSelectorViewModel : ViewModelBase
+public class SourceSelectorViewModel : ViewModelBase
 {
     private readonly ISettingService _settingService;
     private readonly IMediaProviderService _mediaProviderService;
 
-    public DiskSelectorViewModel(ISettingService settingService, IMediaProviderService mediaProviderService)
+    public SourceSelectorViewModel(ISettingService settingService, IMediaProviderService mediaProviderService)
     {
         _settingService = settingService;
         _mediaProviderService = mediaProviderService;
@@ -38,6 +38,6 @@ public class DiskSelectorViewModel : ViewModelBase
     /// <inheritdoc />
     public override Control CreateView()
     {
-        return new DiskSelectorView();
+        return new SourceSelectorView();
     }
 }

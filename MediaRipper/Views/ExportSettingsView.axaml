@@ -6,9 +6,9 @@
              xmlns:vm="clr-namespace:MediaRipper.ViewModels"
              xmlns:utils="clr-namespace:MediaRipper.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="MediaRipper.Views.TitleOptionsView"
-             x:DataType="vm:TitleOptionsViewModel"
-             Design.DataContext="{utils:DesignResolve {x:Type vm:TitleOptionsViewModel}}">
+             x:Class="MediaRipper.Views.ExportSettingsView"
+             x:DataType="vm:ExportSettingsViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:ExportSettingsViewModel}}">
     
     <Border Padding="10">
         <StackPanel Orientation="Horizontal" Spacing="10">

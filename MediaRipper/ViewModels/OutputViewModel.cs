@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using MediaLib.Output;
 using MediaRipper.Models;
-using MediaRipper.Models.Output;
+using MediaRipper.Models.Outputs;
 using MediaRipper.Services.Interfaces;
 using MediaRipper.Views;
 

@@ -1,10 +1,10 @@
 using MediaLib.Models;
 
-namespace MediaRipper.Models.Nodes;
+namespace MediaRipper.Models.Sources;
 
-public class SubtitleNode : StreamNode
+public class SubtitleSourceModel : StreamSourceModel
 {
-    public SubtitleNode(SubtitleInfo stream) : base(stream)
+    public SubtitleSourceModel(SubtitleInfo stream) : base(stream)
     {
         Stream = stream;
     }

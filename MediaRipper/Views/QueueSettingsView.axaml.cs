@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace MediaRipper.Views;
 
-public partial class TitleOptionsView : UserControl
+public partial class QueueSettingsView : UserControl
 {
-    public TitleOptionsView()
+    public QueueSettingsView()
     {
         InitializeComponent();
     }

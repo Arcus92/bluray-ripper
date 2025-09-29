@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace MediaRipper.Views;
 
-public partial class DiskSelectorView : UserControl
+public partial class SourceSelectorView : UserControl
 {
-    public DiskSelectorView()
+    public SourceSelectorView()
     {
         InitializeComponent();
     }

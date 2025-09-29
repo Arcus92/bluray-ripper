@@ -3,26 +3,26 @@ using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using MediaLib;
-using MediaRipper.Models.Output;
+using MediaRipper.Models.Outputs;
 using MediaRipper.Services.Interfaces;
 using MediaRipper.Views;
 
 namespace MediaRipper.ViewModels;
 
-public class TitleOptionsViewModel : ViewModelBase
+public class ExportSettingsViewModel : ViewModelBase
 {
     private readonly IOutputService _outputService;
     private readonly IMediaProviderService _mediaProviderService;
     private readonly OutputSelectorViewModel _outputSelector;
-    private readonly TitleTreeViewModel _titleTree;
+    private readonly SourceTreeViewModel _sourceTree;
     
-    public TitleOptionsViewModel(IOutputService outputService, IMediaProviderService mediaProviderService, 
-        OutputSelectorViewModel outputSelector, TitleTreeViewModel titleTree)
+    public ExportSettingsViewModel(IOutputService outputService, IMediaProviderService mediaProviderService, 
+        OutputSelectorViewModel outputSelector, SourceTreeViewModel sourceTree)
     {
         _outputService = outputService;
         _mediaProviderService = mediaProviderService;
         _outputSelector = outputSelector;
-        _titleTree = titleTree;
+        _sourceTree = sourceTree;
     }
     
     #region Format settings
@@ -64,7 +64,7 @@ public class TitleOptionsViewModel : ViewModelBase
     /// </summary>
     public async Task QueueSelectionAsync()
     {
-        if (!_titleTree.TryGetSelectedTitleNode(out var titleNode))
+        if (!_sourceTree.TryGetSelectedTitleNode(out var titleNode))
             return;
         
         var outputDefinition = titleNode.Source.CreateDefaultOutputDefinition(DefaultCodecOptions, _videoFormat);
@@ -73,7 +73,7 @@ public class TitleOptionsViewModel : ViewModelBase
 
     public async Task DequeueSelectionAsync()
     {
-        if (!_titleTree.TryGetSelectedTitleNode(out var title))
+        if (!_sourceTree.TryGetSelectedTitleNode(out var title))
             return;
         
         var output = _outputService.GetByIdentifier(title.Source.Identifier);
@@ -84,7 +84,7 @@ public class TitleOptionsViewModel : ViewModelBase
 
     public async Task PlayPreviewAsync()
     {
-        if (!_titleTree.TryGetSelectedTitleNode(out var titleNode))
+        if (!_sourceTree.TryGetSelectedTitleNode(out var titleNode))
         {
             return;
         }
@@ -119,7 +119,7 @@ public class TitleOptionsViewModel : ViewModelBase
 
     public async Task SaveSegmentAsync()
     {
-        if (!_titleTree.TryGetSelectedTitleNode(out var titleNode))
+        if (!_sourceTree.TryGetSelectedTitleNode(out var titleNode))
         {
             return;
         }
@@ -136,6 +136,6 @@ public class TitleOptionsViewModel : ViewModelBase
     /// <inheritdoc />
     public override Control CreateView()
     {
-        return new TitleOptionsView();
+        return new ExportSettingsView();
     }
 }

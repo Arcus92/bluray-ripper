@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using MediaLib.Models;
 using MediaLib.Output;
-using MediaRipper.Models.Output;
+using MediaRipper.Models.Outputs;
 
 namespace MediaRipper.Services.Interfaces;
 

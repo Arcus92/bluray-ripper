@@ -1,11 +1,11 @@
 using System;
 using MediaLib.Models;
 
-namespace MediaRipper.Models.Nodes;
+namespace MediaRipper.Models.Sources;
 
-public class ChapterNode : BaseNode
+public class ChapterSourceModel : BaseSourceModel
 {
-    public ChapterNode(ChapterInfo chapter)
+    public ChapterSourceModel(ChapterInfo chapter)
     {
         Chapter = chapter;
     }

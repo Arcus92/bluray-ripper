@@ -5,9 +5,9 @@
              xmlns:vm="clr-namespace:MediaRipper.ViewModels"
              xmlns:utils="clr-namespace:MediaRipper.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="MediaRipper.Views.OutputSettingsView"
-             x:DataType="vm:OutputSettingsViewModel"
-             Design.DataContext="{utils:DesignResolve {x:Type vm:OutputSettingsViewModel}}">
+             x:Class="MediaRipper.Views.QueueSettingsView"
+             x:DataType="vm:QueueSettingsViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:QueueSettingsViewModel}}">
     
     <Border Padding="10">
         <StackPanel Orientation="Horizontal" Spacing="10">

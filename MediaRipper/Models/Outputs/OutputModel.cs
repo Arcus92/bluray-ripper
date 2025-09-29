@@ -3,7 +3,7 @@ using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MediaLib.Output;
 
-namespace MediaRipper.Models.Output;
+namespace MediaRipper.Models.Outputs;
 
 public class OutputModel : ObservableObject
 {

@@ -1,10 +1,10 @@
 using MediaLib.Models;
 
-namespace MediaRipper.Models.Nodes;
+namespace MediaRipper.Models.Sources;
 
-public class StreamNode : BaseNode
+public class StreamSourceModel : BaseSourceModel
 {
-    public StreamNode(StreamInfo stream)
+    public StreamSourceModel(StreamInfo stream)
     {
         Stream = stream;
     }
