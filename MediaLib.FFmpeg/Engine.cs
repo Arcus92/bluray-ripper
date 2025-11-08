@@ -475,7 +475,8 @@ public class Engine
         
         stream.Format = line.Substring(indexFormat + 1, indexEnd - indexFormat - 1).Trim();
 
-        stream.IsDefault = line.EndsWith("(default)");
+        stream.IsDefault = line.Contains("(default)");
+        stream.IsForced = line.Contains("(forced)");
         
         return stream;
     }

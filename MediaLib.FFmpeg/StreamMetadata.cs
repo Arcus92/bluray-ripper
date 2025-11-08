@@ -31,6 +31,11 @@ public class StreamMetadata
     /// Gets if this is the default stream.
     /// </summary>
     public bool IsDefault { get; set; }
+    
+    /// <summary>
+    /// Gets if this is stream is forced (like subtitles).
+    /// </summary>
+    public bool IsForced { get; set; }
 
     /// <summary>
     /// Gets the language of the stream.
