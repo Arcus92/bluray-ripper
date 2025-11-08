@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<QueueSettingsViewModel>();
         collection.AddScoped<OutputListViewModel>();
         collection.AddScoped<OutputTreeViewModel>();
+        collection.AddScoped<OutputSettingsViewModel>();
         
         // Controller
         collection.AddSingleton<ISettingService, SettingService>();

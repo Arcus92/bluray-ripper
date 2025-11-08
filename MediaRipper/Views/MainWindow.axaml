@@ -27,10 +27,11 @@
             <GridSplitter Grid.Column="1"></GridSplitter>
             
             <!-- Output -->
-            <Grid Grid.Column="2" RowDefinitions="Auto,*,Auto">
+            <Grid Grid.Column="2" RowDefinitions="Auto,*,Auto,Auto">
                 <ContentControl Grid.Row="0" Content="{Binding OutputSelector}"/>
                 <ContentControl Grid.Row="1" Content="{Binding OutputTree}"/>
-                <ContentControl Grid.Row="2" Content="{Binding QueueSettings}"/>
+                <ContentControl Grid.Row="2" Content="{Binding OutputSettings}"/>
+                <ContentControl Grid.Row="3" Content="{Binding QueueSettings}"/>
             </Grid>
         </Grid>
     </Grid>

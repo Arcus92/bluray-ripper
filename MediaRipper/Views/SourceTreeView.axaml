@@ -29,7 +29,6 @@
                         
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <Button>Add</Button>
                         </StackPanel>
                     </Grid>
                     

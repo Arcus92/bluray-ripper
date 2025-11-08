@@ -9,40 +9,25 @@
              x:DataType="vm:OutputViewModel"
              Design.DataContext="{utils:DesignResolve {x:Type vm:OutputViewModel}}">
     
-    <Expander VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="5">
-        <Expander.Header>
-            <DockPanel>
+    <Border Margin="5">
+        <ScrollViewer MaxHeight="450">
+            <StackPanel Orientation="Vertical" Spacing="10">
+                <TextBox Text="{Binding Name}" />
                 
-                <ProgressBar Value="{Binding Model.Progress}" 
-                             Maximum="1.0" 
-                             IsVisible="{Binding IsProgressBarVisible}" 
-                             Margin="0,5,0,0"
-                             DockPanel.Dock="Bottom" />
-                <TextBlock Text="{Binding Model.Progress, StringFormat='{}{0:P0}'}" 
-                           IsVisible="{Binding IsProgressBarVisible}" 
-                           VerticalAlignment="Center" 
-                           TextAlignment="Center"
-                           Width="60"
-                           DockPanel.Dock="Right" />
-                <TextBlock Text="{Binding Model.Basename}" />
-            </DockPanel>
-        </Expander.Header>
-        <StackPanel Orientation="Vertical" Spacing="10">
-            <TextBox Text="{Binding Name}" />
-            
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <ComboBox ItemsSource="{Binding AllMediaTypes}" SelectedValue="{Binding MediaType}"/>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <ComboBox ItemsSource="{Binding AllMediaTypes}" SelectedValue="{Binding MediaType}"/>
+                    
+                    <TextBlock Text="Season:" VerticalAlignment="Center"/>
+                    <NumericUpDown Width="110" Minimum="1" Maximum="1000" Value="{Binding Season}" FormatString="N0" ParsingNumberStyle="Integer"/>
+                    
+                    <TextBlock Text="Episode:" VerticalAlignment="Center"/>
+                    <NumericUpDown Width="110" Minimum="1" Maximum="1000" Value="{Binding Episode}" FormatString="N0" ParsingNumberStyle="Integer"/>
+                    
+                    <Button Command="{Binding ApplyAsync}" CommandParameter="{Binding Model}">Apply</Button>
+                </StackPanel>
                 
-                <TextBlock Text="Season:" VerticalAlignment="Center"/>
-                <NumericUpDown Width="110" Minimum="1" Maximum="1000" Value="{Binding Season}" FormatString="N0" ParsingNumberStyle="Integer"/>
-                
-                <TextBlock Text="Episode:" VerticalAlignment="Center"/>
-                <NumericUpDown Width="110" Minimum="1" Maximum="1000" Value="{Binding Episode}" FormatString="N0" ParsingNumberStyle="Integer"/>
+                <ItemsControl ItemsSource="{Binding Files}" />
             </StackPanel>
-            
-            <Button Command="{Binding ApplyAsync}" CommandParameter="{Binding Model}">Apply</Button>
-            
-            <ItemsControl ItemsSource="{Binding Files}" />
-        </StackPanel>
-    </Expander>
+        </ScrollViewer>
+    </Border>
 </UserControl>
