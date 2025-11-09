@@ -49,6 +49,6 @@ public class StreamMetadata
 
     public override string ToString()
     {
-        return $"Stream #{InputId}:{Id}({Language}): {Type}: {Format}: {Title ?? "-/-"} {(IsDefault ? "(default)" : "")}";
+        return $"Stream #{InputId}:{Id}({Language}): {Type}: {Format}: {Title ?? "-/-"} {(IsDefault ? "(default)" : "")} {(IsForced ? "(forced)" : "")}";
     }
 }

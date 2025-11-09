@@ -473,7 +473,11 @@ public class Engine
         var indexEnd = line.IndexOf(',', indexFormat + 1);
         if (indexEnd < 0) indexEnd = line.Length;
         
-        stream.Format = line.Substring(indexFormat + 1, indexEnd - indexFormat - 1).Trim();
+        // The format type is the first word followed by tags like (default) or (forced)
+        var indexFormatType = line.IndexOf(' ', indexFormat + 2);
+        if (indexFormatType < 0 || indexFormatType > indexEnd) indexFormatType = indexEnd;
+        
+        stream.Format = line.Substring(indexFormat + 1, indexFormatType - indexFormat - 1).Trim();
 
         stream.IsDefault = line.Contains("(default)");
         stream.IsForced = line.Contains("(forced)");
