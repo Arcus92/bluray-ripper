@@ -1,4 +1,5 @@
 using MediaLib.FFmpeg;
+using MediaLib.Formats;
 using MediaLib.Models;
 using MediaLib.Output;
 using MediaLib.Sources;
@@ -34,8 +35,21 @@ public class FileSystemMediaSource : IMediaSource
     public MediaIgnoreFlags IgnoreFlags { get; set; }
     
     /// <inheritdoc />
-    public OutputDefinition CreateDefaultOutputDefinition(CodecOptions codec, VideoFormat format)
+    public OutputDefinition CreateDefaultOutputDefinition(CodecOptions codec, MediaFormat containerFormat)
     {
+        var baseName = _name;
+        
+        var streams = _metadata.Streams.Select(stream => new OutputStream()
+        {
+            Id = (ushort)stream.Id,
+            Type = MapStreamType(stream.Type),
+            Format = MapFormat(stream.Format),
+            Default = stream.IsDefault,
+            Enabled = true,
+            LanguageCode = stream.Language
+        });
+        
+        var files = OutputHelper.GetFilesByStreams(baseName, streams, codec, containerFormat);
         return new OutputDefinition
         {
             Identifier = Identifier,
@@ -52,22 +66,7 @@ public class FileSystemMediaSource : IMediaSource
                 End = chapter.End
             }).ToArray(),
             ExportChapters = true,
-            Files =
-            [
-                new OutputFile
-                {
-                    Filename = $"{_name}{format.Extension}",
-                    Format = format.FFmpegFormat,
-                    Streams = _metadata.Streams.Select(stream => new OutputStream()
-                    {
-                        Id = (ushort)stream.Id,
-                        Default = false,
-                        Enabled = true,
-                        Type = MapStreamType(stream.Type),
-                        LanguageCode = stream.Language
-                    }).ToArray(),
-                }
-            ]
+            Files = files.ToArray()
         };
     }
 
@@ -84,6 +83,20 @@ public class FileSystemMediaSource : IMediaSource
             StreamType.Audio => OutputStreamType.Audio,
             StreamType.Subtitle => OutputStreamType.Subtitle,
             _ => throw new ArgumentOutOfRangeException(nameof(streamType), streamType, null)
+        };
+    }
+
+    /// <summary>
+    /// Maps the format to an FFmpeg format name. 
+    /// </summary>
+    /// <param name="format">The input format name.</param>
+    /// <returns>Returns the FFmpeg format name.</returns>
+    private static string MapFormat(string format)
+    {
+        return format switch
+        {
+            "subrip" => SubtitleFormats.Subrip.FFmpegFormat,
+            _ => format
         };
     }
 

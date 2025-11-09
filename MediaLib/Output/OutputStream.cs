@@ -35,4 +35,9 @@ public class OutputStream
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? LanguageCode { get; set; }
+    
+    /// <summary>
+    /// Gets the media format of this stream.
+    /// </summary>
+    public string? Format { get; set; }
 }

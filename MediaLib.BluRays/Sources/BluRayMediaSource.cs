@@ -1,8 +1,7 @@
-using System.Text;
 using BluRayLib;
 using BluRayLib.Enums;
 using BluRayLib.Mpls;
-using MediaLib.BluRays.Providers;
+using MediaLib.Formats;
 using MediaLib.Models;
 using MediaLib.Output;
 using MediaLib.Sources;
@@ -249,15 +248,14 @@ public class BluRayMediaSource : IMediaSource
     #region Output
     
     /// <inheritdoc />
-    public OutputDefinition CreateDefaultOutputDefinition(CodecOptions codec, VideoFormat format)
+    public OutputDefinition CreateDefaultOutputDefinition(CodecOptions codec, MediaFormat containerFormat)
     {
         if (_playlist.Items.Length == 0)
             throw new ArgumentException("Cannot create output for title without segments!", nameof(PlaylistId));
 
         var baseName = $"{Identifier.DiskName}_{PlaylistId}";
         var segment = _playlist.Items[0];
-        var exportSubtitlesAsSeparateFiles = !format.SupportPgs;
-        
+
         // Calculate total duration
         var duration = TimeSpan.Zero;
         foreach (var item in _playlist.Items)
@@ -277,6 +275,7 @@ public class BluRayMediaSource : IMediaSource
             {
                 Id = stream.Entry.RefToStreamId,
                 Type = OutputStreamType.Video,
+                Format = stream.Attributes.VideoFormat.ToString(),
                 Default = first,
             });
             first = false;
@@ -288,6 +287,7 @@ public class BluRayMediaSource : IMediaSource
             {
                 Id = stream.Entry.RefToStreamId,
                 Type = OutputStreamType.Video,
+                Format = stream.Attributes.VideoFormat.ToString(),
                 Default = first,
             });
             first = false;
@@ -302,6 +302,7 @@ public class BluRayMediaSource : IMediaSource
             {
                 Id = stream.Entry.RefToStreamId,
                 Type = OutputStreamType.Audio,
+                Format = stream.Attributes.AudioFormat.ToString(),
                 LanguageCode = stream.Attributes.LanguageCode,
                 Default = first,
             });
@@ -314,6 +315,7 @@ public class BluRayMediaSource : IMediaSource
             {
                 Id = stream.Entry.RefToStreamId,
                 Type = OutputStreamType.Audio,
+                Format = stream.Attributes.AudioFormat.ToString(),
                 LanguageCode = stream.Attributes.LanguageCode,
                 Default = first,
             });
@@ -329,6 +331,7 @@ public class BluRayMediaSource : IMediaSource
             {
                 Id = stream.Entry.RefToStreamId,
                 Type = OutputStreamType.Subtitle,
+                Format = SubtitleFormats.Pgs.FFmpegFormat,
                 LanguageCode = stream.Attributes.LanguageCode,
                 Default = first,
             });
@@ -341,79 +344,14 @@ public class BluRayMediaSource : IMediaSource
             {
                 Id = stream.Entry.RefToStreamId,
                 Type = OutputStreamType.Subtitle,
+                Format = SubtitleFormats.Pgs.FFmpegFormat,
                 LanguageCode = stream.Attributes.LanguageCode,
                 Default = first,
             });
             first = false;
         }
         
-        
-        var files = new List<OutputFile>();
-        
-        // Create the main video file.
-        var mainFile = new OutputFile()
-        {
-            Filename = $"{baseName}{format.Extension}",
-            Format = format.FFmpegFormat,
-        };
-        if (exportSubtitlesAsSeparateFiles)
-        {
-            // Only contains video and audio
-            mainFile.Streams = streams.Where(s => s.Type is OutputStreamType.Video or OutputStreamType.Audio).ToArray();
-        }
-        else
-        {
-            // Contains all streams
-            mainFile.Streams = streams.ToArray();
-        }
-        files.Add(mainFile);
-        
-        
-        // Adds subtitle files
-        if (exportSubtitlesAsSeparateFiles)
-        {
-            // Guessing the subtitle type by order.
-            var languageCounter = new Dictionary<string, int>();
-            var filename = new StringBuilder();
-            
-            foreach (var stream in streams.Where(s => s.Type is OutputStreamType.Subtitle))
-            {
-                // Count how often the language code was encountered.
-                var languageCode = stream.LanguageCode ?? "";
-                languageCounter.TryGetValue(languageCode, out var counter);
-
-                // Building the filename
-                filename.Clear();
-                filename.Append(baseName);
-
-                if (!string.IsNullOrEmpty(languageCode))
-                {
-                    filename.Append('.');
-                    filename.Append(languageCode);
-                }
-                
-                // Second subtitle. Assume: forced subtitle track.
-                if (counter == 1)
-                {
-                    filename.Append(".forced");
-                }
-                else if (counter >= 2) // Extra subtitles
-                {
-                    filename.Append($".extra{counter - 1}");
-                }
-                filename.Append(".sup");
-                
-                // Increment counter
-                languageCounter[languageCode] = ++counter;
-                
-                files.Add(new OutputFile()
-                {
-                    Filename = filename.ToString(),
-                    Format = "sup",
-                    Streams = [stream]
-                });
-            }
-        }
+        var files = OutputHelper.GetFilesByStreams(baseName, streams, codec, containerFormat);
         
         // Build chapters
         var chapterInfos = new List<OutputChapter>();

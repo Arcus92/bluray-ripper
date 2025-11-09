@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using MediaLib;
+using MediaLib.Formats;
 using MediaRipper.Models.Outputs;
 using MediaRipper.Services.Interfaces;
 using MediaRipper.Views;
@@ -30,18 +31,18 @@ public class ExportSettingsViewModel : ViewModelBase
     /// <summary>
     /// Gets the list of all output formats.
     /// </summary>
-    public VideoFormat[] AllOutputFormats => VideoFormat.All;
+    public MediaFormat[] AllOutputFormats => ContainerFormats.All;
     
-    /// <inheritdoc cref="VideoFormat"/>
-    private VideoFormat _videoFormat = VideoFormat.Mp4;
+    /// <inheritdoc cref="OutputFormat"/>
+    private MediaFormat _outputFormat = ContainerFormats.Mp4;
 
     /// <summary>
     /// Gets and sets the output format.
     /// </summary>
-    public VideoFormat VideoFormat
+    public MediaFormat OutputFormat
     {
-        get => _videoFormat;
-        set => SetProperty(ref _videoFormat, value);
+        get => _outputFormat;
+        set => SetProperty(ref _outputFormat, value);
     }
 
     #endregion Format settings
@@ -67,7 +68,7 @@ public class ExportSettingsViewModel : ViewModelBase
         if (!_sourceTree.TryGetSelectedTitleNode(out var titleNode))
             return;
         
-        var outputDefinition = titleNode.Source.CreateDefaultOutputDefinition(DefaultCodecOptions, _videoFormat);
+        var outputDefinition = titleNode.Source.CreateDefaultOutputDefinition(DefaultCodecOptions, _outputFormat);
         await _outputService.AddAsync(outputDefinition);
     }
 

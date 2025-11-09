@@ -1,3 +1,4 @@
+using MediaLib.Formats;
 using MediaLib.Models;
 using MediaLib.Output;
 
@@ -24,7 +25,7 @@ public interface IMediaSource
     /// Creates a default output definition for this media source.
     /// </summary>
     /// <param name="codec">The codec options to use.</param>
-    /// <param name="format">The video format to use.</param>
+    /// <param name="containerFormat">The container format to use.</param>
     /// <returns>Returns the output definition.</returns>
-    OutputDefinition CreateDefaultOutputDefinition(CodecOptions codec, VideoFormat format);
+    OutputDefinition CreateDefaultOutputDefinition(CodecOptions codec, MediaFormat containerFormat);
 }
