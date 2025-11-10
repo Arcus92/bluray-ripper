@@ -276,7 +276,7 @@ public class BluRayMediaSource : IMediaSource
                 Id = stream.Entry.RefToStreamId,
                 Type = OutputStreamType.Video,
                 Format = stream.Attributes.VideoFormat.ToString(),
-                Default = first,
+                Flags = first ? OutputStreamFlags.Default : OutputStreamFlags.None,
             });
             first = false;
         }
@@ -288,7 +288,7 @@ public class BluRayMediaSource : IMediaSource
                 Id = stream.Entry.RefToStreamId,
                 Type = OutputStreamType.Video,
                 Format = stream.Attributes.VideoFormat.ToString(),
-                Default = first,
+                Flags = OutputStreamFlags.Secondary | (first ? OutputStreamFlags.Default : OutputStreamFlags.None),
             });
             first = false;
         }
@@ -304,7 +304,7 @@ public class BluRayMediaSource : IMediaSource
                 Type = OutputStreamType.Audio,
                 Format = stream.Attributes.AudioFormat.ToString(),
                 LanguageCode = stream.Attributes.LanguageCode,
-                Default = first,
+                Flags = first ? OutputStreamFlags.Default : OutputStreamFlags.None,
             });
             first = false;
         }
@@ -317,7 +317,7 @@ public class BluRayMediaSource : IMediaSource
                 Type = OutputStreamType.Audio,
                 Format = stream.Attributes.AudioFormat.ToString(),
                 LanguageCode = stream.Attributes.LanguageCode,
-                Default = first,
+                Flags = OutputStreamFlags.Secondary | (first ? OutputStreamFlags.Default : OutputStreamFlags.None),
             });
             first = false;
         }
@@ -333,7 +333,7 @@ public class BluRayMediaSource : IMediaSource
                 Type = OutputStreamType.Subtitle,
                 Format = SubtitleFormats.Pgs.FFmpegFormat,
                 LanguageCode = stream.Attributes.LanguageCode,
-                Default = first,
+                Flags = first ? OutputStreamFlags.Default : OutputStreamFlags.None,
             });
             first = false;
         }
@@ -346,9 +346,24 @@ public class BluRayMediaSource : IMediaSource
                 Type = OutputStreamType.Subtitle,
                 Format = SubtitleFormats.Pgs.FFmpegFormat,
                 LanguageCode = stream.Attributes.LanguageCode,
-                Default = first,
+                Flags = OutputStreamFlags.Secondary | (first ? OutputStreamFlags.Default : OutputStreamFlags.None),
             });
             first = false;
+        }
+        
+        // Assume the second subtitle of each language is the forced subtitle
+        var languageCounter = new Dictionary<string, int>();
+        foreach (var stream in streams.Where(stream => stream.Type == OutputStreamType.Subtitle))
+        {
+            var languageCode = stream.LanguageCode ?? "";
+            languageCounter.TryGetValue(languageCode, out var counter);
+
+            if (counter == 1)
+            {
+                stream.Flags |= OutputStreamFlags.Forced;
+            }
+            
+            languageCounter[languageCode] = counter + 1;
         }
         
         var files = OutputHelper.GetFilesByStreams(baseName, streams, codec, containerFormat);

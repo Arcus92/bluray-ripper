@@ -44,7 +44,7 @@ public class FileSystemMediaSource : IMediaSource
             Id = (ushort)stream.Id,
             Type = MapStreamType(stream.Type),
             Format = MapFormat(stream.Format),
-            Default = stream.IsDefault,
+            Flags = MapStreamFlags(stream),
             Enabled = true,
             LanguageCode = stream.Language
         });
@@ -73,8 +73,8 @@ public class FileSystemMediaSource : IMediaSource
     /// <summary>
     /// Maps the FFmpeg stream type to the output stream type.
     /// </summary>
-    /// <param name="streamType"></param>
-    /// <returns></returns>
+    /// <param name="streamType">The FFmpeg stream type.</param>
+    /// <returns>Returns the stream output type.</returns>
     private static OutputStreamType MapStreamType(StreamType streamType)
     {
         return streamType switch
@@ -86,6 +86,27 @@ public class FileSystemMediaSource : IMediaSource
         };
     }
 
+    /// <summary>
+    /// Maps the FFMpeg stream metadata to the output flags.
+    /// </summary>
+    /// <param name="streamMetadata">The FFmpeg stream metadata.</param>
+    /// <returns>Returns the stream output flags.</returns>
+    private static OutputStreamFlags MapStreamFlags(StreamMetadata streamMetadata)
+    {
+        var flags = OutputStreamFlags.None;
+
+        if (streamMetadata.IsDefault)
+        {
+            flags |= OutputStreamFlags.Default;
+        }
+        if (streamMetadata.IsForced)
+        {
+            flags |= OutputStreamFlags.Forced;
+        }
+        
+        return flags;
+    }
+    
     /// <summary>
     /// Maps the format to an FFmpeg format name. 
     /// </summary>

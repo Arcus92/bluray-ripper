@@ -1,5 +1,6 @@
 using System.Text;
 using Avalonia.Controls;
+using MediaLib.Output;
 using MediaRipper.Models.Outputs;
 using MediaRipper.Views;
 
@@ -36,6 +37,13 @@ public class OutputFileViewModel : ViewModelBase
                 {
                     builder.Append(':');
                     builder.Append(stream.LanguageCode);
+
+                    if (stream.Flags != OutputStreamFlags.None)
+                    {
+                        builder.Append(" (");
+                        builder.Append(stream.Flags);
+                        builder.Append(')');
+                    }
                 }
                 builder.Append("] ");
             }

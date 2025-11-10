@@ -23,12 +23,6 @@ public class OutputStream
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool Enabled { get; set; } = true;
-
-    /// <summary>
-    /// Gets and sets if this is the default track.
-    /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public bool Default { get; set; }
     
     /// <summary>
     /// Gets and sets the language code of this stream.
@@ -40,4 +34,10 @@ public class OutputStream
     /// Gets the media format of this stream.
     /// </summary>
     public string? Format { get; set; }
+    
+    /// <summary>
+    /// Gets the additional stream flags.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public OutputStreamFlags Flags { get; set; }
 }

@@ -22,7 +22,7 @@ public static class OutputHelper
 
         // Guessing the subtitle type by order.
         var filenameCounter = new Dictionary<string, int>();
-        var filename = new StringBuilder();
+        var filenameBuilder = new StringBuilder();
         
         foreach (var stream in streams)
         {
@@ -36,38 +36,37 @@ public static class OutputHelper
                 if (!TryGetFormatByStream(stream, out var format))
                     continue;
                 
-                // Count how often the language code was encountered.
-                var languageCode = stream.LanguageCode ?? "";
-                var filenameCode = $"{languageCode}{format.Extension}";
-                filenameCounter.TryGetValue(filenameCode, out var counter);
-
                 // Building the filename
-                filename.Clear();
-                filename.Append(baseName);
+                filenameBuilder.Clear();
+                filenameBuilder.Append(baseName);
 
-                if (!string.IsNullOrEmpty(languageCode))
+                if (!string.IsNullOrEmpty(stream.LanguageCode))
                 {
-                    filename.Append('.');
-                    filename.Append(languageCode);
+                    filenameBuilder.Append('.');
+                    filenameBuilder.Append(stream.LanguageCode);
+                }
+
+                if ((stream.Flags & OutputStreamFlags.Forced) != 0)
+                {
+                    filenameBuilder.Append(".forced");
                 }
             
-                // Second subtitle. Assume: forced subtitle track.
-                if (counter == 1)
+                // Count how often the language code was encountered.
+                var filenameBase = filenameBuilder.ToString();
+                filenameCounter.TryGetValue(filenameBase, out var counter);
+                
+                if (counter >= 1) 
                 {
-                    filename.Append(".forced");
+                    filenameBuilder.Append($".extra{counter}");
                 }
-                else if (counter >= 2) // Extra subtitles
-                {
-                    filename.Append($".extra{counter - 1}");
-                }
-                filename.Append(format.Extension);
+                filenameBuilder.Append(format.Extension);
             
                 // Increment counter
-                filenameCounter[filenameCode] = ++counter;
+                filenameCounter[filenameBase] = ++counter;
             
                 files.Add(new OutputFile()
                 {
-                    Filename = filename.ToString(),
+                    Filename = filenameBuilder.ToString(),
                     Format = format.FFmpegFormat,
                     Streams = [stream]
                 });

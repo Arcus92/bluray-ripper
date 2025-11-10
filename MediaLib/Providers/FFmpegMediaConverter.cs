@@ -234,7 +234,7 @@ public abstract class FFmpegMediaConverter<TProvider> : IMediaConverter where TP
                     builder.Map(input, (int)ffmpegStream.Id);
                     if (!string.IsNullOrEmpty(stream.LanguageCode))
                         builder.Metadata(outputStreamCount, "language", stream.LanguageCode);
-                    if (stream.Default)
+                    if ((stream.Flags & OutputStreamFlags.Default) != 0)
                         builder.Disposition(outputStreamCount, "default");
                     
                     // BluRay PCM isn't supported outside M2TS and must be changed to regular PCM.
