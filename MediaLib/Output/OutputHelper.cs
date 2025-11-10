@@ -82,7 +82,7 @@ public static class OutputHelper
             Format = containerFormat.FFmpegFormat,
             Streams = mainFileStreams.ToArray()
         };
-        files.Add(mainFile);
+        files.Insert(0, mainFile);
 
         return files;
     }
