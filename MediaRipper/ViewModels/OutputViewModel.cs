@@ -105,6 +105,6 @@ public class OutputViewModel : ViewModelBase
     /// <inheritdoc />
     public override Control CreateView()
     {
-        return new OutputView();
+        return new OutputSettingsView();
     }
 }

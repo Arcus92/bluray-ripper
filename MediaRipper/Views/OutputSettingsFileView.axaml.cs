@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace MediaRipper.Views;
 
-public partial class OutputFileView : UserControl
+public partial class OutputSettingsFileView : UserControl
 {
-    public OutputFileView()
+    public OutputSettingsFileView()
     {
         InitializeComponent();
     }

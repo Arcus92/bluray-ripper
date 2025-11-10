@@ -11,11 +11,11 @@ public partial class MainWindowViewModel : ViewModelBase
     public OutputSelectorViewModel OutputSelector { get; }
     public QueueSettingsViewModel QueueSettings { get; }
     public OutputTreeViewModel OutputTree { get; }
-    public OutputSettingsViewModel OutputSettings { get; }
+    public OutputSettingsContainerViewModel OutputSettingsContainer { get; }
     
     public MainWindowViewModel(SourceSelectorViewModel sourceSelector, SourceTreeViewModel sourceTree, 
         ExportSettingsViewModel exportSettings, OutputSelectorViewModel outputSelector, 
-        QueueSettingsViewModel queueSettings, OutputTreeViewModel outputTree, OutputSettingsViewModel outputSettings)
+        QueueSettingsViewModel queueSettings, OutputTreeViewModel outputTree, OutputSettingsContainerViewModel outputSettingsContainer)
     {
         SourceSelector = sourceSelector;
         SourceTree = sourceTree;
@@ -23,7 +23,7 @@ public partial class MainWindowViewModel : ViewModelBase
         OutputSelector = outputSelector;
         QueueSettings = queueSettings;
         OutputTree = outputTree;
-        OutputSettings = outputSettings;
+        OutputSettingsContainer = outputSettingsContainer;
     }
 
     /// <inheritdoc />

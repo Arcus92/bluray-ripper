@@ -55,6 +55,6 @@ public class OutputFileViewModel : ViewModelBase
     /// <inheritdoc />
     public override Control CreateView()
     {
-        return new OutputFileView();
+        return new OutputSettingsFileView();
     }
 }

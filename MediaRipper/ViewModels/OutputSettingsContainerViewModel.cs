@@ -5,12 +5,12 @@ using MediaRipper.Views;
 
 namespace MediaRipper.ViewModels;
 
-public class OutputSettingsViewModel : ViewModelBase
+public class OutputSettingsContainerViewModel : ViewModelBase
 {
     private readonly IOutputService _outputService;
     private readonly OutputTreeViewModel _outputTreeViewModel;
     
-    public OutputSettingsViewModel(IOutputService outputService, OutputTreeViewModel outputTreeViewModel)
+    public OutputSettingsContainerViewModel(IOutputService outputService, OutputTreeViewModel outputTreeViewModel)
     {
         _outputService = outputService;
         _outputTreeViewModel =  outputTreeViewModel;
@@ -43,6 +43,6 @@ public class OutputSettingsViewModel : ViewModelBase
     /// <inheritdoc />
     public override Control CreateView()
     {
-        return new OutputSettingsView();
+        return new OutputSettingsContainerView();
     }
 }
