@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:MediaRipper.ViewModels"
              xmlns:utils="clr-namespace:MediaRipper.Utils"
              xmlns:sources="clr-namespace:MediaRipper.Models.Sources"
+             xmlns:avalonia="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MediaRipper.Views.SourceTreeView"
              x:DataType="vm:SourceTreeViewModel"
@@ -37,6 +38,7 @@
                 <!-- Video stream node -->
                 <TreeDataTemplate x:DataType="sources:VideoSourceModel">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
+                        <avalonia:FluentIcon Icon="VideoClip" />
                         <TextBlock Text="{Binding Stream.Name}" />
                     </StackPanel>
                 </TreeDataTemplate>
@@ -44,6 +46,7 @@
                 <!-- Audio stream node -->
                 <TreeDataTemplate x:DataType="sources:AudioSourceModel">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
+                        <avalonia:FluentIcon Icon="Speaker2" />
                         <TextBlock Text="{Binding Stream.Name}" />
                         <TextBlock Text="{Binding Stream.LanguageCode}" />
                     </StackPanel>
@@ -52,6 +55,7 @@
                 <!-- Subtitle stream node -->
                 <TreeDataTemplate x:DataType="sources:SubtitleSourceModel">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
+                        <avalonia:FluentIcon Icon="LocalLanguage" />
                         <TextBlock Text="{Binding Stream.Name}" />
                         <TextBlock Text="{Binding Stream.LanguageCode}" />
                     </StackPanel>
@@ -60,6 +64,7 @@
                 <!-- Chapter node -->
                 <TreeDataTemplate x:DataType="sources:ChapterSourceModel">
                     <StackPanel Orientation="Horizontal" Classes="nodeRow">
+                        <avalonia:FluentIcon Icon="Clock" />
                         <TextBlock Text="{Binding Chapter.Name}" />
                         <TextBlock Text="{Binding Start, StringFormat=hh\\:mm\\:ss}"/>
                         <TextBlock Text="-" />

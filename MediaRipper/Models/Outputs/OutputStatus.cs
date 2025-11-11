@@ -13,7 +13,7 @@ public enum OutputStatus
     /// <summary>
     /// The export is running.
     /// </summary>
-    Running,
+    Processing,
     
     /// <summary>
     /// The export was completed.
@@ -26,7 +26,7 @@ public enum OutputStatus
     Failed,
     
     /// <summary>
-    /// The export is queued, but the current disk doesn't match.
+    /// The export is queued, but the current source doesn't match.
     /// </summary>
-    QueuedMismatchDisk,
+    Missing,
 }

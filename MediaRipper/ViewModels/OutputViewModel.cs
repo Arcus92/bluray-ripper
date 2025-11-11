@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using FluentIcons.Common;
 using MediaLib.Output;
 using MediaRipper.Models;
 using MediaRipper.Models.Outputs;
@@ -36,7 +37,9 @@ public class OutputViewModel : ViewModelBase
         switch (e.PropertyName)
         {
             case nameof(OutputModel.Status):
-                OnPropertyChanged(nameof(IsProgressBarVisible));
+                OnPropertyChanged(nameof(StatusIcon));
+                OnPropertyChanged(nameof(IsProcessing));
+                OnPropertyChanged(nameof(IsMissing));
                 break;
             case nameof(OutputModel.Progress):
                 OnPropertyChanged(nameof(Progress));
@@ -47,8 +50,18 @@ public class OutputViewModel : ViewModelBase
     
     #region Progress
     
-    public bool IsProgressBarVisible => Model.Status == OutputStatus.Running;
+    public bool IsProcessing => Model.Status == OutputStatus.Processing;
+    public bool IsMissing => Model.Status == OutputStatus.Missing;
     public double Progress => Model.Progress;
+    
+    public Icon StatusIcon => Model.Status switch
+    {
+        OutputStatus.Completed => Icon.CheckmarkCircle,
+        OutputStatus.Failed => Icon.ErrorCircle,
+        OutputStatus.Missing => Icon.QuestionCircle,
+        OutputStatus.Processing => Icon.ArrowSyncCircle,
+        _ => Icon.Circle
+    };
     
     #endregion Progress
     

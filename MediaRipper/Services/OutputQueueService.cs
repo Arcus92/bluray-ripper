@@ -55,7 +55,7 @@ public class OutputQueueService(
                     
                     var converter = mediaProviderService.CreateConverter(parameter);
                     
-                    model.Status = OutputStatus.Running;
+                    model.Status = OutputStatus.Processing;
                     await converter.ExecuteAsync();
                     model.Progress = 1.0;
                     

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -13,8 +14,29 @@ namespace MediaRipper.Services;
 /// <summary>
 /// Handling the output directory. Can scan the output directory for existing exports.
 /// </summary>
-public class OutputService(IMediaProviderService mediaProviderService) : IOutputService
+public class OutputService : IOutputService
 {
+    private readonly IMediaProviderService _mediaProviderService;
+
+    /// <summary>
+    /// Handling the output directory. Can scan the output directory for existing exports.
+    /// </summary>
+    public OutputService(IMediaProviderService mediaProviderService)
+    {
+        _mediaProviderService = mediaProviderService;
+        _mediaProviderService.Changed += OnMediaProviderServiceChanged;
+    }
+
+    /// <summary>
+    /// The media provider changed the source.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
+    private void OnMediaProviderServiceChanged(object? sender, EventArgs e)
+    {
+        UpdateStatus();
+    }
+
     /// <inheritdoc />
     public string OutputPath { get; private set; } = "";
 
@@ -106,6 +128,17 @@ public class OutputService(IMediaProviderService mediaProviderService) : IOutput
         }
     }
 
+    /// <summary>
+    /// Uploads the status for all current items.
+    /// </summary>
+    private void UpdateStatus()
+    {
+        foreach (var model in Outputs)
+        {
+            UpdateStatus(model);
+        }
+    }
+
     /// <inheritdoc />
     public void UpdateStatus(OutputModel model)
     {
@@ -125,17 +158,19 @@ public class OutputService(IMediaProviderService mediaProviderService) : IOutput
                 hasAllFiles = false;
             }
         }
-            
+        
         if (hasAllFiles)
         {
             model.Status = OutputStatus.Completed;
         }
         else
         {
+            model.Status = OutputStatus.Queued;
+            
             // Queued output file, but from a different disk.
-            if (mediaProviderService.Contains(model.Definition.Identifier))
+            if (!_mediaProviderService.Contains(model.Definition.Identifier))
             {
-                model.Status = OutputStatus.QueuedMismatchDisk;
+                model.Status = OutputStatus.Missing;
             }
         }
     }
