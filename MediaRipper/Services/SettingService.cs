@@ -1,5 +1,9 @@
 using System;
+using System.IO;
+using System.Text.Json;
+using MediaRipper.Models.Settings;
 using MediaRipper.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace MediaRipper.Services;
 
@@ -8,29 +12,89 @@ namespace MediaRipper.Services;
 /// </summary>
 public class SettingService : ISettingService
 {
-    private readonly string _lastDiskPath;
-    private readonly string _lastOutputPath;
-
-    public SettingService()
+    private readonly ILogger _logger;
+    private readonly string _filename = "settings.json";
+    
+    private SettingsData _data = new();
+    
+    public SettingService(ILogger<SettingService> logger)
     {
-        _lastDiskPath = "";
-        _lastOutputPath = "";
+        _logger = logger;
 
-        // For testing, load from command line.
-        var args = Environment.GetCommandLineArgs();
-        if (args.Length > 1)
+        Load();
+    }
+
+    /// <inheritdoc />
+    public string SourcePath
+    {
+        get => _data.SourcePath;
+        set
         {
-            _lastDiskPath = args[1];
+            if (_data.SourcePath == value) return;
+            _data.SourcePath = value;
+            OnSettingsDataChanged();
         }
-        if (args.Length > 2)
+    }
+    
+    /// <inheritdoc />
+    public string OutputPath
+    {
+        get => _data.OutputPath;
+        set
         {
-            _lastOutputPath = args[2];
+            if (_data.OutputPath == value) return;
+            _data.OutputPath = value;
+            OnSettingsDataChanged();
         }
     }
 
     /// <inheritdoc />
-    public string GetDefaultDiskPath() => _lastDiskPath;
+    public void Load()
+    {
+        try
+        {
+            _logger.LogInformation("Loading settings file...");
+            
+            if (!File.Exists(_filename))
+            {
+                _logger.LogInformation("No settings file found. Creating a new file...");
+                Save();
+                return;
+            }
+            
+            using var file = File.OpenRead(_filename);
+            var data = JsonSerializer.Deserialize<SettingsData>(file);
+            if (data is null)
+            {
+                return;
+            }
+
+            _data = data;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load settings file!");
+        }
+    }
 
     /// <inheritdoc />
-    public string GetDefaultOutputPath() => _lastOutputPath;
+    public void Save()
+    {
+        try
+        {
+            _logger.LogInformation("Writing settings file...");
+            
+            using var file = File.OpenWrite(_filename);
+            JsonSerializer.Serialize(file, _data);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save settings file!");
+        }
+    }
+    
+    private void OnSettingsDataChanged()
+    {
+        Save();
+    }
 }

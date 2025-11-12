@@ -30,6 +30,7 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<IMediaProviderService, MediaProviderService>();
         collection.AddSingleton<IOutputService, OutputService>();
         collection.AddSingleton<IOutputQueueService, OutputQueueService>();
+        collection.AddSingleton<IStorageProviderAccessor, StorageProviderAccessor>();
 
         // Services
         collection.AddLogging(builder => builder.AddConsole());

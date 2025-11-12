@@ -24,6 +24,9 @@
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="FluentIcons.Avalonia" Version="1.2.313" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="9.0.5" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.5" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.5" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.5" />

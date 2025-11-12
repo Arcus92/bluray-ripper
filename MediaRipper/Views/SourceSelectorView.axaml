@@ -4,16 +4,28 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MediaRipper.ViewModels"
              xmlns:utils="clr-namespace:MediaRipper.Utils"
+             xmlns:avalonia="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="50"
              x:Class="MediaRipper.Views.SourceSelectorView"
              x:DataType="vm:SourceSelectorViewModel"
              Design.DataContext="{utils:DesignResolve {x:Type vm:SourceSelectorViewModel}}">
     
     <Border Padding="10">
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <TextBox Width="250" Text="{Binding DiskPath}"></TextBox>
-            <Button Command="{Binding OpenAsync}" Content="{DynamicResource OpenDisk}"/>
-        </StackPanel>
+        <DockPanel>
+            <!-- Actions -->
+            <StackPanel Orientation="Horizontal" Margin="5,0,0,0" Spacing="5" DockPanel.Dock="Right">
+                <Button Command="{Binding OpenFolderPickerAsync}" ToolTip.Tip="{DynamicResource OpenOutput}">
+                    <avalonia:FluentIcon Icon="FolderOpen" />
+                </Button>
+            </StackPanel>
+            
+            <!-- Input path -->
+            <TextBox Text="{Binding SourcePath}">
+                <TextBox.KeyBindings>
+                    <KeyBinding  Command="{Binding OpenAsync}" Gesture="Enter" />
+                </TextBox.KeyBindings>
+            </TextBox>
+        </DockPanel>
     </Border>
     
 </UserControl>

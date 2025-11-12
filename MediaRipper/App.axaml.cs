@@ -3,6 +3,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
+using MediaRipper.Services.Interfaces;
 using MediaRipper.ViewModels;
 using MediaRipper.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +41,9 @@ public partial class App : Application
             {
                 DataContext = mainViewModel,
             };
+            
+            var storageProviderAccessor = ServiceProvider.GetRequiredService<IStorageProviderAccessor>();
+            storageProviderAccessor.StorageProvider = desktop.MainWindow.StorageProvider;
         }
 
         base.OnFrameworkInitializationCompleted();

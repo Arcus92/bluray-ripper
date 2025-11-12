@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using MediaRipper.Services.Interfaces;
 using MediaRipper.Views;
 
@@ -9,30 +10,60 @@ public class SourceSelectorViewModel : ViewModelBase
 {
     private readonly ISettingService _settingService;
     private readonly IMediaProviderService _mediaProviderService;
+    private readonly IStorageProviderAccessor _storageProviderAccessor;
 
-    public SourceSelectorViewModel(ISettingService settingService, IMediaProviderService mediaProviderService)
+    public SourceSelectorViewModel(ISettingService settingService, IMediaProviderService mediaProviderService, IStorageProviderAccessor storageProviderAccessor)
     {
         _settingService = settingService;
         _mediaProviderService = mediaProviderService;
         
-        _diskPath = _settingService.GetDefaultDiskPath();
+        _sourcePath = _settingService.SourcePath;
+        _storageProviderAccessor = storageProviderAccessor;
     }
     
-    /// <inheritdoc cref="DiskPath"/>
-    private string _diskPath;
+    /// <inheritdoc cref="SourcePath"/>
+    private string _sourcePath;
 
     /// <summary>
     /// Gets and sets the disk input path.
     /// </summary>
-    public string DiskPath
+    public string SourcePath
     {
-        get => _diskPath;
-        set => SetProperty(ref _diskPath, value);
+        get => _sourcePath;
+        set => SetProperty(ref _sourcePath, value);
     }
     
+    /// <summary>
+    /// Opens and loads the current source path.
+    /// </summary>
     public async Task OpenAsync()
     {
-        await _mediaProviderService.OpenAsync(_diskPath);
+        await _mediaProviderService.OpenAsync(_sourcePath);
+        _settingService.SourcePath = _sourcePath;
+    }
+
+    /// <summary>
+    /// Opens a folder picker to select the source file.
+    /// </summary>
+    public async Task OpenFolderPickerAsync()
+    {
+        var storageProvider = _storageProviderAccessor.StorageProvider;
+        if (storageProvider is null)
+        {
+            return;
+        }
+        
+        var paths = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        {
+            AllowMultiple = false,
+            SuggestedStartLocation = await storageProvider.TryGetFolderFromPathAsync(_sourcePath)
+        });
+
+        if (paths.Count >= 1)
+        {
+            SourcePath = paths[0].Path.AbsolutePath;
+            await OpenAsync();
+        }
     }
     
     /// <inheritdoc />

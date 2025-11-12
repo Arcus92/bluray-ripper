@@ -3,14 +3,22 @@ namespace MediaRipper.Services.Interfaces;
 public interface ISettingService
 {
     /// <summary>
-    /// Returns the default disk path.
+    /// Loads the settings file.
     /// </summary>
-    /// <returns>The last used path to the disk.</returns>
-    string GetDefaultDiskPath();
+    void Load();
     
     /// <summary>
-    /// Returns the default output path.
+    /// Saves the settings file.
     /// </summary>
-    /// <returns>The last used path to the output.</returns>
-    string GetDefaultOutputPath();
+    void Save();
+    
+    /// <summary>
+    /// Gets and sets the last opened source path.
+    /// </summary>
+    string SourcePath { get; set; }
+    
+    /// <summary>
+    /// Gets and sets the last opened output path.
+    /// </summary>
+    string OutputPath { get; set; }
 }

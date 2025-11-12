@@ -12,6 +12,10 @@
      <Application.Resources>
          <ResourceDictionary>
              <ResourceDictionary.MergedDictionaries>
+                 <MergeResourceInclude Source="Resources/Layouts.axaml" />
+                 <MergeResourceInclude Source="Resources/Colors.axaml" />
+                 <MergeResourceInclude Source="Resources/Styles.axaml" />
+                 
                  <!-- Default language -->
                  <MergeResourceInclude Source="Resources/Strings/English.axaml" />
              </ResourceDictionary.MergedDictionaries>

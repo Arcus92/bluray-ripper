@@ -4,15 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MediaRipper.ViewModels"
              xmlns:utils="clr-namespace:MediaRipper.Utils"
+             xmlns:avalonia="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="50"
              x:Class="MediaRipper.Views.OutputSelectorView"
              x:DataType="vm:OutputSelectorViewModel"
              Design.DataContext="{utils:DesignResolve {x:Type vm:OutputSelectorViewModel}}">
     
     <Border Padding="10">
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <TextBox Width="250" Text="{Binding OutputPath}"></TextBox>
-        </StackPanel>
+        <DockPanel>
+            <!-- Actions -->
+            <StackPanel Orientation="Horizontal" Margin="5,0,0,0" Spacing="5" DockPanel.Dock="Right">
+                <Button Command="{Binding OpenFolderPickerAsync}" ToolTip.Tip="{DynamicResource OpenOutput}">
+                    <avalonia:FluentIcon Icon="FolderOpen" />
+                </Button>
+            
+                <Button Command="{Binding RefreshAsync}" ToolTip.Tip="{DynamicResource Refresh}">
+                    <avalonia:FluentIcon Icon="ArrowClockwise" />
+                </Button>
+            </StackPanel>
+            
+            <!-- Input path -->
+            <TextBox Text="{Binding OutputPath}" >
+                <TextBox.KeyBindings>
+                    <KeyBinding  Command="{Binding OpenAsync}" Gesture="Enter" />
+                </TextBox.KeyBindings>
+            </TextBox>
+        </DockPanel>
     </Border>
-    
 </UserControl>

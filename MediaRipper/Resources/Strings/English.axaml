@@ -2,7 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     
-    <system:String x:Key="OpenDisk">Open disk</system:String>
+    <system:String x:Key="OpenSource">Open source</system:String>
+    <system:String x:Key="OpenOutput">Open output</system:String>
+    <system:String x:Key="Refresh">Refresh</system:String>
     <system:String x:Key="Play">Play</system:String>
     <system:String x:Key="Export">Export</system:String>
     <system:String x:Key="QueueSelection">Queue selection</system:String>

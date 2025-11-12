@@ -120,6 +120,12 @@ public class OutputService : IOutputService
     public async Task RefreshAsync()
     {
         Outputs.Clear();
+
+        if (string.IsNullOrEmpty(OutputPath))
+        {
+            return;
+        }
+        
         await foreach (var (filename, info) in OutputDefinitionSerializer.DeserializeFromDirectoryAsync(OutputPath))
         {
             var model = new OutputModel(info, filename);
