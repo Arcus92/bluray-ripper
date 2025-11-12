@@ -84,7 +84,7 @@ public class SettingService : ISettingService
         {
             _logger.LogInformation("Writing settings file...");
             
-            using var file = File.OpenWrite(_filename);
+            using var file = File.Create(_filename);
             JsonSerializer.Serialize(file, _data);
         }
         catch (Exception ex)
