@@ -13,17 +13,7 @@
     
     <Border Padding="10,5">
         <DockPanel>
-            <ComboBox ItemsSource="{Binding AllOutputFormats}" 
-                      SelectedValue="{Binding OutputFormat}"
-                      DockPanel.Dock="Right">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate DataType="formats:MediaFormat">
-                        <TextBlock Text="{Binding Extension}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            
-            <StackPanel Orientation="Horizontal" Spacing="5">
+            <StackPanel Orientation="Horizontal" Spacing="5" DockPanel.Dock="Right">
                 <Button Command="{Binding QueueSelectionAsync}" 
                         IsEnabled="{Binding CanQueueSelection}" 
                         ToolTip.Tip="{DynamicResource QueueSelection}">
@@ -37,13 +27,24 @@
                 <Button Command="{Binding PlayPreviewAsync}" 
                         IsEnabled="{Binding CanPlaySelection}" 
                         ToolTip.Tip="{DynamicResource Play}">
-                    <avalonia:FluentIcon Icon="Play" />
+                    <avalonia:FluentIcon Icon="VideoClip" />
                 </Button>
                 <Button Command="{Binding SaveSegmentAsync}" 
                         IsEnabled="{Binding CanSaveSelection}" 
                         ToolTip.Tip="{DynamicResource SaveRawSegment}">
                     <avalonia:FluentIcon Icon="Save" />
                 </Button>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <ComboBox ItemsSource="{Binding AllOutputFormats}" 
+                          SelectedValue="{Binding OutputFormat}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="formats:MediaFormat">
+                            <TextBlock Text="{Binding Extension}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </StackPanel>
         </DockPanel>
     </Border>

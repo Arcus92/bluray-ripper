@@ -11,17 +11,24 @@
              Design.DataContext="{utils:DesignResolve {x:Type vm:QueueSettingsViewModel}}">
     
     <Border Padding="10,5">
-        <StackPanel Orientation="Horizontal" Spacing="5">
-            <Button Command="{Binding StartQueue}"
-                    IsVisible="{Binding !IsRunning}"
-                    IsEnabled="{Binding CanStartQueue}">
-                <avalonia:FluentIcon Icon="Play" />
-            </Button>
-            <Button Command="{Binding StopQueue}"
-                    IsVisible="{Binding IsRunning}">
-                <avalonia:FluentIcon Icon="Stop" />
-            </Button>
-        </StackPanel>
+        <DockPanel>
+            <StackPanel Orientation="Horizontal" Spacing="5" DockPanel.Dock="Right">
+                <Button Command="{Binding StartQueue}"
+                        IsVisible="{Binding !IsRunning}"
+                        IsEnabled="{Binding CanStartQueue}">
+                    <avalonia:FluentIcon Icon="Play" />
+                </Button>
+                
+                <Button Command="{Binding StopQueue}"
+                        IsVisible="{Binding IsRunning}">
+                    <avalonia:FluentIcon Icon="Stop" />
+                </Button>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                
+            </StackPanel>
+        </DockPanel>
     </Border>
     
 </UserControl>
