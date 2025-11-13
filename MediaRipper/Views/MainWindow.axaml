@@ -17,21 +17,20 @@
         <Grid Grid.Row="0" ColumnDefinitions="*,auto,*">
 
             <!-- Sources -->
-            <Grid Grid.Column="0" RowDefinitions="Auto,*,Auto,Auto">
+            <Grid Grid.Column="0" RowDefinitions="Auto,Auto,*">
                 <ContentControl Grid.Row="0" Content="{Binding SourceSelector}"/>
-                <ContentControl Grid.Row="1" Content="{Binding SourceTree}"/>
-                <ContentControl Grid.Row="2" Content="{Binding ExportSettings}"/>
+                <ContentControl Grid.Row="1" Content="{Binding ExportSettings}"/>
+                <ContentControl Grid.Row="2" Content="{Binding SourceTree}"/>
             </Grid>
-            
 
             <GridSplitter Grid.Column="1"></GridSplitter>
             
             <!-- Output -->
-            <Grid Grid.Column="2" RowDefinitions="Auto,*,Auto,Auto">
+            <Grid Grid.Column="2" RowDefinitions="Auto,Auto,*,Auto">
                 <ContentControl Grid.Row="0" Content="{Binding OutputSelector}"/>
-                <ContentControl Grid.Row="1" Content="{Binding OutputTree}"/>
-                <ContentControl Grid.Row="2" Content="{Binding OutputSettingsContainer}"/>
-                <ContentControl Grid.Row="3" Content="{Binding QueueSettings}"/>
+                <ContentControl Grid.Row="1" Content="{Binding QueueSettings}"/>
+                <ContentControl Grid.Row="2" Content="{Binding OutputTree}"/>
+                <ContentControl Grid.Row="3" Content="{Binding OutputSettingsContainer}"/>
             </Grid>
         </Grid>
     </Grid>

@@ -14,17 +14,22 @@
         <DockPanel>
             <!-- Actions -->
             <StackPanel Orientation="Horizontal" Margin="5,0,0,0" Spacing="5" DockPanel.Dock="Right">
-                <Button Command="{Binding OpenFolderPickerAsync}" ToolTip.Tip="{DynamicResource OpenOutput}">
+                <Button Command="{Binding OpenFolderPickerAsync}" 
+                        IsEnabled="{Binding IsEnabled}"
+                        ToolTip.Tip="{DynamicResource OpenOutput}">
                     <avalonia:FluentIcon Icon="FolderOpen" />
                 </Button>
             
-                <Button Command="{Binding RefreshAsync}" ToolTip.Tip="{DynamicResource Refresh}">
+                <Button Command="{Binding RefreshAsync}"
+                        IsEnabled="{Binding IsEnabled}"
+                        ToolTip.Tip="{DynamicResource Refresh}">
                     <avalonia:FluentIcon Icon="ArrowClockwise" />
                 </Button>
             </StackPanel>
             
             <!-- Input path -->
-            <TextBox Text="{Binding OutputPath}" >
+            <TextBox Text="{Binding OutputPath}" 
+                     IsReadOnly="{Binding !IsEnabled}">
                 <TextBox.KeyBindings>
                     <KeyBinding  Command="{Binding OpenAsync}" Gesture="Enter" />
                 </TextBox.KeyBindings>

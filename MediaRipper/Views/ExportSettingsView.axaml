@@ -5,14 +5,17 @@
              xmlns:formats="clr-namespace:MediaLib.Formats;assembly=MediaLib"
              xmlns:vm="clr-namespace:MediaRipper.ViewModels"
              xmlns:utils="clr-namespace:MediaRipper.Utils"
+             xmlns:avalonia="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MediaRipper.Views.ExportSettingsView"
              x:DataType="vm:ExportSettingsViewModel"
              Design.DataContext="{utils:DesignResolve {x:Type vm:ExportSettingsViewModel}}">
     
-    <Border Padding="10">
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <ComboBox ItemsSource="{Binding AllOutputFormats}" SelectedValue="{Binding OutputFormat}">
+    <Border Padding="10,5">
+        <DockPanel>
+            <ComboBox ItemsSource="{Binding AllOutputFormats}" 
+                      SelectedValue="{Binding OutputFormat}"
+                      DockPanel.Dock="Right">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="formats:MediaFormat">
                         <TextBlock Text="{Binding Extension}"/>
@@ -20,11 +23,29 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             
-            <Button Command="{Binding QueueSelectionAsync}" Content="{DynamicResource QueueSelection}" />
-            <Button Command="{Binding DequeueSelectionAsync}" Content="{DynamicResource DequeueSelection}" />
-            <Button Command="{Binding PlayPreviewAsync}" Content="{DynamicResource Play}" />
-            <Button Command="{Binding SaveSegmentAsync}" Content="{DynamicResource SaveRawSegment}" />
-        </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <Button Command="{Binding QueueSelectionAsync}" 
+                        IsEnabled="{Binding CanQueueSelection}" 
+                        ToolTip.Tip="{DynamicResource QueueSelection}">
+                    <avalonia:FluentIcon Icon="Add" />
+                </Button>
+                <Button Command="{Binding DequeueSelectionAsync}"
+                        IsEnabled="{Binding CanDequeueSelection}" 
+                        ToolTip.Tip="{DynamicResource DequeueSelection}">
+                    <avalonia:FluentIcon Icon="Subtract" />
+                </Button>
+                <Button Command="{Binding PlayPreviewAsync}" 
+                        IsEnabled="{Binding CanPlaySelection}" 
+                        ToolTip.Tip="{DynamicResource Play}">
+                    <avalonia:FluentIcon Icon="Play" />
+                </Button>
+                <Button Command="{Binding SaveSegmentAsync}" 
+                        IsEnabled="{Binding CanSaveSelection}" 
+                        ToolTip.Tip="{DynamicResource SaveRawSegment}">
+                    <avalonia:FluentIcon Icon="Save" />
+                </Button>
+            </StackPanel>
+        </DockPanel>
     </Border>
     
 </UserControl>

@@ -17,11 +17,7 @@
                 
                 <!-- Title node -->
                 <TreeDataTemplate x:DataType="sources:MediaSourceModel" ItemsSource="{Binding SubNodes}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                    <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0" Orientation="Horizontal" Classes="nodeRow" Classes.transparent="{Binding IsIgnored}">
                             <TextBlock Text="{Binding Info.Name}" />
                             <TextBlock Text="{Binding Info.Duration, StringFormat=hh\\:mm\\:ss}" />
@@ -30,6 +26,9 @@
                         
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button>
+                                <avalonia:FluentIcon Icon="ArrowRight" />
+                            </Button>
                         </StackPanel>
                     </Grid>
                     

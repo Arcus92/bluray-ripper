@@ -4,16 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MediaRipper.ViewModels"
              xmlns:utils="clr-namespace:MediaRipper.Utils"
+             xmlns:avalonia="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MediaRipper.Views.QueueSettingsView"
              x:DataType="vm:QueueSettingsViewModel"
              Design.DataContext="{utils:DesignResolve {x:Type vm:QueueSettingsViewModel}}">
     
-    <Border Padding="10">
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button Command="{Binding StartQueue}">Start queue</Button>
-            <Button Command="{Binding StopQueue}">Stop queue</Button>
-            <Button Command="{Binding RefreshAsync}">Refresh</Button>
+    <Border Padding="10,5">
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <Button Command="{Binding StartQueue}"
+                    IsVisible="{Binding !IsRunning}"
+                    IsEnabled="{Binding CanStartQueue}">
+                <avalonia:FluentIcon Icon="Play" />
+            </Button>
+            <Button Command="{Binding StopQueue}"
+                    IsVisible="{Binding IsRunning}">
+                <avalonia:FluentIcon Icon="Stop" />
+            </Button>
         </StackPanel>
     </Border>
     

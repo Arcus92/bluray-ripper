@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -24,10 +25,104 @@ public class ExportSettingsViewModel : ViewModelBase
         _mediaProviderService = mediaProviderService;
         _outputSelector = outputSelector;
         _sourceTree = sourceTree;
+        
+        _sourceTree.PropertyChanged += OnSourceTreePropertyChanged;
+    }
+
+    #region Selection
+    
+    /// <inheritdoc cref="CanQueueSelection" />
+    private bool _canQueueSelection;
+
+    /// <summary>
+    /// Gets if the selected item can be queued.
+    /// </summary>
+    public bool CanQueueSelection
+    {
+        get => _canQueueSelection;
+        set => SetProperty(ref _canQueueSelection, value);
     }
     
+    /// <inheritdoc cref="CanDequeueSelection" />
+    private bool _canDequeueSelection;
+
+    /// <summary>
+    /// Gets if the selected item can be dequeued.
+    /// </summary>
+    public bool CanDequeueSelection
+    {
+        get => _canDequeueSelection;
+        set => SetProperty(ref _canDequeueSelection, value);
+    }
+    
+    /// <inheritdoc cref="CanPlaySelection" />
+    private bool _canPlaySelection;
+
+    /// <summary>
+    /// Gets if the selected item can be played.
+    /// </summary>
+    public bool CanPlaySelection
+    {
+        get => _canPlaySelection;
+        set => SetProperty(ref _canPlaySelection, value);
+    }
+    
+    /// <inheritdoc cref="CanSaveSelection" />
+    private bool _canSaveSelection;
+
+    /// <summary>
+    /// Gets if the selected item can be saved.
+    /// </summary>
+    public bool CanSaveSelection
+    {
+        get => _canSaveSelection;
+        set => SetProperty(ref _canSaveSelection, value);
+    }
+    
+    private void OnSourceTreePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(SourceTreeViewModel.SelectedItem):
+                UpdateSelection();
+                break;
+        }
+    }
+
+    private void UpdateSelection()
+    {
+        if (_sourceTree.TryGetSelectedTitleNode(out var titleNode))
+        {
+            var output = _outputService.GetByIdentifier(titleNode.Source.Identifier);
+            CanQueueSelection = output is null;
+            CanDequeueSelection = output is not null && output.Status == OutputStatus.Queued;
+            CanPlaySelection = true;
+            CanSaveSelection = true;
+        }
+        else
+        {
+            CanQueueSelection = false;
+            CanDequeueSelection = false;
+            CanPlaySelection = false;
+            CanSaveSelection = false;
+        }
+    }
+    
+    #endregion Selection
+
     #region Format settings
 
+    /// <summary>
+    /// Convert video to web-friendly format.
+    /// </summary>
+    private static readonly CodecOptions DefaultCodecOptions = new()
+    {
+        VideoCodec = "libx264",
+        ConstantRateFactor = 16,
+        MaxRate = 20000,
+        BufferSize = 25000
+    };
+    
     /// <summary>
     /// Gets the list of all output formats.
     /// </summary>
@@ -47,18 +142,7 @@ public class ExportSettingsViewModel : ViewModelBase
 
     #endregion Format settings
     
-    #region Export
-    
-    /// <summary>
-    /// Convert video to web-friendly format.
-    /// </summary>
-    private static readonly CodecOptions DefaultCodecOptions = new()
-    {
-        VideoCodec = "libx264",
-        ConstantRateFactor = 16,
-        MaxRate = 20000,
-        BufferSize = 25000
-    };
+    #region Commands
     
     /// <summary>
     /// Adds the selected title to the output list.
@@ -70,6 +154,7 @@ public class ExportSettingsViewModel : ViewModelBase
         
         var outputDefinition = titleNode.Source.CreateDefaultOutputDefinition(DefaultCodecOptions, _outputFormat);
         await _outputService.AddAsync(outputDefinition);
+        UpdateSelection();
     }
 
     public async Task DequeueSelectionAsync()
@@ -81,6 +166,7 @@ public class ExportSettingsViewModel : ViewModelBase
         if (output is null) return;
         if (output.Status == OutputStatus.Completed) return; // Do not remove completed outputs!
         await _outputService.RemoveAsync(output);
+        UpdateSelection();
     }
 
     public async Task PlayPreviewAsync()
@@ -132,7 +218,7 @@ public class ExportSettingsViewModel : ViewModelBase
         await stream.CopyToAsync(output);
     }
     
-    #endregion Export
+    #endregion Commands
     
     /// <inheritdoc />
     public override Control CreateView()

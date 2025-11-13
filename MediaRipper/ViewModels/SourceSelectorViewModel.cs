@@ -1,6 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using MediaRipper.Models.Outputs;
 using MediaRipper.Services.Interfaces;
 using MediaRipper.Views;
 
@@ -11,16 +13,20 @@ public class SourceSelectorViewModel : ViewModelBase
     private readonly ISettingService _settingService;
     private readonly IMediaProviderService _mediaProviderService;
     private readonly IStorageProviderAccessor _storageProviderAccessor;
+    private readonly IOutputQueueService _outputQueueService;
 
-    public SourceSelectorViewModel(ISettingService settingService, IMediaProviderService mediaProviderService, IStorageProviderAccessor storageProviderAccessor)
+    public SourceSelectorViewModel(ISettingService settingService, IMediaProviderService mediaProviderService, 
+        IStorageProviderAccessor storageProviderAccessor, IOutputQueueService outputQueueService)
     {
         _settingService = settingService;
         _mediaProviderService = mediaProviderService;
+        _storageProviderAccessor = storageProviderAccessor;
+        _outputQueueService = outputQueueService;
         
         _sourcePath = _settingService.SourcePath;
-        _storageProviderAccessor = storageProviderAccessor;
+        _outputQueueService.StatusChanged += OnOutputQueueServiceStatusChanged;
     }
-    
+
     /// <inheritdoc cref="SourcePath"/>
     private string _sourcePath;
 
@@ -33,11 +39,34 @@ public class SourceSelectorViewModel : ViewModelBase
         set => SetProperty(ref _sourcePath, value);
     }
     
+    /// <inheritdoc cref="IsEnabled"/>
+    private bool _isEnabled = true;
+
+    /// <summary>
+    /// Gets if this element is enabled.
+    /// </summary>
+    public bool IsEnabled
+    {
+        get => _isEnabled;
+        private set => SetProperty(ref _isEnabled, value);
+    }
+    
+    private void OnOutputQueueServiceStatusChanged(object? sender, EventArgs e)
+    {
+        UpdateStatus();
+    }
+
+    private void UpdateStatus()
+    {
+        IsEnabled = _outputQueueService.Status != OutputQueueStatus.Running;
+    }
+    
     /// <summary>
     /// Opens and loads the current source path.
     /// </summary>
     public async Task OpenAsync()
     {
+        if (!IsEnabled) return;
         await _mediaProviderService.OpenAsync(_sourcePath);
         _settingService.SourcePath = _sourcePath;
     }
@@ -47,6 +76,7 @@ public class SourceSelectorViewModel : ViewModelBase
     /// </summary>
     public async Task OpenFolderPickerAsync()
     {
+        if (!IsEnabled) return;
         var storageProvider = _storageProviderAccessor.StorageProvider;
         if (storageProvider is null)
         {
