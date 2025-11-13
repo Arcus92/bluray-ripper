@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Matroska" Version="0.0.9" />
+      <PackageReference Include="Matroska" Version="0.0.12" />
     </ItemGroup>
 
     <ItemGroup>
