@@ -78,73 +78,78 @@ public class Engine
         
         process.Start();
 
-        var output = new StringBuilder();
-        var inputs = new List<InputMetadata>();
-        var intentReader = new IntentTextReader(process.StandardError, 2);
-        await foreach (var lineRoot in intentReader.ReadBlockAsync().WithCancellation(cancellationToken))
+        try 
         {
-            if (lineRoot.StartsWith("Input #"))
+            var output = new StringBuilder();
+            var inputs = new List<InputMetadata>();
+            var intentReader = new IntentTextReader(process.StandardError, 2);
+            await foreach (var lineRoot in intentReader.ReadBlockAsync().WithCancellation(cancellationToken))
             {
-                var input = await ReadInputMedaDataAsync(intentReader);
-                inputs.Add(input);
-            }
-
-            // Frame update
-            else if (lineRoot.StartsWith("frame="))
-            {
-                // No need to check frame updates
-                if (startInfo.OnUpdate is null) continue;
-
-                var frameStart = 6;
-                
-                var frameEnd = lineRoot.IndexOf("fps=", frameStart, StringComparison.Ordinal);
-                if (frameEnd < 0) continue;
-                var frameText = lineRoot.Substring(frameStart, frameEnd - frameStart).Trim();
-                long? frame = null;
-                if (long.TryParse(frameText, out var value))
+                if (cancellationToken.IsCancellationRequested)
                 {
-                    frame = value;
+                    process.Kill();
                 }
-                
-                var timeStart = lineRoot.IndexOf("time=", frameEnd, StringComparison.Ordinal);
-                if (timeStart < 0) continue;
-                timeStart += 5;
-                
-                var timeEnd = lineRoot.IndexOf("bitrate=", timeStart, StringComparison.Ordinal);
-                if (timeEnd < 0) continue;
-                var timeText = lineRoot.Substring(timeStart, timeEnd - timeStart).Trim();
-                TimeSpan? currentTime = null;
-                if (TimeSpan.TryParse(timeText, out var time))
-                {
-                    currentTime = time;
-                }
-
-                // We need one input to determine the total duration. 
-                // Currently, this won't handle offsets or lengths.
-                if (inputs.Count <= 0) continue;
-                var duration = inputs.Max(i => i.Duration);
-                var percentage = currentTime?.TotalSeconds / duration.TotalSeconds;
-                var update = new ConverterUpdate()
-                {
-                    Inputs = inputs,
-                    Duration = duration,
-                    Current = currentTime,
-                    Frame = frame,
-                    Percentage = percentage
-                };
-
-                startInfo.OnUpdate(update);
-            }
             
-            // Log other output
-            else
-            {
-                output.AppendLine(lineRoot);
+                if (lineRoot.StartsWith("Input #"))
+                {
+                    var input = await ReadInputMedaDataAsync(intentReader);
+                    inputs.Add(input);
+                }
+
+                // Frame update
+                else if (lineRoot.StartsWith("frame="))
+                {
+                    // No need to check frame updates
+                    if (startInfo.OnUpdate is null) continue;
+
+                    var frameStart = 6;
+                
+                    var frameEnd = lineRoot.IndexOf("fps=", frameStart, StringComparison.Ordinal);
+                    if (frameEnd < 0) continue;
+                    var frameText = lineRoot.Substring(frameStart, frameEnd - frameStart).Trim();
+                    long? frame = null;
+                    if (long.TryParse(frameText, out var value))
+                    {
+                        frame = value;
+                    }
+                
+                    var timeStart = lineRoot.IndexOf("time=", frameEnd, StringComparison.Ordinal);
+                    if (timeStart < 0) continue;
+                    timeStart += 5;
+                
+                    var timeEnd = lineRoot.IndexOf("bitrate=", timeStart, StringComparison.Ordinal);
+                    if (timeEnd < 0) continue;
+                    var timeText = lineRoot.Substring(timeStart, timeEnd - timeStart).Trim();
+                    TimeSpan? currentTime = null;
+                    if (TimeSpan.TryParse(timeText, out var time))
+                    {
+                        currentTime = time;
+                    }
+
+                    // We need one input to determine the total duration. 
+                    // Currently, this won't handle offsets or lengths.
+                    if (inputs.Count <= 0) continue;
+                    var duration = inputs.Max(i => i.Duration);
+                    var percentage = currentTime?.TotalSeconds / duration.TotalSeconds;
+                    var update = new ConverterUpdate()
+                    {
+                        Inputs = inputs,
+                        Duration = duration,
+                        Current = currentTime,
+                        Frame = frame,
+                        Percentage = percentage
+                    };
+
+                    startInfo.OnUpdate(update);
+                }
+            
+                // Log other output
+                else
+                {
+                    output.AppendLine(lineRoot);
+                }
             }
-        }
         
-        try
-        {
             await process.WaitForExitAsync(cancellationToken);
             
             // Verify that the input stream didn't throw any exceptions.

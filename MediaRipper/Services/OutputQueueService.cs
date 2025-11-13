@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediaLib.Providers;
 using MediaRipper.Models.Outputs;
@@ -18,16 +19,32 @@ public class OutputQueueService(
     /// The output queue.
     /// </summary>
     private readonly List<OutputModel> _queue = [];
-    
-    /// <summary>
-    /// Gets and sets if the queue is currently running.
-    /// </summary>
-    private bool _isRunning;
+
+    /// <see cref="Status"/>
+    private OutputQueueStatus _status;
 
     /// <inheritdoc />
-    public async Task StartAsync()
+    public OutputQueueStatus Status
     {
-        if (_isRunning)
+        get => _status;
+        private set
+        {
+            if (_status == value) return;
+            _status = value;
+            StatusChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <inheritdoc />
+    public event EventHandler? StatusChanged;
+
+
+    private CancellationTokenSource? _cancellationTokenSource;
+    
+    /// <inheritdoc />
+    public void Start()
+    {
+        if (Status != OutputQueueStatus.Idle)
             return;
         
         // Build the initial progress map
@@ -40,13 +57,18 @@ public class OutputQueueService(
         }
         
         // Start the thread
-        _isRunning = true;
-        await Task.Run(async () =>
+        Status = OutputQueueStatus.Running;
+        _cancellationTokenSource = new CancellationTokenSource();
+        
+        var cancellationToken = _cancellationTokenSource.Token;
+        Task.Run(async () =>
         {
             foreach (var model in _queue)
             {
                 try
                 {
+                    if (cancellationToken.IsCancellationRequested) break;
+                    
                     var outputPath = outputService.OutputPath;
                     var parameter = new MediaConverterParameter(
                         outputPath, 
@@ -55,9 +77,17 @@ public class OutputQueueService(
                     
                     var converter = mediaProviderService.CreateConverter(parameter);
                     
+                    model.Progress = 0.0;
                     model.Status = OutputStatus.Processing;
-                    await converter.ExecuteAsync();
-                    model.Progress = 1.0;
+                    await converter.ExecuteAsync(cancellationToken);
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        model.Status = OutputStatus.Failed;
+                    }
+                    else
+                    {
+                        model.Progress = 1.0;
+                    }
                     
                     // Updates the status
                     outputService.UpdateStatus(model);
@@ -69,13 +99,18 @@ public class OutputQueueService(
                 }
             }
 
-            _isRunning = false;
-        });
+            Status = OutputQueueStatus.Idle;
+        }, cancellationToken);
     }
 
     /// <inheritdoc />
-    public Task StopAsync()
+    public void Stop()
     {
-        throw new NotImplementedException();
+        if (Status != OutputQueueStatus.Running)
+        {
+            return;
+        }
+        
+        _cancellationTokenSource?.Cancel();
     }
 }

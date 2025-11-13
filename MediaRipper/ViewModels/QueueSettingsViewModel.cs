@@ -5,29 +5,25 @@ using MediaRipper.Views;
 
 namespace MediaRipper.ViewModels;
 
-public class QueueSettingsViewModel : ViewModelBase
+public class QueueSettingsViewModel(IOutputService outputService, IOutputQueueService outputQueueService)
+    : ViewModelBase
 {
-    private readonly IMediaProviderService _mediaProviderService;
-    private readonly IOutputService _outputService;
-    private readonly IOutputQueueService _outputQueueService;
-
-    public QueueSettingsViewModel(IMediaProviderService mediaProviderService, IOutputService outputService, IOutputQueueService outputQueueService)
-    {
-        _mediaProviderService = mediaProviderService;
-        _outputService = outputService;
-        _outputQueueService = outputQueueService;
-    }
-    
     /// <inheritdoc cref="IOutputService.RefreshAsync"/>
     public async Task RefreshAsync()
     {
-        await _outputService.RefreshAsync();
+        await outputService.RefreshAsync();
     }
 
-    /// <inheritdoc cref="IOutputQueueService.StartAsync"/>
-    public async Task StartQueueAsync()
+    /// <inheritdoc cref="IOutputQueueService.Start"/>
+    public void StartQueue()
     {
-        await _outputQueueService.StartAsync();
+        outputQueueService.Start();
+    }
+    
+    /// <inheritdoc cref="IOutputQueueService.Stop"/>
+    public void StopQueue()
+    {
+        outputQueueService.Stop();
     }
     
     /// <inheritdoc />
