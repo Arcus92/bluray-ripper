@@ -23,7 +23,7 @@ public class OutputSelectorViewModel : ViewModelBase
         _storageProviderAccessor = storageProviderAccessor;
         _outputQueueService = outputQueueService;
 
-        _outputPath = _settingService.OutputPath;
+        _outputPath = _settingService.Data.OutputPath;
         _outputQueueService.StatusChanged += OnOutputQueueServiceStatusChanged;
         
         _ = OpenAsync();
@@ -70,7 +70,8 @@ public class OutputSelectorViewModel : ViewModelBase
     {
         if (!IsEnabled) return;
         await _outputService.OpenAsync(_outputPath);
-        _settingService.OutputPath = _outputPath;
+        _settingService.Data.OutputPath = _outputPath;
+        _settingService.NotifyChange();
     }
     
     /// <summary>

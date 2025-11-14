@@ -23,7 +23,7 @@ public class SourceSelectorViewModel : ViewModelBase
         _storageProviderAccessor = storageProviderAccessor;
         _outputQueueService = outputQueueService;
         
-        _sourcePath = _settingService.SourcePath;
+        _sourcePath = _settingService.Data.SourcePath;
         _outputQueueService.StatusChanged += OnOutputQueueServiceStatusChanged;
     }
 
@@ -68,7 +68,8 @@ public class SourceSelectorViewModel : ViewModelBase
     {
         if (!IsEnabled) return;
         await _mediaProviderService.OpenAsync(_sourcePath);
-        _settingService.SourcePath = _sourcePath;
+        _settingService.Data.SourcePath = _sourcePath;
+        _settingService.NotifyChange();
     }
 
     /// <summary>

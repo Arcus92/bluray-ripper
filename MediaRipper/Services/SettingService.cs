@@ -14,9 +14,10 @@ public class SettingService : ISettingService
 {
     private readonly ILogger _logger;
     private readonly string _filename = "settings.json";
-    
-    private SettingsData _data = new();
-    
+
+    /// <inheritdoc />
+    public SettingsData Data { get; private set; } = new();
+
     public SettingService(ILogger<SettingService> logger)
     {
         _logger = logger;
@@ -25,31 +26,15 @@ public class SettingService : ISettingService
     }
 
     /// <inheritdoc />
-    public string SourcePath
+    public void NotifyChange()
     {
-        get => _data.SourcePath;
-        set
-        {
-            if (_data.SourcePath == value) return;
-            _data.SourcePath = value;
-            OnSettingsDataChanged();
-        }
-    }
-    
-    /// <inheritdoc />
-    public string OutputPath
-    {
-        get => _data.OutputPath;
-        set
-        {
-            if (_data.OutputPath == value) return;
-            _data.OutputPath = value;
-            OnSettingsDataChanged();
-        }
+        Save();
     }
 
-    /// <inheritdoc />
-    public void Load()
+    /// <summary>
+    /// Loads the settings file.
+    /// </summary>
+    private void Load()
     {
         try
         {
@@ -69,7 +54,7 @@ public class SettingService : ISettingService
                 return;
             }
 
-            _data = data;
+            Data = data;
         }
         catch (Exception ex)
         {
@@ -77,15 +62,17 @@ public class SettingService : ISettingService
         }
     }
 
-    /// <inheritdoc />
-    public void Save()
+    /// <summary>
+    /// Saves the settings file.
+    /// </summary>
+    private void Save()
     {
         try
         {
             _logger.LogInformation("Writing settings file...");
             
             using var file = File.Create(_filename);
-            JsonSerializer.Serialize(file, _data);
+            JsonSerializer.Serialize(file, Data);
         }
         catch (Exception ex)
         {
