@@ -1,0 +1,81 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mediaLookup="clr-namespace:MediaRipper.Models.MediaLookup"
+             xmlns:vm="clr-namespace:MediaRipper.ViewModels"
+             xmlns:utils="clr-namespace:MediaRipper.Utils"
+             xmlns:avalonia="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MediaRipper.Views.MediaLookupView"
+             x:DataType="vm:MediaLookupViewModel"
+             Design.DataContext="{utils:DesignResolve {x:Type vm:MediaLookupViewModel}}">
+    
+    <Border Padding="10">
+        <StackPanel Orientation="Vertical" Spacing="5">
+            
+            <!-- Search box -->
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,0,0,0" DockPanel.Dock="Right">
+                    <Button Command="{Binding SearchAsync}"
+                            IsEnabled="{Binding !IsLoading}">
+                        <avalonia:FluentIcon Icon="Search" />
+                    </Button>
+                </StackPanel>
+                <TextBox Text="{Binding SearchText, Mode=TwoWay}" 
+                         IsEnabled="{Binding !IsLoading}"
+                         Watermark="{StaticResource Search}">
+                    <TextBox.KeyBindings>
+                        <KeyBinding  Command="{Binding SearchAsync}" Gesture="Enter" />
+                    </TextBox.KeyBindings>
+                </TextBox>
+            </DockPanel>
+            
+            <!-- Search result selection -->
+            <ComboBox HorizontalAlignment="Stretch" 
+                      SelectedItem="{Binding SelectedMediaItem, Mode=TwoWay}"
+                      ItemsSource="{Binding SearchResults}"
+                      IsEnabled="{Binding !IsLoading}">
+                <ComboBox.DataTemplates>
+                    <DataTemplate DataType="mediaLookup:MediaSearchResult">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="{Binding MediaType}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.DataTemplates>
+            </ComboBox>
+            
+            <!-- Season selection -->
+            <ComboBox HorizontalAlignment="Stretch" 
+                      SelectedItem="{Binding SelectedSeason, Mode=TwoWay}"
+                      ItemsSource="{Binding Seasons}"
+                      IsEnabled="{Binding !IsLoading}"
+                      IsVisible="{Binding IsTvSeries}">
+                <ComboBox.DataTemplates>
+                    <DataTemplate DataType="mediaLookup:MediaSeason">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.DataTemplates>
+            </ComboBox>
+            
+            <!-- Episode selection -->
+            <ComboBox HorizontalAlignment="Stretch" 
+                      SelectedItem="{Binding SelectedEpisode, Mode=TwoWay}"
+                      ItemsSource="{Binding Episodes}"
+                      IsEnabled="{Binding !IsLoading}"
+                      IsVisible="{Binding IsTvSeries}">
+                <ComboBox.DataTemplates>
+                    <DataTemplate DataType="mediaLookup:MediaEpisode">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="{Binding EpisodeNumber}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.DataTemplates>
+            </ComboBox>
+        </StackPanel>
+    </Border>
+</UserControl>

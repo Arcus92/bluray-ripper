@@ -74,10 +74,29 @@ public static class FileHandler
     public static string RemoveInvalidCharsFromFilename(string fileName)
     {
         var builder = new StringBuilder(fileName);
-        foreach (var c in Path.GetInvalidFileNameChars())
-        {
-            builder.Replace(c, '-');
-        }
+        RemoveInvalidCharsFromFilename(builder);
         return builder.ToString();
+    }
+    
+    /// <summary>
+    /// Removes invalid characters from the given file name.
+    /// </summary>
+    /// <param name="fileName">The original file name as string builder.</param>
+    public static void RemoveInvalidCharsFromFilename(StringBuilder fileName)
+    {
+        // GetInvalidFileNameChars will return different chars per OS.
+        // This should return the same result on every OS.
+        fileName.Replace("\0", "");
+        fileName.Replace("\r", "");
+        fileName.Replace("\t", "");
+        fileName.Replace("/", "");
+        fileName.Replace("\\", "");
+        fileName.Replace(":", "");
+        fileName.Replace("!", "");
+        fileName.Replace("?", "");
+        fileName.Replace("<", "");
+        fileName.Replace(">", "");
+        fileName.Replace("\"", "");
+        fileName.Replace("|", "");
     }
 }

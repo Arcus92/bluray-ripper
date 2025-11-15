@@ -10,6 +10,7 @@
     <system:String x:Key="QueueSelection">Queue selection</system:String>
     <system:String x:Key="DequeueSelection">Dequeue selection</system:String>
     <system:String x:Key="SaveRawSegment">Save raw segment</system:String>
+    <system:String x:Key="Search">Search</system:String>
     
     <system:String x:Key="Title">Title</system:String>
     <system:String x:Key="Segments">Segments</system:String>

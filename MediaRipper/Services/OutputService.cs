@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using MediaLib.Models;
 using MediaLib.Output;
@@ -59,7 +60,7 @@ public class OutputService : IOutputService
         var model = GetByIdentifier(definition.Identifier);
         if (model is not null) return model;
 
-        model = new OutputModel(definition, definition.MediaInfo.Name);
+        model = new OutputModel(definition, definition.MediaInfo.GetBasename());
         Outputs.Add(model);
         await WriteOutputInfoAsync(model);
         return model;
@@ -80,7 +81,7 @@ public class OutputService : IOutputService
         // intermediate rename step to not block any filename. 
         var renameMap = new Dictionary<string, string>();
         
-        var basename = model.BuildBasename();
+        var basename = model.Definition.MediaInfo.GetBasename();
         if (basename != model.Basename)
         {
             await RemoveOutputInfoAsync(model);

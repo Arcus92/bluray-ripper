@@ -1,4 +1,6 @@
+using System.Text;
 using System.Text.Json.Serialization;
+using MediaLib.Utils.IO;
 
 namespace MediaLib.Output;
 
@@ -34,4 +36,21 @@ public class OutputMediaInfo
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? ImdbId { get; set; }
+
+    /// <summary>
+    /// Gets the basename if the media info.
+    /// </summary>
+    /// <returns>Returns the basename.</returns>
+    public string GetBasename()
+    {
+        var builder = new StringBuilder();
+        if (Season.HasValue && Episode.HasValue)
+        {
+            builder.Append($"S{Season.Value:00}E{Episode.Value:00} ");
+        }
+
+        builder.Append(Name);
+        FileHandler.RemoveInvalidCharsFromFilename(builder);
+        return builder.ToString();
+    }
 }

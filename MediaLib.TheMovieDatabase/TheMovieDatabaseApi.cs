@@ -34,6 +34,7 @@ public class TheMovieDatabaseApi
 
         Search = new SearchService(this);
         Tv = new TvService(this);
+        Movie = new MovieService(this);
     }
 
     /// <summary>
@@ -45,6 +46,11 @@ public class TheMovieDatabaseApi
     /// Gets the TV service.
     /// </summary>
     public TvService Tv { get; }
+    
+    /// <summary>
+    /// Gets the movie service.
+    /// </summary>
+    public MovieService Movie { get; }
 
     /// <summary>
     /// The JSON serializer options.

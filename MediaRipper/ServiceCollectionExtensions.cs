@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<OutputListViewModel>();
         collection.AddScoped<OutputTreeViewModel>();
         collection.AddScoped<OutputSettingsContainerViewModel>();
+        collection.AddScoped<MediaLookupViewModel>();
         
         // Controller
         collection.AddSingleton<ISettingService, SettingService>();

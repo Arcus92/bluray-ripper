@@ -6,12 +6,12 @@ namespace MediaLib.TheMovieDatabase.Services;
 public readonly struct TvService(TheMovieDatabaseApi api)
 {
     /// <summary>
-    /// Fetches the series info.
+    /// Fetches the series details.
     /// </summary>
     /// <param name="seriesId">The id of the TV show.</param>
     /// <param name="language">The result language.</param>
-    /// <returns>Returns the series information.</returns>
-    public async Task<TvSeriesDetails> SeriesAsync(int seriesId, string? language = null)
+    /// <returns>Returns the series details.</returns>
+    public async Task<TvSeriesDetails> DetailsAsync(int seriesId, string? language = null)
     {
         var builder = new UriQueryBuilder($"{api.Endpoint}/3/tv/{seriesId}");
         

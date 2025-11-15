@@ -36,22 +36,6 @@ public class OutputModel : ObservableObject
         set => SetProperty(ref _basename, value);
     }
     
-    #region Metadata
-    
-    public string BuildBasename()
-    {
-        var builder = new StringBuilder();
-        if (Definition.MediaInfo.Season.HasValue && Definition.MediaInfo.Episode.HasValue)
-        {
-            builder.Append($"S{Definition.MediaInfo.Season.Value:00}E{Definition.MediaInfo.Episode.Value:00} ");
-        }
-
-        builder.Append(Definition.MediaInfo.Name);
-        return builder.ToString();
-    }
-    
-    #endregion Metadata
-    
     #region Progress
     
     /// <inheritdoc cref="Status"/>

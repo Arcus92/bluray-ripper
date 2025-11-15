@@ -17,14 +17,16 @@ public class ExportSettingsViewModel : ViewModelBase
     private readonly IMediaProviderService _mediaProviderService;
     private readonly OutputSelectorViewModel _outputSelector;
     private readonly SourceTreeViewModel _sourceTree;
+    private readonly MediaLookupViewModel _mediaLookup;
     
     public ExportSettingsViewModel(IOutputService outputService, IMediaProviderService mediaProviderService, 
-        OutputSelectorViewModel outputSelector, SourceTreeViewModel sourceTree)
+        OutputSelectorViewModel outputSelector, SourceTreeViewModel sourceTree, MediaLookupViewModel mediaLookup)
     {
         _outputService = outputService;
         _mediaProviderService = mediaProviderService;
         _outputSelector = outputSelector;
         _sourceTree = sourceTree;
+        _mediaLookup = mediaLookup;
         
         _sourceTree.PropertyChanged += OnSourceTreePropertyChanged;
     }
@@ -153,6 +155,20 @@ public class ExportSettingsViewModel : ViewModelBase
             return;
         
         var outputDefinition = titleNode.Source.CreateDefaultOutputDefinition(DefaultCodecOptions, _outputFormat);
+
+        if (_mediaLookup.TryGetMediaInfo(out var mediaInfo))
+        {
+            var basename = mediaInfo.GetBasename();
+
+            foreach (var file in outputDefinition.Files)
+            {
+                file.Filename = file.Filename[outputDefinition.MediaInfo.Name.Length..].Insert(0, basename);
+            }
+            
+            outputDefinition.MediaInfo = mediaInfo;
+            _mediaLookup.IncreaseEpisodeNumber();
+        }
+        
         await _outputService.AddAsync(outputDefinition);
         UpdateSelection();
     }

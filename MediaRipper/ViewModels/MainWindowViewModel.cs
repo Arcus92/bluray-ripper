@@ -12,10 +12,12 @@ public partial class MainWindowViewModel : ViewModelBase
     public QueueSettingsViewModel QueueSettings { get; }
     public OutputTreeViewModel OutputTree { get; }
     public OutputSettingsContainerViewModel OutputSettingsContainer { get; }
+    public MediaLookupViewModel MediaLookup { get; }
     
     public MainWindowViewModel(SourceSelectorViewModel sourceSelector, SourceTreeViewModel sourceTree, 
         ExportSettingsViewModel exportSettings, OutputSelectorViewModel outputSelector, 
-        QueueSettingsViewModel queueSettings, OutputTreeViewModel outputTree, OutputSettingsContainerViewModel outputSettingsContainer)
+        QueueSettingsViewModel queueSettings, OutputTreeViewModel outputTree, 
+        OutputSettingsContainerViewModel outputSettingsContainer, MediaLookupViewModel mediaLookup)
     {
         SourceSelector = sourceSelector;
         SourceTree = sourceTree;
@@ -24,6 +26,7 @@ public partial class MainWindowViewModel : ViewModelBase
         QueueSettings = queueSettings;
         OutputTree = outputTree;
         OutputSettingsContainer = outputSettingsContainer;
+        MediaLookup = mediaLookup;
     }
 
     /// <inheritdoc />
