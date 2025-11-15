@@ -17,4 +17,9 @@ public class SettingsData
     /// Gets and sets the last opened output path.
     /// </summary>
     public string OutputPath { get; set; } = "";
+
+    /// <summary>
+    /// Gets TheMovieDatabase settings.
+    /// </summary>
+    public TheMovieDatabaseSettings TheMovieDatabase { get; set; } = new();
 }

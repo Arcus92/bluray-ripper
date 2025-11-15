@@ -28,11 +28,13 @@ public static class ServiceCollectionExtensions
         // Controller
         collection.AddSingleton<ISettingService, SettingService>();
         collection.AddSingleton<IMediaProviderService, MediaProviderService>();
+        collection.AddSingleton<IMediaLookupService, MediaLookupService>();
         collection.AddSingleton<IOutputService, OutputService>();
         collection.AddSingleton<IOutputQueueService, OutputQueueService>();
         collection.AddSingleton<IStorageProviderAccessor, StorageProviderAccessor>();
-
+        
         // Services
+        collection.AddHttpClient();
         collection.AddLogging(builder => builder.AddConsole());
     }
 }

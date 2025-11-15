@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DvdLib.Decrypt", "DvdLib.De
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaLib.FileSystem", "MediaLib.FileSystem\MediaLib.FileSystem.csproj", "{4965C71F-A541-4306-A9E6-70E0B07BC7C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaLib.TheMovieDatabase", "MediaLib.TheMovieDatabase\MediaLib.TheMovieDatabase.csproj", "{36C20D6C-8B53-4359-9545-225EFFFB293B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,5 +80,9 @@ Global
 		{4965C71F-A541-4306-A9E6-70E0B07BC7C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4965C71F-A541-4306-A9E6-70E0B07BC7C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4965C71F-A541-4306-A9E6-70E0B07BC7C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36C20D6C-8B53-4359-9545-225EFFFB293B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36C20D6C-8B53-4359-9545-225EFFFB293B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36C20D6C-8B53-4359-9545-225EFFFB293B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36C20D6C-8B53-4359-9545-225EFFFB293B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
