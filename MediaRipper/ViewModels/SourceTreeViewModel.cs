@@ -7,15 +7,18 @@ using MediaLib;
 using MediaRipper.Models.Sources;
 using MediaRipper.Services.Interfaces;
 using MediaRipper.Views;
+using Microsoft.Extensions.Logging;
 
 namespace MediaRipper.ViewModels;
 
 public class SourceTreeViewModel : ViewModelBase
 {
+    private readonly ILogger<SourceTreeViewModel> _logger;
     private readonly IMediaProviderService _mediaProviderService;
     
-    public SourceTreeViewModel(IMediaProviderService mediaProviderService)
+    public SourceTreeViewModel(ILogger<SourceTreeViewModel> logger, IMediaProviderService mediaProviderService)
     {
+        _logger = logger;
         _mediaProviderService = mediaProviderService;
         _mediaProviderService.Changed += OnMediaProviderServiceChanged;
     }
@@ -52,7 +55,7 @@ public class SourceTreeViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            throw; // TODO handle exception
+            _logger.LogError(ex, "Failed to build track nodes!");
         }
     }
 

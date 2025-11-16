@@ -10,7 +10,12 @@ public class MovieDetails
     /// Gets the movie id.
     /// </summary>
     public int Id { get; init; }
-    
+
+    /// <summary>
+    /// Gets the IMDB id.
+    /// </summary>
+    public string ImdbId { get; init; } = "";
+
     /// <summary>
     /// Gets the movie title.
     /// </summary>
