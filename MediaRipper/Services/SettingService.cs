@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using MediaRipper.Models.Settings;
+using MediaRipper.Serializer;
 using MediaRipper.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -48,7 +49,7 @@ public class SettingService : ISettingService
             }
             
             using var file = File.OpenRead(_filename);
-            var data = JsonSerializer.Deserialize<SettingsData>(file);
+            var data = JsonSerializer.Deserialize(file, SettingsContext.Default.SettingsData);
             if (data is null)
             {
                 return;
@@ -72,7 +73,7 @@ public class SettingService : ISettingService
             _logger.LogInformation("Writing settings file...");
             
             using var file = File.Create(_filename);
-            JsonSerializer.Serialize(file, Data);
+            JsonSerializer.Serialize(file, Data, SettingsContext.Default.SettingsData);
         }
         catch (Exception ex)
         {

@@ -1,7 +1,5 @@
-using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using MediaLib.TheMovieDatabase.Converters;
+using System.Text.Json.Serialization.Metadata;
 using MediaLib.TheMovieDatabase.Services;
 
 namespace MediaLib.TheMovieDatabase;
@@ -51,29 +49,15 @@ public class TheMovieDatabaseApi
     /// Gets the movie service.
     /// </summary>
     public MovieService Movie { get; }
-
-    /// <summary>
-    /// The JSON serializer options.
-    /// </summary>
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-        AllowOutOfOrderMetadataProperties = true,
-        Converters =
-        {
-            new JsonStringEnumConverter(),
-            new DateTimeFormatConverter()
-        }
-    };
     
     /// <summary>
     /// Sends a GET request to the TMDB api.
     /// </summary>
     /// <param name="uri">The URI to fetch.</param>
+    /// <param name="typeInfo">The JSON type info.</param>
     /// <typeparam name="T">The response type.</typeparam>
     /// <returns>Returns the serialized response from JSON.</returns>
-    internal async Task<T> GetAsync<T>(string uri)
+    internal async Task<T> GetAsync<T>(string uri, JsonTypeInfo<T> typeInfo)
     {
         var client = _httpClientFactory.CreateClient();
         var request = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -82,7 +66,8 @@ public class TheMovieDatabaseApi
         var response = await client.SendAsync(request);
         response.EnsureSuccessStatusCode();
         
-        var result = await response.Content.ReadFromJsonAsync<T>(JsonSerializerOptions);
+        var content = await response.Content.ReadAsStreamAsync();
+        var result = await JsonSerializer.DeserializeAsync(content, typeInfo);
         if (result is null)
         {
             throw new HttpRequestException("HTTP request returned null.");
@@ -91,7 +76,7 @@ public class TheMovieDatabaseApi
         return result;
     }
 
-    /// <summary>
+    /// <summary>        var typeInfo = ModelContext.Default.GetTypeInfo(typeof(T));
     /// Adds the general HTTP headers.
     /// </summary>
     /// <param name="request">The request to add the HTTP headers.</param>

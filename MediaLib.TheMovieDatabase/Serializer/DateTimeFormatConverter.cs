@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace MediaLib.TheMovieDatabase.Converters;
+namespace MediaLib.TheMovieDatabase.Serializer;
 
 /// <summary>
 /// A JSON converter to read a specific date-time format. 

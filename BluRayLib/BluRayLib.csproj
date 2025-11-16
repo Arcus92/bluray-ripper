@@ -4,7 +4,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
+        <PublishAot>true</PublishAot>
+        <PublishTrimmed>true</PublishTrimmed>
         <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+        <Configurations>Release;Debug</Configurations>
+        <Platforms>x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

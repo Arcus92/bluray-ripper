@@ -1,3 +1,4 @@
+using MediaLib.TheMovieDatabase.Serializer;
 using MediaLib.TheMovieDatabase.Models;
 using MediaLib.TheMovieDatabase.Utils;
 
@@ -30,7 +31,7 @@ public readonly struct SearchService(TheMovieDatabaseApi api)
         if (page.HasValue) builder.Add("page", page.Value);
         if (year.HasValue) builder.Add("year", year.Value);
         
-        return await api.GetAsync<SearchResults<TvResult>>(builder.ToString());
+        return await api.GetAsync(builder.ToString(), ModelContext.Default.SearchResultsTvResult);
     }
     
     /// <summary>
@@ -50,7 +51,7 @@ public readonly struct SearchService(TheMovieDatabaseApi api)
         if (language is not null) builder.Add("language", language);
         if (page.HasValue) builder.Add("page", page.Value);
         
-        return await api.GetAsync<SearchResults<MovieResult>>(builder.ToString());
+        return await api.GetAsync(builder.ToString(), ModelContext.Default.SearchResultsMovieResult);
     }
     
     /// <summary>
@@ -70,6 +71,6 @@ public readonly struct SearchService(TheMovieDatabaseApi api)
         if (language is not null) builder.Add("language", language);
         if (page.HasValue) builder.Add("page", page.Value);
         
-        return await api.GetAsync<SearchResults<SearchResult>>(builder.ToString());
+        return await api.GetAsync(builder.ToString(), ModelContext.Default.SearchResultsSearchResult);
     }
 }

@@ -1,14 +1,10 @@
 using System.Text.Json;
+using MediaLib.Serializer;
 
 namespace MediaLib.Output;
 
 public static class OutputDefinitionSerializer
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        WriteIndented = true,
-    };
-    
     /// <summary>
     /// Serializes the output definition file.
     /// </summary>
@@ -17,7 +13,7 @@ public static class OutputDefinitionSerializer
     public static async Task SerializeAsync(string path, OutputDefinition definition)
     {
         await using var stream = File.Create(path);
-        await JsonSerializer.SerializeAsync(stream, definition, SerializerOptions);
+        await JsonSerializer.SerializeAsync(stream, definition, ModelContext.Default.OutputDefinition);
     }
     
     /// <summary>
@@ -28,7 +24,7 @@ public static class OutputDefinitionSerializer
     public static async Task<OutputDefinition?> DeserializeAsync(string path)
     {
         await using var stream = File.OpenRead(path);
-        return await JsonSerializer.DeserializeAsync<OutputDefinition>(stream, SerializerOptions);
+        return await JsonSerializer.DeserializeAsync(stream, ModelContext.Default.OutputDefinition);
     }
 
     /// <summary>

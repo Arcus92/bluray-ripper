@@ -1,3 +1,4 @@
+using MediaLib.TheMovieDatabase.Serializer;
 using MediaLib.TheMovieDatabase.Models;
 using MediaLib.TheMovieDatabase.Utils;
 
@@ -17,6 +18,6 @@ public readonly struct MovieService(TheMovieDatabaseApi api)
         
         if (language is not null) builder.Add("language", language);
         
-        return await api.GetAsync<MovieDetails>(builder.ToString());
+        return await api.GetAsync(builder.ToString(), ModelContext.Default.MovieDetails);
     }
 }

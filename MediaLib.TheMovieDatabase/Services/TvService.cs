@@ -1,4 +1,5 @@
 using MediaLib.TheMovieDatabase.Models;
+using MediaLib.TheMovieDatabase.Serializer;
 using MediaLib.TheMovieDatabase.Utils;
 
 namespace MediaLib.TheMovieDatabase.Services;
@@ -17,7 +18,7 @@ public readonly struct TvService(TheMovieDatabaseApi api)
         
         if (language is not null) builder.Add("language", language);
         
-        return await api.GetAsync<TvSeriesDetails>(builder.ToString());
+        return await api.GetAsync(builder.ToString(), ModelContext.Default.TvSeriesDetails);
     }
     
     /// <summary>
@@ -33,6 +34,6 @@ public readonly struct TvService(TheMovieDatabaseApi api)
         
         if (language is not null) builder.Add("language", language);
         
-        return await api.GetAsync<TvSeasonDetails>(builder.ToString());
+        return await api.GetAsync(builder.ToString(), ModelContext.Default.TvSeasonDetails);
     }
 }
