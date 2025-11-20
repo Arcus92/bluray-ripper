@@ -44,5 +44,5 @@ public class TvEpisode
     /// <summary>
     /// Gets the episode runtime in minutes.
     /// </summary>
-    public int Runtime { get; init; }
+    public int? Runtime { get; init; }
 }
