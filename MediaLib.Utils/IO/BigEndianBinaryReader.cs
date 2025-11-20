@@ -127,6 +127,20 @@ public class BigEndianBinaryReader : IDisposable
     }
     
     /// <summary>
+    /// Reads an 40-bit unsigned integer.
+    /// </summary>
+    /// <returns></returns>
+    public long ReadUInt40()
+    {
+        var b1 = ReadByte();
+        var b2 = ReadByte();
+        var b3 = ReadByte();
+        var b4 = ReadByte();
+        var b5 = ReadByte();
+        return ((long)b1 << 32) + ((long)b2 << 24) + ((long)b3 << 16) + ((long)b4 << 8) + b5;
+    }
+    
+    /// <summary>
     /// Reads an 64-bit integer.
     /// </summary>
     /// <returns></returns>

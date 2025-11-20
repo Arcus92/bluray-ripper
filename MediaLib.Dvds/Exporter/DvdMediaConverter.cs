@@ -1,24 +1,54 @@
+using DvdLib.Vmg;
 using MediaLib.Dvds.Providers;
 using MediaLib.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace MediaLib.Dvds.Exporter;
 
-public class DvdMediaConverter : IMediaConverter
+public class DvdMediaConverter : FFmpegMediaConverter<DvdMediaProvider>
 {
-    private readonly ILogger _logger;
-    private readonly DvdMediaProvider _provider;
-    private readonly MediaConverterParameter _parameter;
-    
-    public DvdMediaConverter(ILogger logger, DvdMediaProvider provider, MediaConverterParameter parameter)
+    public DvdMediaConverter(ILogger logger, DvdMediaProvider provider, MediaConverterParameter parameter) : 
+        base(logger, provider, parameter)
     {
-        _logger = logger;
-        _provider = provider;
-        _parameter = parameter;
     }
 
-    public Task ExecuteAsync(CancellationToken cancellationToken = default)
+    /// <inheritdoc />
+    protected override long GetSegmentFilesize(ushort segmentId)
     {
-        throw new NotImplementedException();
+        var identifier = VmgIdentifier.FromSegmentId(segmentId);
+        var fileInfo = Provider.Dvd.GetVobFileInfo(identifier);
+        return fileInfo.Length;
     }
+    
+    /// <inheritdoc />
+    protected override Stream OpenSegmentStream(ushort segmentId)
+    {
+        var identifier = VmgIdentifier.FromSegmentId(segmentId);
+        
+        var retries = 0;
+        const int maxRetries = 5;
+        while (true)
+        {
+            try
+            {
+                Logger.LogInformation("Opening segment {identifier}.VOB", identifier);
+                return Provider.Dvd.GetVobStream(identifier);
+            }
+            catch (Exception ex)
+            {
+                if (retries < maxRetries)
+                {
+                    retries++;
+                    Logger.LogWarning(ex, "Exception while opening segment {identifier}.VOB. Retry {Retry} / {MaxRetry}", identifier, retries, maxRetries);
+                }
+                else
+                {
+                    Logger.LogError(ex, "Exception while opening segment {identifier}.VOB!", identifier);
+                    throw;
+                }
+            }
+        }
+    }
+
+    
 }

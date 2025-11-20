@@ -1,7 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using DvdLib;
 using DvdLib.Decrypt;
+using DvdLib.Streams;
+using DvdLib.Vmg;
 using MediaLib.Dvds.Exporter;
+using MediaLib.Dvds.Sources;
 using MediaLib.Models;
 using MediaLib.Providers;
 using MediaLib.Sources;
@@ -27,19 +30,46 @@ public class DvdMediaProvider : IMediaProvider
     
     static DvdMediaProvider()
     {
+        DvdCss.RegisterAsDecryptionHandler();
         DvdCss.RegisterLibraryImportResolver();
     }
     
     /// <inheritdoc />
     public async Task<List<IMediaSource>> GetSourcesAsync()
     {
+        await Dvd.LoadAsync();
+        
         var list = new List<IMediaSource>();
 
-        // TODO
+        foreach (var videoStream in Dvd.VideoStreams.Values)
+        {
+            var source = GetSource(videoStream);
+            list.Add(source);
+        }
         
         return list;
     }
 
+    /// <summary>
+    /// Returns the media source for the given video stream.
+    /// </summary>
+    /// <param name="videoStream">The DVD video stream.</param>
+    /// <returns></returns>
+    private DvdMediaSource GetSource(VideoStream videoStream)
+    {
+        // Builds the media identifier
+        var identifier = new MediaIdentifier
+        {
+            Type = MediaIdentifierType.Dvd,
+            ContentHash = Dvd.ContentHash,
+            DiskName = Dvd.DiskName,
+            Id = videoStream.Identifier.ToFilename(),
+            SegmentIds = [videoStream.Identifier.ToSegmentId()],
+        };
+        
+        return new DvdMediaSource(videoStream, identifier);
+    }
+    
     /// <inheritdoc />
     public IMediaConverter CreateConverter(MediaConverterParameter parameter)
     {
@@ -49,9 +79,15 @@ public class DvdMediaProvider : IMediaProvider
     /// <inheritdoc />
     public Stream GetRawStream(IMediaSource source)
     {
-        if (!Contains(source.Identifier)) throw new ArgumentException($"The given source isn't contained by this provider.", nameof(source));
+        if (!Contains(source.Identifier)) throw new ArgumentException("The given source isn't contained by this provider.", nameof(source));
 
-        throw new NotImplementedException();
+        var identifier = VmgIdentifier.FromFilename(source.Identifier.Id);
+        if (!Dvd.VideoStreams.TryGetValue(identifier, out var videoStream))
+        {
+            throw new ArgumentException("Couldn't parse filename.", nameof(source));
+        }
+
+        return Dvd.GetVobStream(identifier);
     }
 
     /// <inheritdoc />

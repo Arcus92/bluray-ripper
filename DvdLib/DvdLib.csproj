@@ -11,4 +11,8 @@
         <Platforms>x64</Platforms>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\MediaLib.Utils\MediaLib.Utils.csproj" />
+    </ItemGroup>
+
 </Project>

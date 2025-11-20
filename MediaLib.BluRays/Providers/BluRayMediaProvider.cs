@@ -68,7 +68,7 @@ public class BluRayMediaProvider : IMediaProvider
     /// </summary>
     /// <param name="playlistId">The BluRay playlist id.</param>
     /// <returns></returns>
-    public BluRayMediaSource GetSource(ushort playlistId)
+    private BluRayMediaSource GetSource(ushort playlistId)
     {
         var playlist = BluRay.Playlists[playlistId];
         

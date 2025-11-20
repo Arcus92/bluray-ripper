@@ -59,6 +59,12 @@ public static class ContainerFormats
                 "matroska" => true,
                 _ => false
             },
+            "dvd_subtitle" => containerFormat switch
+            {
+                "mp4" => true,
+                "matroska" => true,
+                _ => false
+            },
             _ => false
         };
     }
