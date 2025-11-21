@@ -92,7 +92,7 @@ public class SourceSelectorViewModel : ViewModelBase
 
         if (paths.Count >= 1)
         {
-            SourcePath = paths[0].Path.AbsolutePath;
+            SourcePath = paths[0].Path.LocalPath;
             await OpenAsync();
         }
     }
