@@ -61,6 +61,11 @@
                 </ComboBox.DataTemplates>
             </ComboBox>
             
+            <!-- Season description -->
+            <TextBlock Text="{Binding SelectedSeason.Description, FallbackValue={}}" 
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding IsTvSeries}" />
+            
             <!-- Episode selection -->
             <ComboBox HorizontalAlignment="Stretch" 
                       SelectedItem="{Binding SelectedEpisode, Mode=TwoWay}"
@@ -72,10 +77,17 @@
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <TextBlock Text="{Binding EpisodeNumber}" />
                             <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="{Binding Duration}" />
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.DataTemplates>
             </ComboBox>
+            
+            <!-- Episode description -->
+            <TextBlock Text="{Binding SelectedEpisode.Description, FallbackValue={}}" 
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding IsTvSeries}" />
+
         </StackPanel>
     </Border>
 </UserControl>

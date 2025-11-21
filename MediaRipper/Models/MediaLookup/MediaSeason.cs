@@ -21,6 +21,11 @@ public class MediaSeason
     public required string Name { get; init; }
     
     /// <summary>
+    /// Gets the seasons's description.
+    /// </summary>
+    public required string Description { get; init; }
+    
+    /// <summary>
     /// Gets the season number.
     /// </summary>
     public required int SeasonNumber { get; init; }

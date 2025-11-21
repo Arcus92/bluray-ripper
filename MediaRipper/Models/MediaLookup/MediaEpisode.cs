@@ -1,3 +1,5 @@
+using System;
+
 namespace MediaRipper.Models.MediaLookup;
 
 public class MediaEpisode
@@ -26,4 +28,9 @@ public class MediaEpisode
     /// Gets the episode number.
     /// </summary>
     public required int EpisodeNumber { get; init; }
+    
+    /// <summary>
+    /// Gets the episode's duration.
+    /// </summary>
+    public TimeSpan? Duration { get; init; }
 }

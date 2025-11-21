@@ -106,6 +106,7 @@ public class MediaLookupService : IMediaLookupService
             {
                 Id = s.Id,
                 Name = s.Name,
+                Description = s.Overview,
                 SeriesId = id,
                 SeasonNumber = s.SeasonNumber,
                 EpisodeCount = s.EpisodeCount,
@@ -128,7 +129,8 @@ public class MediaLookupService : IMediaLookupService
                 Name = e.Name,
                 SeasonNumber = e.SeasonNumber,
                 EpisodeNumber = e.EpisodeNumber,
-                Description = e.Overview
+                Description = e.Overview,
+                Duration = e.Runtime.HasValue ? TimeSpan.FromMinutes(e.Runtime.Value) : null
             }).ToArray()
         };
     }
