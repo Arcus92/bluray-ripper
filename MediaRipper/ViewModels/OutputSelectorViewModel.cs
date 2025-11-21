@@ -25,8 +25,14 @@ public class OutputSelectorViewModel : ViewModelBase
 
         _outputPath = _settingService.Data.OutputPath;
         _outputQueueService.StatusChanged += OnOutputQueueServiceStatusChanged;
-        
-        _ = OpenAsync();
+    }
+
+    /// <summary>
+    /// The view was loaded.
+    /// </summary>
+    public async Task OnLoaded()
+    {
+        await OpenAsync();
     }
     
     /// <inheritdoc cref="OutputPath"/>

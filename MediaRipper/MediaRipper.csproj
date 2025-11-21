@@ -32,6 +32,8 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
+        <PackageReference Include="Xaml.Behaviors.Avalonia" Version="11.3.8.2" />
+        <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.8.2" />
     </ItemGroup>
 
     <ItemGroup>

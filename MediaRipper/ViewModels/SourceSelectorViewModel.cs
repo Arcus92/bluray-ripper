@@ -26,7 +26,15 @@ public class SourceSelectorViewModel : ViewModelBase
         _sourcePath = _settingService.Data.SourcePath;
         _outputQueueService.StatusChanged += OnOutputQueueServiceStatusChanged;
     }
-
+    
+    /// <summary>
+    /// The view was loaded.
+    /// </summary>
+    public async Task OnLoaded()
+    {
+        await OpenAsync();
+    }
+    
     /// <inheritdoc cref="SourcePath"/>
     private string _sourcePath;
 

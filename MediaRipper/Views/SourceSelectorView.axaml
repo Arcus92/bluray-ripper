@@ -10,6 +10,13 @@
              x:DataType="vm:SourceSelectorViewModel"
              Design.DataContext="{utils:DesignResolve {x:Type vm:SourceSelectorViewModel}}">
     
+    <Interaction.Behaviors>
+        <EventTriggerBehavior
+            EventName="Loaded">
+            <InvokeCommandAction Command="{Binding OnLoaded}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    
     <Border Padding="10">
         <DockPanel>
             <!-- Actions -->
