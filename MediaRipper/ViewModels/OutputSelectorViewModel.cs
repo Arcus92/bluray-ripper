@@ -23,7 +23,7 @@ public class OutputSelectorViewModel : ViewModelBase
         _storageProviderAccessor = storageProviderAccessor;
         _outputQueueService = outputQueueService;
 
-        _outputPath = _settingService.Data.OutputPath;
+        _outputPath = _settingService.Data.OutputPath ?? "";
         _outputQueueService.StatusChanged += OnOutputQueueServiceStatusChanged;
     }
 

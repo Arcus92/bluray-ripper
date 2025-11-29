@@ -23,7 +23,7 @@
             <StackPanel Orientation="Horizontal" Margin="5,0,0,0" Spacing="5" DockPanel.Dock="Right">
                 <Button Command="{Binding OpenFolderPickerAsync}" 
                         IsEnabled="{Binding IsEnabled}"
-                        ToolTip.Tip="{DynamicResource OpenOutput}">
+                        ToolTip.Tip="{DynamicResource OpenSource}">
                     <avalonia:FluentIcon Icon="FolderOpen" />
                 </Button>
             </StackPanel>

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Text;
 using MediaLib.Utils.IO;
 
@@ -9,7 +10,7 @@ public class Engine
 {
     public Engine(string? ffmpegPath = null)
     {
-        Binary = ffmpegPath ?? "ffmpeg";
+        Binary = ffmpegPath ?? DefaultBinary;
     }
     
     /// <summary>
@@ -491,4 +492,22 @@ public class Engine
     }
     
     #endregion Prope
+    
+    #region Static
+
+    /// <summary>
+    /// Gets the default binary path that is used when the engine is created without an explicit path.
+    /// </summary>
+    public static string DefaultBinary { get; set; } = GetDefaultBinaryForPlatform();
+
+    /// <summary>
+    /// Gets the default binary path to FFmpeg for the current platform.
+    /// </summary>
+    /// <returns>Returns the FFmpeg binary name.</returns>
+    private static string GetDefaultBinaryForPlatform()
+    {
+        return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ffmpeg.exe" : "ffmpeg";
+    }
+    
+    #endregion Static
 }

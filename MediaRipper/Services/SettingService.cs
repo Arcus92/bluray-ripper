@@ -29,7 +29,20 @@ public class SettingService : ISettingService
     /// <inheritdoc />
     public void NotifyChange()
     {
+        OnChange();
         Save();
+    }
+
+    /// <summary>
+    /// Some settings were changed.
+    /// </summary>
+    private void OnChange()
+    {
+        // Update the FFmpeg binary path
+        if (!string.IsNullOrEmpty(Data.FFmpegPath))
+        {
+            MediaLib.FFmpeg.Engine.DefaultBinary = Data.FFmpegPath;
+        }
     }
 
     /// <summary>
