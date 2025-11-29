@@ -34,6 +34,11 @@ public class MediaProviderService : IMediaProviderService
     public async Task OpenAsync(string path)
     {
         await CloseAsync();
+
+        if (string.IsNullOrEmpty(path))
+        {
+            return;
+        }
         
         _logger.LogInformation("Opening directory: {Path}", path);
         
