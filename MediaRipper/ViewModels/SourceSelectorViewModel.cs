@@ -81,6 +81,15 @@ public class SourceSelectorViewModel : ViewModelBase
     }
 
     /// <summary>
+    /// Refresh the current source path.
+    /// </summary>
+    public async Task RefreshAsync()
+    {
+        if (!IsEnabled) return;
+        await _mediaProviderService.OpenAsync(_sourcePath);
+    }
+    
+    /// <summary>
     /// Opens a folder picker to select the source file.
     /// </summary>
     public async Task OpenFolderPickerAsync()

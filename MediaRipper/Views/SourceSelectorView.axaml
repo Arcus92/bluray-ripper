@@ -26,6 +26,12 @@
                         ToolTip.Tip="{DynamicResource OpenSource}">
                     <avalonia:FluentIcon Icon="FolderOpen" />
                 </Button>
+                
+                <Button Command="{Binding RefreshAsync}"
+                        IsEnabled="{Binding IsEnabled}"
+                        ToolTip.Tip="{DynamicResource Refresh}">
+                    <avalonia:FluentIcon Icon="ArrowClockwise" />
+                </Button>
             </StackPanel>
             
             <!-- Input path -->
