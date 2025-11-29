@@ -34,7 +34,7 @@ public static class OutputDefinitionSerializer
     /// <returns>Returns a list of all output definition files.</returns>
     public static async IAsyncEnumerable<(string, OutputDefinition)> DeserializeFromDirectoryAsync(string path)
     {
-        foreach (var file in Directory.EnumerateFiles(path, "*.json"))
+        foreach (var file in Directory.EnumerateFiles(path, "*.json").Order())
         {
             var definition = await DeserializeAsync(file);
             if (definition is null) continue;
