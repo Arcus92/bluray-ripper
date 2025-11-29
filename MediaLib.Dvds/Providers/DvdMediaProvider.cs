@@ -35,19 +35,15 @@ public class DvdMediaProvider : IMediaProvider
     }
     
     /// <inheritdoc />
-    public async Task<List<IMediaSource>> GetSourcesAsync()
+    public async IAsyncEnumerable<IMediaSource> GetSourcesAsync()
     {
         await Dvd.LoadAsync();
         
-        var list = new List<IMediaSource>();
-
         foreach (var videoStream in Dvd.VideoStreams.Values)
         {
             var source = GetSource(videoStream);
-            list.Add(source);
+            yield return source;
         }
-        
-        return list;
     }
 
     /// <summary>

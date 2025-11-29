@@ -37,30 +37,26 @@ public class BluRayMediaProvider : IMediaProvider
     }
 
     /// <inheritdoc />
-    public async Task<List<IMediaSource>> GetSourcesAsync()
+    public async IAsyncEnumerable<IMediaSource> GetSourcesAsync()
     {
         await BluRay.LoadAsync();
 
         var sources = new List<BluRayMediaSource>();
         foreach (var playlistId in BluRay.Playlists.Keys.Order())
         {
-            var definition = GetSource(playlistId);
-            sources.Add(definition);
-        }
+            var source = GetSource(playlistId);
 
-        for (var a = 0; a < sources.Count; a++)
-        for (var b = a + 1; b < sources.Count; b++)
-        {
-            var sourceA = sources[a];
-            var sourceB = sources[b];
-
-            if (sourceA.Matches(sourceB))
+            foreach (var otherSource in sources)
             {
-                sourceB.IgnoreFlags |= MediaIgnoreFlags.Duplicate;
+                if (otherSource.Matches(source))
+                {
+                    source.IgnoreFlags |= MediaIgnoreFlags.Duplicate;
+                }
             }
+            
+            sources.Add(source);
+            yield return source;
         }
-        
-        return sources.Cast<IMediaSource>().ToList();
     }
 
     /// <summary>

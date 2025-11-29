@@ -12,7 +12,7 @@ public interface IMediaProvider : IDisposable
     /// Returns all possible media sources from this provider.
     /// </summary>
     /// <returns>The list of all definitions from this provider.</returns>
-    Task<List<IMediaSource>> GetSourcesAsync();
+    IAsyncEnumerable<IMediaSource> GetSourcesAsync();
     
     /// <summary>
     /// Creates a media exporter for the given source.

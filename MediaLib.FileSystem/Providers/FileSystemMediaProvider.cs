@@ -30,18 +30,14 @@ public class FileSystemMediaProvider : IMediaProvider
     }
     
     /// <inheritdoc />
-    public async Task<List<IMediaSource>> GetSourcesAsync()
+    public async IAsyncEnumerable<IMediaSource> GetSourcesAsync()
     {
-        var list = new List<IMediaSource>();
-
         foreach (var file in Directory.EnumerateFiles(_path).Where(IsMediaFile).Order())
         {
             var source = await TryGetSourceAsync(file);
             if (source is null) continue;
-            list.Add(source);
+            yield return source;
         }
-        
-        return list;
     }
 
     /// <inheritdoc />

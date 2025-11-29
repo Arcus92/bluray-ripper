@@ -64,8 +64,8 @@ public class SourceTreeViewModel : ViewModelBase
         Items.Clear();
         if (!_mediaProviderService.IsLoaded) return;
         
-        var sources = await _mediaProviderService.GetSourcesAsync();
-        foreach (var source in sources)
+        var sources = _mediaProviderService.GetSourcesAsync();
+        await foreach (var source in sources)
         {
             var isIgnored = source.IgnoreFlags != MediaIgnoreFlags.None;
             Items.Add(new MediaSourceModel(source)

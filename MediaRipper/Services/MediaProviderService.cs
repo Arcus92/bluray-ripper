@@ -80,7 +80,7 @@ public class MediaProviderService : IMediaProviderService
     public event EventHandler? Changed;
     
     /// <inheritdoc />
-    public Task<List<IMediaSource>> GetSourcesAsync()
+    public IAsyncEnumerable<IMediaSource> GetSourcesAsync()
     {
         if (_provider is null) throw new ArgumentException("No media provider has been loaded!", nameof(_provider));
         return _provider.GetSourcesAsync();

@@ -35,7 +35,7 @@ public interface IMediaProviderService
     /// Creates the track list of the current loaded media provider.
     /// </summary>
     /// <returns>The track list.</returns>
-    Task<List<IMediaSource>> GetSourcesAsync();
+    IAsyncEnumerable<IMediaSource> GetSourcesAsync();
     
     /// <summary>
     /// Creates a new title exporter from the current media provider.
