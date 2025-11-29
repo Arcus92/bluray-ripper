@@ -26,7 +26,7 @@ public class FileSystemMediaProvider : IMediaProvider
         _logger = serviceProvider.GetRequiredService<ILogger<FileSystemMediaProvider>>();;
         _path = path;
         _contentHash = ContentHash.CalculateHash(path);
-        _diskName = Path.GetFileName(_diskName) ?? "";
+        _diskName = Path.GetFileName(_path);
     }
     
     /// <inheritdoc />
@@ -34,7 +34,7 @@ public class FileSystemMediaProvider : IMediaProvider
     {
         var list = new List<IMediaSource>();
 
-        foreach (var file in Directory.EnumerateFiles(_path, "*.mkv"))
+        foreach (var file in Directory.EnumerateFiles(_path).Where(IsMediaFile).Order())
         {
             var source = await TryGetSourceAsync(file);
             if (source is null) continue;
@@ -104,6 +104,19 @@ public class FileSystemMediaProvider : IMediaProvider
     public string GetMediaPath(MediaIdentifier identifier)
     {
         return Path.Combine(_path, identifier.Id);
+    }
+    
+    /// <summary>
+    /// Returns if the given file is a supported media format by the file extension.
+    /// </summary>
+    /// <param name="path">The file path.</param>
+    /// <returns>Returns true, if the given file is supported.</returns>
+    private static bool IsMediaFile(string path)
+    {
+        var extension = Path.GetExtension(path);
+
+        return string.Equals(extension, ".mp4", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(extension, ".mkv", StringComparison.OrdinalIgnoreCase);
     }
     
     /// <summary>
