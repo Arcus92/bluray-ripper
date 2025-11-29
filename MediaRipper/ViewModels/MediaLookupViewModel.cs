@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using MediaLib.Models;
 using MediaLib.Output;
 using MediaRipper.Models.MediaLookup;
 using MediaRipper.Services.Interfaces;

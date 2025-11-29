@@ -8,7 +8,7 @@
         <PublishAot>true</PublishAot>
         <PublishTrimmed>true</PublishTrimmed>
         <Configurations>Release;Debug</Configurations>
-        <Platforms>x64</Platforms>
+        <Platforms>x64;arm64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
