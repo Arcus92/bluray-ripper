@@ -110,8 +110,14 @@ public class MediaSourceModel : BaseSourceModel
     /// For example, instead of repeating '1, 1, 1, 1' it will print '4x1' instead.
     /// </summary>
     /// <returns>Returns a string representation of the segment ids.</returns>
-    private static string BuildSegmentDescription(IEnumerable<SegmentInfo> segments)
+    private static string BuildSegmentDescription(SegmentInfo[] segments)
     {
+        // Some sources don't have relevant segment ids.
+        if (segments is [{ Id: 0 }])
+        {
+            return "";
+        }
+        
         var builder = new StringBuilder();
 
         var counter = 0;
