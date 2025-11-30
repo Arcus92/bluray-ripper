@@ -65,7 +65,8 @@ public class Engine
             Arguments = startInfo.Arguments,
             UseShellExecute = false,
             RedirectStandardError = true,
-            RedirectStandardOutput = true
+            RedirectStandardOutput = true,
+            CreateNoWindow = true
         };
         
         // Start the input streams

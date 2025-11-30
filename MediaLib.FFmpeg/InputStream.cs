@@ -50,6 +50,8 @@ public class InputStream : IDisposable
     /// </summary>
     private NamedPipeServerStream? _pipe;
 
+    private const int HResultPipeIsBroken = -2147024664;
+    
     /// <summary>
     /// Gets the pipe path.
     /// </summary>
@@ -94,7 +96,7 @@ public class InputStream : IDisposable
                 await stream.CopyToAsync(_pipe);
                 _fixedPosition = stream.Position;
             }
-            catch (IOException ex) when (ex.InnerException is SocketException { ErrorCode: 32 })
+            catch (IOException ex) when (ex.InnerException is SocketException { ErrorCode: 32 } || ex.HResult == HResultPipeIsBroken)
             {
                 // Ignore Broken pipe. This happens when the consuming process closes the pipe.
                 // That's fine. We are only concerned about reading errors.  
