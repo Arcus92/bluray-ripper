@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using FluentIcons.Common;
 using MediaLib;
 using MediaLib.Models;
 using MediaLib.Sources;
@@ -40,6 +41,7 @@ public class MediaSourceModel : BaseSourceModel
         
         // Build the segment description
         SegmentDescriptionText = BuildSegmentDescription(Info.Segments);
+        Icons = BuildMediaIcons(Source.IgnoreFlags);
     }
     
     /// <summary>
@@ -53,9 +55,9 @@ public class MediaSourceModel : BaseSourceModel
     public MediaInfo Info => Source.Info;
     
     /// <summary>
-    /// Gets the media ignore flags.
+    /// Gets the icons displayed next the media item.
     /// </summary>
-    public MediaIgnoreFlags IgnoreFlags => Source.IgnoreFlags;
+    public MediaSourceIconModel[] Icons { get; }
 
     /// <summary>
     /// Gets the segment usage text.
@@ -152,5 +154,46 @@ public class MediaSourceModel : BaseSourceModel
             }
             builder.Append(previousId);
         }
+    }
+
+    /// <summary>
+    /// Builds the list of icons attached to the source.
+    /// </summary>
+    /// <param name="ignoreFlags">The media ignore flags to convert to icons.</param>
+    /// <returns>Returns the list of icons.</returns>
+    private static MediaSourceIconModel[] BuildMediaIcons(MediaIgnoreFlags ignoreFlags)
+    {
+        var list = new List<MediaSourceIconModel>();
+
+        if ((ignoreFlags & MediaIgnoreFlags.TooShort) != 0)
+        {
+            list.Add(new MediaSourceIconModel(Icon.Clock, "Too short"));
+        }
+        if ((ignoreFlags & MediaIgnoreFlags.TooLong) != 0)
+        {
+            list.Add(new MediaSourceIconModel(Icon.Clock, "Too long"));
+        }
+        if ((ignoreFlags & MediaIgnoreFlags.NoSubtitle) != 0)
+        {
+            list.Add(new MediaSourceIconModel(Icon.TextStrikethrough, "No subtitles"));
+        }
+        if ((ignoreFlags & MediaIgnoreFlags.NoAudio) != 0)
+        {
+            list.Add(new MediaSourceIconModel(Icon.SpeakerMute, "No audio"));
+        }
+        if ((ignoreFlags & MediaIgnoreFlags.Menu) != 0)
+        {
+            list.Add(new MediaSourceIconModel(Icon.PanelLeftText, "Menu"));
+        }
+        if ((ignoreFlags & MediaIgnoreFlags.Duplicate) != 0)
+        {
+            list.Add(new MediaSourceIconModel(Icon.Copy, "Duplicate"));
+        }
+        if ((ignoreFlags & MediaIgnoreFlags.RepeatingClips) != 0)
+        {
+            list.Add(new MediaSourceIconModel(Icon.ArrowRepeatAll, "Repeating clips"));
+        }
+        
+        return list.ToArray();
     }
 }

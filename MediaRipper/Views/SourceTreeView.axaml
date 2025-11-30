@@ -17,12 +17,32 @@
                 
                 <!-- Title node -->
                 <TreeDataTemplate x:DataType="sources:MediaSourceModel" ItemsSource="{Binding SubNodes}">
-                    <StackPanel Orientation="Horizontal" Classes="nodeRow" Classes.transparent="{Binding IsIgnored}">
-                        <TextBlock Text="{Binding Info.Name}" />
-                        <TextBlock Text="{Binding Info.Duration, StringFormat=hh\\:mm\\:ss}" />
-                        <TextBlock Text="{Binding IgnoreFlags}" />
-                        <TextBlock Text="{Binding SegmentDescriptionText}" />
-                    </StackPanel>
+                    <DockPanel Classes.transparent="{Binding IsIgnored}">
+
+                        <!-- Title icon -->
+                        <ItemsControl ItemsSource="{Binding Icons}" DockPanel.Dock="Right">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            
+                            <!-- Icon template -->
+                            <ItemsControl.DataTemplates>
+                                <DataTemplate x:DataType="sources:MediaSourceIconModel">
+                                    <avalonia:FluentIcon Icon="{Binding Icon}" 
+                                                         ToolTip.Tip="{Binding Description}" />
+                                </DataTemplate>
+                            </ItemsControl.DataTemplates>
+                        </ItemsControl>
+                        
+                        <!-- Title text -->
+                        <StackPanel Orientation="Horizontal" Classes="nodeRow">
+                            <TextBlock Text="{Binding Info.Name}" />
+                            <TextBlock Text="{Binding Info.Duration, StringFormat=hh\\:mm\\:ss}" />
+                            <TextBlock Text="{Binding SegmentDescriptionText}" />
+                        </StackPanel>
+                    </DockPanel>
                 </TreeDataTemplate>
                 
                 <!-- Video stream node -->
