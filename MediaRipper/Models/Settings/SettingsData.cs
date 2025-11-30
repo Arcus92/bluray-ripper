@@ -19,10 +19,15 @@ public class SettingsData
     public string? OutputPath { get; set; }
     
     /// <summary>
-    /// Gets and sets the custom FFmpeg path
+    /// Gets and sets the custom FFmpeg path.
     /// </summary>
     public string? FFmpegPath { get; set; } 
 
+    /// <summary>
+    /// Gets and sets the video player path (FFplay or mpv).
+    /// </summary>
+    public string? FFplayPath { get; set; } 
+    
     /// <summary>
     /// Gets TheMovieDatabase settings.
     /// </summary>

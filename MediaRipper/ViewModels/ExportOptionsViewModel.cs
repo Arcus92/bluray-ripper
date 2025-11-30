@@ -15,15 +15,18 @@ public class ExportSettingsViewModel : ViewModelBase
 {
     private readonly IOutputService _outputService;
     private readonly IMediaProviderService _mediaProviderService;
+    private readonly ISettingService _settingService;
     private readonly OutputSelectorViewModel _outputSelector;
     private readonly SourceTreeViewModel _sourceTree;
     private readonly MediaLookupViewModel _mediaLookup;
     
     public ExportSettingsViewModel(IOutputService outputService, IMediaProviderService mediaProviderService, 
-        OutputSelectorViewModel outputSelector, SourceTreeViewModel sourceTree, MediaLookupViewModel mediaLookup)
+        ISettingService settingService, OutputSelectorViewModel outputSelector, SourceTreeViewModel sourceTree, 
+        MediaLookupViewModel mediaLookup)
     {
         _outputService = outputService;
         _mediaProviderService = mediaProviderService;
+        _settingService = settingService;
         _outputSelector = outputSelector;
         _sourceTree = sourceTree;
         _mediaLookup = mediaLookup;
@@ -93,12 +96,14 @@ public class ExportSettingsViewModel : ViewModelBase
 
     private void UpdateSelection()
     {
+        var canPlayPreview = !string.IsNullOrEmpty(_settingService.Data.FFplayPath);
+        
         if (_sourceTree.TryGetSelectedTitleNode(out var titleNode))
         {
             var output = _outputService.GetByIdentifier(titleNode.Source.Identifier);
             CanQueueSelection = output is null;
             CanDequeueSelection = output is not null && output.Status == OutputStatus.Queued;
-            CanPlaySelection = true;
+            CanPlaySelection = canPlayPreview;
             CanSaveSelection = true;
         }
         else
@@ -197,7 +202,7 @@ public class ExportSettingsViewModel : ViewModelBase
         // jump ahead to the end of the current playback buffer.
         // Despite all of this, this is a usable preview to determine the content.
         var process = new Process();
-        process.StartInfo.FileName = "mpv"; // mpv is also working
+        process.StartInfo.FileName = _settingService.Data.FFplayPath;
         process.StartInfo.Arguments = "-";
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardInput = true;
