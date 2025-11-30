@@ -14,7 +14,7 @@ public interface IMediaLookupService
     /// <summary>
     /// Gets the default language.
     /// </summary>
-    string Language { get; }
+    string? Language { get; }
     
     /// <summary>
     /// Searches the given query and returns the found media results.

@@ -28,7 +28,7 @@ public class MediaLookupService : IMediaLookupService
     public TheMovieDatabaseApi MovieDatabaseApi { get; }
 
     /// <inheritdoc />
-    public string Language => _settingService.Data.TheMovieDatabase.Language;
+    public string? Language => _settingService.Data.TheMovieDatabase.Language;
 
     /// <inheritdoc />
     public async Task<MediaSearchResult[]> SearchAsync(string query)

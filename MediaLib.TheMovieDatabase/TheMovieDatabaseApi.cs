@@ -6,7 +6,7 @@ namespace MediaLib.TheMovieDatabase;
 
 /// <summary>
 /// The api for TheMovieDatabase.
-/// You'll need to set the <see cref="_apiKey"/> before using the services.
+/// You'll need to set the <see cref="ApiKey"/> before using the services.
 /// </summary>
 public class TheMovieDatabaseApi
 {
@@ -23,12 +23,12 @@ public class TheMovieDatabaseApi
     /// <summary>
     /// Gets and sets teh authentication token.
     /// </summary>
-    private readonly string _apiKey;
+    public string? ApiKey { get; set; }
 
-    public TheMovieDatabaseApi(IHttpClientFactory httpClientFactory, string apiKey)
+    public TheMovieDatabaseApi(IHttpClientFactory httpClientFactory, string? apiKey = null)
     {
         _httpClientFactory = httpClientFactory;
-        _apiKey = apiKey;
+        ApiKey = apiKey;
 
         Search = new SearchService(this);
         Tv = new TvService(this);
@@ -61,7 +61,7 @@ public class TheMovieDatabaseApi
     {
         var client = _httpClientFactory.CreateClient();
         var request = new HttpRequestMessage(HttpMethod.Get, uri);
-        AddHeaders(request);
+        ValidateAndAddHeaders(request);
         
         var response = await client.SendAsync(request);
         response.EnsureSuccessStatusCode();
@@ -76,13 +76,18 @@ public class TheMovieDatabaseApi
         return result;
     }
 
-    /// <summary>        var typeInfo = ModelContext.Default.GetTypeInfo(typeof(T));
+    /// <summary>
     /// Adds the general HTTP headers.
     /// </summary>
     /// <param name="request">The request to add the HTTP headers.</param>
-    private void AddHeaders(HttpRequestMessage request)
+    private void ValidateAndAddHeaders(HttpRequestMessage request)
     {
+        if (string.IsNullOrEmpty(ApiKey))
+        {
+            throw new ArgumentException("TheMovieDatabase ApiKey is not set.", nameof(ApiKey));
+        }
+        
         request.Headers.Add("Accept", "application/json");
-        request.Headers.Add("Authorization", $"Bearer {_apiKey}");
+        request.Headers.Add("Authorization", $"Bearer {ApiKey}");
     }
 }
