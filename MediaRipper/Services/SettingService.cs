@@ -69,6 +69,7 @@ public class SettingService : ISettingService
             }
 
             Data = data;
+            OnChange();
         }
         catch (Exception ex)
         {
