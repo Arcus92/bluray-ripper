@@ -2,6 +2,7 @@ namespace MediaLib.FFmpeg;
 
 public enum StreamType
 {
+    Unknown,
     Video,
     Audio,
     Subtitle,
@@ -20,6 +21,7 @@ public static class StreamTypeHelper
     {
         return type switch
         {
+            StreamType.Unknown => '?',
             StreamType.Video => 'v',
             StreamType.Audio => 'a',
             StreamType.Subtitle => 's',

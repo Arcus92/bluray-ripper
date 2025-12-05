@@ -82,6 +82,7 @@ public class FileSystemMediaSource : IMediaSource
             StreamType.Video => OutputStreamType.Video,
             StreamType.Audio => OutputStreamType.Audio,
             StreamType.Subtitle => OutputStreamType.Subtitle,
+            StreamType.Attachment => OutputStreamType.Attachment,
             _ => throw new ArgumentOutOfRangeException(nameof(streamType), streamType, null)
         };
     }

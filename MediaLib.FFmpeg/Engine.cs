@@ -474,7 +474,7 @@ public class Engine
             "Subtitle" => StreamType.Subtitle,
             "Data" => StreamType.Data,
             "Attachment" => StreamType.Attachment,
-            _ => throw new ArgumentException($"Unknown stream type: '{type}'")
+            _ => StreamType.Unknown
         };
         
         var indexEnd = line.IndexOf(',', indexFormat + 1);

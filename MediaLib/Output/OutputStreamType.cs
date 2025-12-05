@@ -11,4 +11,5 @@ public enum OutputStreamType
     Video,
     Audio,
     Subtitle,
+    Attachment,
 }
