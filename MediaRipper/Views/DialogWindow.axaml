@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MediaRipper.ViewModels"
+        xmlns:utils="clr-namespace:MediaRipper.Utils"
+        Width="320" Height="120"
+        mc:Ignorable="d"
+        x:Class="MediaRipper.Views.DialogWindow"
+        x:DataType="vm:DialogWindowViewModel"
+        Title="DialogWindow"
+        WindowStartupLocation="CenterOwner"
+        Design.DataContext="{utils:DesignResolve {x:Type vm:DialogWindowViewModel}}">
+    
+    <Grid RowDefinitions="*,Auto">
+        <ScrollViewer Grid.Row="0">
+            <TextBlock Text="{Binding Text}" Margin="10" />
+        </ScrollViewer>
+        
+        <!-- Button row -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10" Spacing="5" HorizontalAlignment="Right">
+            <Button Command="{Binding Close}" 
+                    Content="{StaticResource Okay}"/>
+        </StackPanel>
+        
+    </Grid>
+    
+    
+</Window>

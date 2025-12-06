@@ -31,17 +31,14 @@ public partial class App : Application
         
         ServiceProvider = collection.BuildServiceProvider();
         
-        var mainViewModel = ServiceProvider.GetRequiredService<MainWindowViewModel>();
+        var applicationService = ServiceProvider.GetRequiredService<IApplicationService>();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = mainViewModel,
-            };
-            
+            desktop.MainWindow = applicationService.ShowWindow<MainWindowViewModel>();
+
             var storageProviderAccessor = ServiceProvider.GetRequiredService<IStorageProviderAccessor>();
             storageProviderAccessor.StorageProvider = desktop.MainWindow.StorageProvider;
         }
