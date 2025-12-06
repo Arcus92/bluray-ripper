@@ -4,45 +4,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:MediaRipper.ViewModels"
         xmlns:utils="clr-namespace:MediaRipper.Utils"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" Width="480" Height="640"
         x:Class="MediaRipper.Views.SettingsWindow"
         x:DataType="vm:SettingsWindowViewModel"
+        WindowStartupLocation="CenterOwner"
         Icon="/Assets/avalonia-logo.ico"
         Title="Settings"
         Design.DataContext="{utils:DesignResolve {x:Type vm:MainWindowViewModel}}">
-    <ScrollViewer>
-        <StackPanel Orientation="Vertical" Margin="5" Spacing="10">
-            
-            <!-- FFmpeg binary path -->
-            <TextBlock>
-                FFmpeg path
-            </TextBlock>
-            <TextBox Text="{Binding FFmpegPath, Mode=TwoWay}" />
-            
-            <!-- FFplay binary path -->
-            <TextBlock>
-                FFplay path
-            </TextBlock>
-            <TextBox Text="{Binding FFplayPath, Mode=TwoWay}" />
-            
-            <!-- TheMovieDatabase api key -->
-            <TextBlock>
-                TheMovieDatabase Api-Key
-            </TextBlock>
-            <TextBox Text="{Binding TheMovieDatabaseApiKey, Mode=TwoWay}" />
-            
-            <!-- TheMovieDatabase language -->
-            <TextBlock>
-                TheMovieDatabase language
-            </TextBlock>
-            <TextBox Text="{Binding TheMovieDatabaseLanguage, Mode=TwoWay}" />
-            
-            <!-- Button row -->
-            <StackPanel Orientation="Horizontal" Spacing="5">
-                <Button Command="{Binding Apply}">
-                    Apply
-                </Button>
+    <Grid RowDefinitions="*,Auto">
+        <ScrollViewer Grid.Row="0">
+            <StackPanel Orientation="Vertical" Margin="5" Spacing="10">
+                <!-- FFmpeg binary path -->
+                <TextBlock Text="{StaticResource FFmpegPath}" />
+                <TextBox Text="{Binding FFmpegPath, Mode=TwoWay}" />
+                
+                <!-- FFplay binary path -->
+                <TextBlock Text="{StaticResource FFplayPath}" />
+                <TextBox Text="{Binding FFplayPath, Mode=TwoWay}" />
+                
+                <!-- TheMovieDatabase api key -->
+                <TextBlock Text="{StaticResource TheMovieDatabaseApiKey}" />
+                <TextBox Text="{Binding TheMovieDatabaseApiKey, Mode=TwoWay}" />
+                
+                <!-- TheMovieDatabase language -->
+                <TextBlock Text="{StaticResource TheMovieDatabaseLanguage}" />
+                <TextBox Text="{Binding TheMovieDatabaseLanguage, Mode=TwoWay}" />
             </StackPanel>
+        </ScrollViewer>
+        
+        <!-- Button row -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10" Spacing="5" HorizontalAlignment="Right">
+            <Button Command="{Binding Apply}" 
+                    Content="{StaticResource Apply}"/>
         </StackPanel>
-    </ScrollViewer>
+    </Grid>
 </Window>

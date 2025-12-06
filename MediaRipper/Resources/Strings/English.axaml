@@ -2,14 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     
-    <system:String x:Key="OpenSource">Open source</system:String>
-    <system:String x:Key="OpenOutput">Open output</system:String>
-    <system:String x:Key="Refresh">Refresh</system:String>
-    <system:String x:Key="Play">Play</system:String>
-    <system:String x:Key="Export">Export</system:String>
-    <system:String x:Key="QueueSelection">Queue selection</system:String>
-    <system:String x:Key="DequeueSelection">Dequeue selection</system:String>
-    <system:String x:Key="SaveRawSegment">Save raw segment</system:String>
+    <!-- General -->
+    <system:String x:Key="Cancel">Cancel</system:String>
+    <system:String x:Key="Okay">Okay</system:String>
+    <system:String x:Key="Apply">Apply</system:String>
     <system:String x:Key="Search">Search</system:String>
     
     <system:String x:Key="Title">Title</system:String>
@@ -19,6 +15,17 @@
     <system:String x:Key="AudioStreams">Audio streams</system:String>
     <system:String x:Key="SubtitleStreams">Subtitle streams</system:String>
     
+    <!-- Main window -->
+    <system:String x:Key="OpenSource">Open source</system:String>
+    <system:String x:Key="OpenOutput">Open output</system:String>
+    <system:String x:Key="Refresh">Refresh</system:String>
+    <system:String x:Key="Play">Play</system:String>
+    <system:String x:Key="Export">Export</system:String>
+    <system:String x:Key="QueueSelection">Queue selection</system:String>
+    <system:String x:Key="DequeueSelection">Dequeue selection</system:String>
+    <system:String x:Key="SaveRawSegment">Save raw segment</system:String>
+    
+    <!-- Media type -->
     <system:String x:Key="MediaTypeUnset">-/-</system:String>
     <system:String x:Key="MediaTypeMovie">Movie</system:String>
     <system:String x:Key="MediaTypeEpisode">Episode</system:String>
@@ -28,4 +35,10 @@
     <system:String x:Key="MediaTypeDeletedScenes">Deleted scenes</system:String>
     <system:String x:Key="MediaTypeInterview">Interview</system:String>
     <system:String x:Key="MediaTypeTrailer">Trailer</system:String>
+    
+    <!-- Settings -->
+    <system:String x:Key="FFmpegPath">FFmpeg path</system:String>
+    <system:String x:Key="FFplayPath">FFmpeg path</system:String>
+    <system:String x:Key="TheMovieDatabaseApiKey">TheMovieDatabase api key</system:String>
+    <system:String x:Key="TheMovieDatabaseLanguage">TheMovieDatabase language</system:String>
 </ResourceDictionary>
