@@ -8,11 +8,14 @@ namespace MediaRipper.ViewModels;
 
 public class QueueSettingsViewModel : ViewModelBase
 {
+    private readonly IApplicationService _applicationService;
     private readonly IOutputQueueService _outputQueueService;
     private readonly IMediaProviderService _mediaProviderService;
 
-    public QueueSettingsViewModel(IOutputQueueService outputQueueService, IMediaProviderService mediaProviderService)
+    public QueueSettingsViewModel(IApplicationService applicationService, IOutputQueueService outputQueueService, 
+        IMediaProviderService mediaProviderService)
     {
+        _applicationService = applicationService;
         _outputQueueService = outputQueueService;
         _mediaProviderService = mediaProviderService;
         
@@ -76,6 +79,14 @@ public class QueueSettingsViewModel : ViewModelBase
     public void StopQueue()
     {
         _outputQueueService.Stop();
+    }
+
+    /// <summary>
+    /// Opens the application settings.
+    /// </summary>
+    public void OpenSettings()
+    {
+        _applicationService.ShowWindow<SettingsWindowViewModel>();
     }
     
     #endregion Commands

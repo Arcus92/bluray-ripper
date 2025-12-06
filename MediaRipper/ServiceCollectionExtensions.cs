@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
     {
         // View models
         collection.AddScoped<MainWindowViewModel>();
+        collection.AddScoped<SettingsWindowViewModel>();
         collection.AddScoped<SourceSelectorViewModel>();
         collection.AddScoped<SourceTreeViewModel>();
         collection.AddScoped<ExportSettingsViewModel>();
@@ -27,6 +28,7 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<MediaLookupViewModel>();
         
         // Controller
+        collection.AddSingleton<IApplicationService, ApplicationService>();
         collection.AddSingleton<ISettingService, SettingService>();
         collection.AddSingleton<IMediaProviderService, MediaProviderService>();
         collection.AddSingleton<IMediaLookupService, MediaLookupService>();

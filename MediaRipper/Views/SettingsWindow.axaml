@@ -1,0 +1,48 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MediaRipper.ViewModels"
+        xmlns:utils="clr-namespace:MediaRipper.Utils"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MediaRipper.Views.SettingsWindow"
+        x:DataType="vm:SettingsWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Settings"
+        Design.DataContext="{utils:DesignResolve {x:Type vm:MainWindowViewModel}}">
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" Margin="5" Spacing="10">
+            
+            <!-- FFmpeg binary path -->
+            <TextBlock>
+                FFmpeg path
+            </TextBlock>
+            <TextBox Text="{Binding FFmpegPath, Mode=TwoWay}" />
+            
+            <!-- FFplay binary path -->
+            <TextBlock>
+                FFplay path
+            </TextBlock>
+            <TextBox Text="{Binding FFplayPath, Mode=TwoWay}" />
+            
+            <!-- TheMovieDatabase api key -->
+            <TextBlock>
+                TheMovieDatabase Api-Key
+            </TextBlock>
+            <TextBox Text="{Binding TheMovieDatabaseApiKey, Mode=TwoWay}" />
+            
+            <!-- TheMovieDatabase language -->
+            <TextBlock>
+                TheMovieDatabase language
+            </TextBlock>
+            <TextBox Text="{Binding TheMovieDatabaseLanguage, Mode=TwoWay}" />
+            
+            <!-- Button row -->
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <Button Command="{Binding Apply}">
+                    Apply
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
