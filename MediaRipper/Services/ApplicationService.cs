@@ -40,7 +40,14 @@ public class ApplicationService : IApplicationService
                 return;
         }
         
-        var window = (Window)viewModel.CreateView();
+        // Check if window is already open
+        if (TryGetWindow(viewModel, out var window))
+        {
+            window.Focus();
+            return;
+        }
+        
+        window = (Window)viewModel.CreateView();
         window.DataContext = viewModel;
         window.ShowDialog(ownerWindow);
         _viewModelsToWindow.Add(viewModel, window);
@@ -57,7 +64,14 @@ public class ApplicationService : IApplicationService
     /// <inheritdoc />
     public Window ShowWindow<T>(T viewModel) where T : ViewModelBase
     {
-        var window = (Window)viewModel.CreateView();
+        // Check if window is already open
+        if (TryGetWindow(viewModel, out var window))
+        {
+            window.Focus();
+            return window;
+        }
+        
+        window = (Window)viewModel.CreateView();
         window.DataContext = viewModel;
         window.Show();
         _viewModelsToWindow.Add(viewModel, window);
