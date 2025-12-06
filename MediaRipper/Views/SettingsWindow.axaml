@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:MediaRipper.ViewModels"
         xmlns:utils="clr-namespace:MediaRipper.Utils"
-        mc:Ignorable="d" Width="480" Height="640"
+        mc:Ignorable="d" Width="480" Height="360"
         x:Class="MediaRipper.Views.SettingsWindow"
         x:DataType="vm:SettingsWindowViewModel"
         WindowStartupLocation="CenterOwner"
@@ -24,7 +24,7 @@
                 
                 <!-- TheMovieDatabase api key -->
                 <TextBlock Text="{StaticResource TheMovieDatabaseApiKey}" />
-                <TextBox Text="{Binding TheMovieDatabaseApiKey, Mode=TwoWay}" />
+                <TextBox Text="{Binding TheMovieDatabaseApiKey, Mode=TwoWay}" PasswordChar="●" />
                 
                 <!-- TheMovieDatabase language -->
                 <TextBlock Text="{StaticResource TheMovieDatabaseLanguage}" />
