@@ -13,7 +13,7 @@
         Design.DataContext="{utils:DesignResolve {x:Type vm:MainWindowViewModel}}">
     <Grid RowDefinitions="*,Auto">
         <ScrollViewer Grid.Row="0">
-            <StackPanel Orientation="Vertical" Margin="5" Spacing="10">
+            <StackPanel Orientation="Vertical" Margin="10" Spacing="10">
                 <!-- FFmpeg binary path -->
                 <TextBlock Text="{StaticResource FFmpegPath}" />
                 <TextBox Text="{Binding FFmpegPath, Mode=TwoWay}" />
