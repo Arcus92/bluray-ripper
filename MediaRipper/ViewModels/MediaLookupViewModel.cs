@@ -142,6 +142,18 @@ public class MediaLookupViewModel : ViewModelBase
     }
 
     /// <summary>
+    /// Clears all input fields
+    /// </summary>
+    public void Clear()
+    {
+        SearchText = "";
+        SearchResults.Clear();
+        SelectedMediaItem = null;
+        SelectedSeason = null;
+        SelectedEpisode = null;
+    }
+    
+    /// <summary>
     /// Fetches the media details.
     /// </summary>
     private async Task FetchDetailsAsync()

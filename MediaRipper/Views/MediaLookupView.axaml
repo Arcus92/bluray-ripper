@@ -17,10 +17,16 @@
             <!-- Search box -->
             <DockPanel>
                 <StackPanel Orientation="Horizontal" Margin="5,0,0,0" DockPanel.Dock="Right">
-                    <Button Command="{Binding SearchAsync}"
-                            IsEnabled="{Binding !IsLoading}">
-                        <avalonia:FluentIcon Icon="Search" />
-                    </Button>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Button Command="{Binding SearchAsync}"
+                                IsEnabled="{Binding !IsLoading}">
+                            <avalonia:FluentIcon Icon="Search" />
+                        </Button>
+                        <Button Command="{Binding Clear}"
+                                IsEnabled="{Binding !IsLoading}">
+                            <avalonia:FluentIcon Icon="Dismiss" />
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
                 <TextBox Text="{Binding SearchText, Mode=TwoWay}" 
                          IsEnabled="{Binding !IsLoading}"
